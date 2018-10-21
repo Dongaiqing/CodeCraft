@@ -9,9 +9,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-react": "^6.24.1",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
-  }
+    "react-ace": "^6.2.0",
+    "react-dom": "^16.5.2",
+    "sass": "^1.14.2",
+    "webpack": "^4.22.0"
+  },
+  "dependencies": {}
 }
