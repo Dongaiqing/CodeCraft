@@ -4,7 +4,8 @@
   "description": "Frontend work",
   "main": "index.js",
   "scripts": {
-    "test": "echo 'Test commands!'"
+    "test": "echo 'Test commands!'",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +20,8 @@
     "react-ace": "^6.2.0",
     "react-dom": "^16.5.2",
     "sass": "^1.14.2",
-    "webpack": "^4.22.0"
+    "webpack": "^4.22.0",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {}
 }
