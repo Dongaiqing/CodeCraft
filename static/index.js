@@ -4,7 +4,9 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactDom = _interopRequireDefault(require("react-dom"));
 
-var _Coding = require("./modules/Coding.js");
+var _Editor = require("./modules/Editor");
+
+var _Header = require("./modules/Header");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46,7 +48,7 @@ function (_Component) {
   _createClass(Main, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement(_Coding.Editor, null);
+      return [_react.default.createElement(_Header.Header, null), _react.default.createElement(_Editor.Editor, null)];
     }
   }]);
 

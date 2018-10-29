@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import {Editor} from './modules/Coding.js'
+import {Editor} from './modules/Editor'
+import {Header} from './modules/Header'
 
 class Main extends Component {
     constructor(props) {
@@ -9,7 +10,10 @@ class Main extends Component {
     }
 
     render() {
-        return <Editor/>;
+        return [
+            <Header/>,
+            <Editor/>
+        ];
     }
 }
 

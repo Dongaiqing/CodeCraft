@@ -1,9 +1,17 @@
 import React, {Component} from 'react'
-import brace from 'brace';
 import AceEditor from 'react-ace';
 
 import 'brace/mode/java';
+import 'brace/mode/html';
+import 'brace/mode/javascript';
+import 'brace/mode/python';
+
 import 'brace/theme/github';
+import 'brace/theme/xcode';
+import 'brace/theme/monokai';
+
+import 'brace/snippets/html';
+import 'brace/ext/language_tools';
 
 
 const staticSettings = {
@@ -21,6 +29,7 @@ const staticSettings = {
             showPrintMargin: [true, false],
             highlightActiveLine: [true, false],
             wrapEnabled: [true, false],
+            showLineNumbers: [true, false],
             enableLiveAutocompletion: [true, false],
             tabSize: {
                 min: 0,
@@ -32,7 +41,6 @@ const staticSettings = {
 
     configurationTypes(key) {
         const obj = this.all_settings[key];
-        console.log(obj, key);
         if (Array.isArray(obj) && obj[0] === true) {
             return 'binary';
         } else if (obj.hasOwnProperty('min')) {
@@ -46,20 +54,38 @@ const staticSettings = {
 
 
 class EditorConfigItem extends Component {
+    update(key_name, value) {
+        this.props.updating_method(key_name, value);
+    }
     render() {
         const props = this.props;
         const item_key = props.key_name;
         const item_value = props.value;
         switch (staticSettings.configurationTypes(item_key)) {
             case 'binary':
-                return <label><input type={"checkbox"} checked={item_value} name={item_key}/>{item_key}</label>;
+                return <label>
+                    <input
+                        type={"checkbox"}
+                        checked={item_value}
+                        name={item_key}
+                        onChange={(e) => {this.update(item_key, e.target.value)}}
+                    />
+                    {item_key}
+                    </label>;
             case 'list':
                 const arr_options = staticSettings.all_settings[item_key].map(x => {
                     return <option value={x}>{x}</option>;
                 });
-                return <select value={item_value}>{arr_options}</select>
+                return <select value={item_value} onChange={(e) => {this.update(item_key, e.target.value)}}>{arr_options}</select>;
             default:
-                return <input type={'number'} name={item_key} min={staticSettings.all_settings[item_key].min} max={staticSettings.all_settings[item_key].max} value={item_value}/>
+                return <input
+                    type={'number'}
+                    name={item_key}
+                    min={staticSettings.all_settings[item_key].min}
+                    max={staticSettings.all_settings[item_key].max}
+                    value={item_value}
+                    onChange={(e) => {this.update(item_key, e.target.value)}}
+                />
         }
     }
 }
@@ -72,10 +98,10 @@ class EditorConfigPanel extends Component {
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
                 // distinguish different types of keys
-                elements.push(<EditorConfigItem key_name={key} value={settings[key]}/>)
+                elements.push(<EditorConfigItem key_name={key} value={settings[key]} updating_method={(key_name, value) => this.props.updating_method(key_name, value)}/>)
             }
         }
-        return elements;
+        return <div className={'EditorConfigPanel'}>{elements}</div>;
     }
 }
 
@@ -102,36 +128,38 @@ export class Editor extends Component {
         };
     }
 
+    updateSettings(key_name, value) {
+        const prev_settings = this.state.settings;
+        prev_settings[key_name] = value;
+        this.setState({
+            settings: prev_settings
+        });
+    }
+
     render() {
         const settings = this.state.settings;
         return [
-            <EditorConfigPanel settings={settings}/>,
+            <EditorConfigPanel settings={settings} updating_method={(key_name, value) => this.updateSettings(key_name, value)}/>,
             <AceEditor
+                name={'CoreEditor'}
                 mode={settings.language}
                 theme={settings.theme}
-                fontSize={settings.fontSize}
-                enableBasicAutocompletion={settings.enableBasicAutocompletion}
-                enableLiveAutocompletion={settings.enableLiveAutocompletion}
+                setOptions={{
+                    enableBasicAutocompletion: settings.enableBasicAutocompletion,
+                    enableLiveAutocompletion: settings.enableLiveAutocompletion,
+                    showLineNumbers: settings.showLineNumbers,
+                    tabSize: settings.tabSize,
+                    fontSize: `${settings.fontSize}`+'px'
+                }}
                 showGutter={settings.showGutter}
                 showPrintMargin={settings.showPrintMargin}
                 highlightActiveLine={settings.highlightActiveLine}
                 wrapEnabled={settings.wrapEnabled}
-                tabSize={settings.tabSize}
             />
         ];
     }
 }
 
-export class QuestionDisplayPanel extends Component {
-    render() {
 
-    }
-}
-
-export class QuestionFeedbackPanel extends Component {
-    render() {
-
-    }
-}
 
 
