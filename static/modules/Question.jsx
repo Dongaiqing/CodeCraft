@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 
-const sendURL = '';
-const receieveURL = '';
+const sendURL = '/code_test';
+const receieveURL = '/code_test';
 
 
 class GetContainer extends Component {
@@ -17,15 +17,15 @@ class GetContainer extends Component {
     }
 
     componentDidMount() {
-        console.log({
-            id: this.props.current_number
-        });
+        // console.log({
+        //     id: this.props.current_number
+        // });
         axios.get(this.url, {
             params: {
                 id: this.props.current_number
             }
         }).then((response) => {
-            console.log(response);
+            // console.log(response);
             this.updateStatus(JSON.stringify(response));
         }).catch((error) => {
             console.log(error);
@@ -48,16 +48,16 @@ class PostContainer extends Component {
     }
 
     componentDidMount() {
-        console.log({
-            source_code: this.props.content, // TOD
-            language: this.props.language
-        });
+        // console.log({
+        //     source_code: this.props.content,
+        //     language: this.props.language
+        // });
         axios.post(this.url, {
-            source_code: this.props.content, // TOD
+            source_code: this.props.content,
             language: this.props.language
         }).then((response) => {
-            console.log(response);
-            this.updateStatus(JSON.stringify(response));
+            // console.log(response.data);
+            this.updateStatus(JSON.stringify(response.data));
         }).catch((error) => {
             console.log(error);
         });
