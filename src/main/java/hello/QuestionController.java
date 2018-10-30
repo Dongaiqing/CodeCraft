@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,17 +39,13 @@ public class QuestionController {
     }
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
-    public String saveCode( @RequestParam("source_code") String code,
-    		 				   @RequestParam("language") String language
-    		) {
-    	question_code question_code = new question_code();
-    	question_code.setLanguage(language);
-    	question_code.setSource_code(code);
-    	question_codeService.save(question_code);
-    	String response = language;
+    public question_code saveCode( @RequestBody question_code code) {
+    	
+    	question_codeService.save(code);
+    	
         // Process the request
         // Prepare the response string
-        return response;    
+        return code;    
     }
 }
 
