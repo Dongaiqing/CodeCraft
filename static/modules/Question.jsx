@@ -119,7 +119,17 @@ export class QuestionDisplayPanel extends Component {
         const state = this.state;
         const arr_elem = [];
         if (state.current_content !== '' && state.should_send_request === false) {
-            arr_elem.push(<section style={{marginBottom: '1em'}} key={'QuestionDisplayPanel_section'}>{state.current_content}</section>);
+            arr_elem.push(
+                <section
+                style={{
+                    marginBottom: '1em',
+                    paddingLeft: '0.5em',
+                    borderLeft: '0.2em solid #5D6D7E'
+                }}
+                key={'QuestionDisplayPanel_section'}>
+                {state.current_content}
+                </section>
+            );
         }
         if (state.should_send_request === true) {
             arr_elem.push(<GetContainer key={'QuestionDisplayPanel_GetContainer'} updating_method={(key, val) => this.updateState(key, val)} current_number={this.state.current_question_number}/>);
@@ -153,7 +163,17 @@ export class QuestionFeedbackPanel extends Component {
         const state = this.state;
         const arr_elem = [];
         if (state.current_content !== '' && state.should_send_request === false) {
-            arr_elem.push(<section style={{marginBottom: '1em'}} key={'QuestionFeedbackPanel_section'}>{state.current_content}</section>);
+            arr_elem.push(
+                <section
+                    style={{
+                        marginBottom: '1em',
+                        paddingLeft: '0.5em',
+                        borderLeft: '0.2em solid #2C8DC7'
+                    }}
+                    key={'QuestionFeedbackPanel_section'}>
+                    {state.current_content}
+                    </section>
+            );
         }
         if (state.should_send_request === true) {
             arr_elem.push(<PostContainer key={'QuestionFeedbackPanel_PostContainer'} updating_method={(key, val) => this.updateState(key, val)} content={this.props.content} language={this.props.language}/>);
