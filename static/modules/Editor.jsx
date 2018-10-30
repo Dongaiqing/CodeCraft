@@ -1,33 +1,33 @@
 import React, {Component} from 'react'
-import AceEditor from 'react-ace';
+import AceEditor from 'react-ace'
 
-import 'brace/mode/java';
-import 'brace/mode/html';
-import 'brace/mode/javascript';
-import 'brace/mode/python';
-import 'brace/mode/ruby';
-import 'brace/mode/mysql';
-import 'brace/mode/mysql';
-import 'brace/mode/sass';
-import 'brace/mode/markdown';
-import 'brace/mode/json';
-import 'brace/mode/html';
+import 'brace/mode/java'
+import 'brace/mode/html'
+import 'brace/mode/javascript'
+import 'brace/mode/python'
+import 'brace/mode/ruby'
+import 'brace/mode/mysql'
+import 'brace/mode/mysql'
+import 'brace/mode/sass'
+import 'brace/mode/markdown'
+import 'brace/mode/json'
+import 'brace/mode/html'
 // import 'brace/mode/go';
-import 'brace/mode/csharp';
-import 'brace/mode/elixir';
-import 'brace/mode/typescript';
-import 'brace/mode/css';
+import 'brace/mode/csharp'
+import 'brace/mode/elixir'
+import 'brace/mode/typescript'
+import 'brace/mode/css'
 
-import 'brace/theme/github';
-import 'brace/theme/xcode';
-import 'brace/theme/monokai';
-import 'brace/theme/tomorrow';
-import 'brace/theme/kuroir';
-import 'brace/theme/twilight';
-import 'brace/theme/textmate';
-import 'brace/theme/terminal';
-import 'brace/theme/solarized_dark';
-import 'brace/theme/solarized_light';
+import 'brace/theme/github'
+import 'brace/theme/xcode'
+import 'brace/theme/monokai'
+import 'brace/theme/tomorrow'
+import 'brace/theme/kuroir'
+import 'brace/theme/twilight'
+import 'brace/theme/textmate'
+import 'brace/theme/terminal'
+import 'brace/theme/solarized_dark'
+import 'brace/theme/solarized_light'
 
 import 'brace/snippets/html';
 import 'brace/ext/language_tools';
@@ -76,51 +76,87 @@ class EditorConfigItem extends Component {
     update(key_name, value) {
         this.props.updating_method(key_name, value);
     }
+    get common_item_style() {
+        return {
+            display: 'block',
+            marginBottom: '0.5em'
+        }
+    }
     render() {
         const props = this.props;
         const item_key = props.key_name;
         const item_value = props.value;
+        let items = null;
+        let common_key = null;
+
+        const label_style = {
+            marginRight: '0.3em'
+        };
         switch (staticSettings.configurationTypes(item_key)) {
             case 'binary':
-                return <label>
+                items = [
+                    <label htmlFor={'EditorConfigItem_checkbox_'+item_key} key={'EditorConfigItem_checkbox_label_'+item_key} style={label_style}>{item_key}</label>,
                     <input
+                        id={'EditorConfigItem_checkbox_'+item_key}
+                        key={'EditorConfigItem_checkbox_'+item_key}
                         type={"checkbox"}
                         checked={item_value}
                         name={item_key}
-                        onChange={(e) => {this.update(item_key, e.target.value)}}
+                        onChange={(e) => {this.update(item_key, e.target.checked)}}
                     />
-                    {item_key}
-                    </label>;
+                ];
+                return <div style={this.common_item_style}>{items}</div>;
             case 'list':
                 const arr_options = staticSettings.all_settings[item_key].map(x => {
                     return <option key={'EditorConfigItem_option_'+x} value={x}>{x}</option>;
                 });
-                return <select value={item_value} onChange={(e) => {this.update(item_key, e.target.value)}}>{arr_options}</select>;
+                common_key = 'EditorConfigItem_select_'+item_key;
+                items = [
+                    <label key={common_key+'_label'} htmlFor={common_key} style={label_style}>Select {item_key}</label>,
+                    <select id={common_key} key={common_key} value={item_value} onChange={(e) => {this.update(item_key, e.target.value)}}>{arr_options}</select>
+                ];
+                return <div style={this.common_item_style}>{items}</div>;
             default:
-                return <input
-                    type={'number'}
-                    name={item_key}
-                    min={staticSettings.all_settings[item_key].min}
-                    max={staticSettings.all_settings[item_key].max}
-                    value={item_value}
-                    onChange={(e) => {this.update(item_key, e.target.value)}}
-                />
+                common_key = 'EditorConfigItem_range_'+item_key;
+                items = [
+                    <label key={common_key+'_label'} htmlFor={common_key} style={label_style}>Set {item_key}</label>,
+                    <input
+                        id={common_key}
+                        key={common_key}
+                        type={'number'}
+                        name={item_key}
+                        min={staticSettings.all_settings[item_key].min}
+                        max={staticSettings.all_settings[item_key].max}
+                        value={item_value}
+                        onChange={(e) => {this.update(item_key, e.target.value)}}
+                    />
+                ];
+                return <div style={this.common_item_style}>{items}</div>
         }
     }
 }
 
 
 class EditorConfigPanel extends Component {
+
     render() {
         const settings = this.props.settings;
         const elements = [];
+        elements.push(<h3 key={'EditorConfigPanel_header'} style={{display: 'block', marginBottom: '1em'}}>Editor Settings</h3>);
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
                 // distinguish different types of keys
                 elements.push(<EditorConfigItem key={'EditorConfigItem'+'_'+key} key_name={key} value={settings[key]} updating_method={(key_name, value) => this.props.updating_method(key_name, value)}/>)
             }
         }
-        return <div className={'EditorConfigPanel'}>{elements}</div>;
+        return <div
+            style={{
+                order: 2,
+                marginLeft: '1em'
+            }}
+            className={'EditorConfigPanel'}>
+            {elements}
+            </div>;
     }
 }
 
@@ -145,11 +181,20 @@ export class Editor extends Component {
         this.state = {
             settings: settings
         };
+
     }
 
     updateSettings(key_name, value) {
+
         const prev_settings = this.state.settings;
-        prev_settings[key_name] = value;
+        const prev_value = prev_settings[key_name];
+        if (Number.isInteger(prev_value)) {
+            prev_settings[key_name] = parseInt(value, 10);
+        } else if (typeof(prev_value) === 'boolean') {
+            prev_settings[key_name] = value;
+        } else {
+            prev_settings[key_name] = value;
+        }
         this.setState({
             settings: prev_settings
         });
@@ -165,9 +210,13 @@ export class Editor extends Component {
 
     render() {
         const settings = this.state.settings;
-        return [
+        const items = [
             <EditorConfigPanel key={'EditorConfigPanel'} settings={settings} updating_method={(key_name, value) => this.updateSettings(key_name, value)}/>,
             <AceEditor
+                style={{
+                        order: 1,
+                        width: '100%'
+                }}
                 key={'CoreEditor'}
                 name={'CoreEditor'}
                 mode={settings.language === 'c#' ? 'csharp':settings.language}
@@ -187,6 +236,15 @@ export class Editor extends Component {
                 onBlur={(event, editor) => this.props.updating_content('editor_content', editor.getValue())}
             />
         ];
+        return <div
+            style={{
+                display: 'flex',
+                flexDirection: 'row',
+                order: 3,
+                marginLeft: '1em'
+            }}>
+            {items}
+            </div>
     }
 }
 

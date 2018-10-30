@@ -63,7 +63,7 @@ function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      return [_react.default.createElement(_Header.Header, {
+      var items = [_react.default.createElement(_Header.Header, {
         key: 'Header'
       }), _react.default.createElement(_Question.QuestionDisplayPanel, {
         key: 'QuestionDisplayPanel'
@@ -78,6 +78,14 @@ function (_Component) {
         content: this.state.editor_content,
         language: this.state.editor_language
       })];
+      return _react.default.createElement("div", {
+        style: {
+          display: 'flex',
+          margin: '1em',
+          flexDirection: 'column',
+          fontFamily: '\'Lato\', sans-serif'
+        }
+      }, items);
     }
   }]);
 

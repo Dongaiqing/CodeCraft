@@ -20,12 +20,20 @@ class Main extends Component {
         });
     }
     render() {
-        return [
+        const items = [
             <Header key={'Header'}/>,
             <QuestionDisplayPanel key={'QuestionDisplayPanel'}/>,
             <Editor key={'Editor'} updating_content={(key_name, value) => this.updateState(key_name, value)} content={this.state.editor_content}/>,
             <QuestionFeedbackPanel key={'QuestionFeedbackPanel'} content={this.state.editor_content} language={this.state.editor_language}/>
         ];
+        return <div style={{
+            display: 'flex',
+            margin: '1em',
+            flexDirection: 'column',
+            fontFamily: '\'Lato\', sans-serif'
+            }}>
+            {items}
+            </div>
     }
 }
 

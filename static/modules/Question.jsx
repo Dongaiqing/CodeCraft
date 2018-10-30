@@ -88,6 +88,7 @@ class QuestionSubmitButton extends Component {
 class QuestionIDInput extends Component {
     render() {
         return [
+            <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'} style={{marginRight: '0.3em'}}>Put your question ID here!</label>,
             <input
                 key={'QuestionIDInput_input'}
                 type={'number'}
@@ -95,8 +96,7 @@ class QuestionIDInput extends Component {
                 id={'QuestionIDInput'}
                 value={this.props.current_number}
                 onChange={(e) => this.props.updating_method('current_question_number', e.target.value)}
-            />,
-            <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'}>Put your question ID here!</label>
+            />
         ];
     }
 }
@@ -119,14 +119,20 @@ export class QuestionDisplayPanel extends Component {
         const state = this.state;
         const arr_elem = [];
         if (state.current_content !== '' && state.should_send_request === false) {
-            arr_elem.push(<section key={'QuestionDisplayPanel_section'}>{state.current_content}</section>);
+            arr_elem.push(<section style={{marginBottom: '1em'}} key={'QuestionDisplayPanel_section'}>{state.current_content}</section>);
         }
         if (state.should_send_request === true) {
             arr_elem.push(<GetContainer key={'QuestionDisplayPanel_GetContainer'} updating_method={(key, val) => this.updateState(key, val)} current_number={this.state.current_question_number}/>);
         }
-        arr_elem.push(<QuestionGenerateButton key={'QuestionDisplayPanel_QuestionGenerateButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
         arr_elem.push(<QuestionIDInput key={'QuestionDisplayPanel_QuestionIDInput'} updating_method={(key, val) => this.updateState(key, val)} current_number={this.state.current_question_number}/>);
-        return arr_elem;
+        arr_elem.push(<QuestionGenerateButton key={'QuestionDisplayPanel_QuestionGenerateButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
+        return <div
+            style={{
+                margin: '1em',
+                order : 2
+            }}>
+            {arr_elem}
+            </div>;
     }
 }
 
@@ -147,12 +153,18 @@ export class QuestionFeedbackPanel extends Component {
         const state = this.state;
         const arr_elem = [];
         if (state.current_content !== '' && state.should_send_request === false) {
-            arr_elem.push(<section key={'QuestionFeedbackPanel_section'}>{state.current_content}</section>);
+            arr_elem.push(<section style={{marginBottom: '1em'}} key={'QuestionFeedbackPanel_section'}>{state.current_content}</section>);
         }
         if (state.should_send_request === true) {
             arr_elem.push(<PostContainer key={'QuestionFeedbackPanel_PostContainer'} updating_method={(key, val) => this.updateState(key, val)} content={this.props.content} language={this.props.language}/>);
         }
         arr_elem.push(<QuestionSubmitButton key={'QuestionFeedbackPanel_QuestionSubmitButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
-        return arr_elem;
+        return <div
+            style={{
+                margin: '1em',
+                order: 4
+            }}>
+            {arr_elem}
+            </div>;
     }
 }
