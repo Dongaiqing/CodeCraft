@@ -8,11 +8,15 @@ var _Editor = require("./modules/Editor");
 
 var _Header = require("./modules/Header");
 
+var _Question = require("./modules/Question");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -41,14 +45,39 @@ function (_Component) {
     _classCallCheck(this, Main);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
-    _this.state = {};
+    _this.state = {
+      editor_content: '',
+      editor_language: ''
+    };
     return _this;
   }
 
   _createClass(Main, [{
+    key: "updateState",
+    value: function updateState(key_name, value) {
+      console.log(value);
+      this.setState(_defineProperty({}, key_name, value));
+    }
+  }, {
     key: "render",
     value: function render() {
-      return [_react.default.createElement(_Header.Header, null), _react.default.createElement(_Editor.Editor, null)];
+      var _this2 = this;
+
+      return [_react.default.createElement(_Header.Header, {
+        key: 'Header'
+      }), _react.default.createElement(_Question.QuestionDisplayPanel, {
+        key: 'QuestionDisplayPanel'
+      }), _react.default.createElement(_Editor.Editor, {
+        key: 'Editor',
+        updating_content: function updating_content(key_name, value) {
+          return _this2.updateState(key_name, value);
+        },
+        content: this.state.editor_content
+      }), _react.default.createElement(_Question.QuestionFeedbackPanel, {
+        key: 'QuestionFeedbackPanel',
+        content: this.state.editor_content,
+        language: this.state.editor_language
+      })];
     }
   }]);
 

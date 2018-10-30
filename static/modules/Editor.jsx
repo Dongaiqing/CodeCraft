@@ -5,10 +5,29 @@ import 'brace/mode/java';
 import 'brace/mode/html';
 import 'brace/mode/javascript';
 import 'brace/mode/python';
+import 'brace/mode/ruby';
+import 'brace/mode/mysql';
+import 'brace/mode/mysql';
+import 'brace/mode/sass';
+import 'brace/mode/markdown';
+import 'brace/mode/json';
+import 'brace/mode/html';
+// import 'brace/mode/go';
+import 'brace/mode/csharp';
+import 'brace/mode/elixir';
+import 'brace/mode/typescript';
+import 'brace/mode/css';
 
 import 'brace/theme/github';
 import 'brace/theme/xcode';
 import 'brace/theme/monokai';
+import 'brace/theme/tomorrow';
+import 'brace/theme/kuroir';
+import 'brace/theme/twilight';
+import 'brace/theme/textmate';
+import 'brace/theme/terminal';
+import 'brace/theme/solarized_dark';
+import 'brace/theme/solarized_light';
 
 import 'brace/snippets/html';
 import 'brace/ext/language_tools';
@@ -17,7 +36,7 @@ import 'brace/ext/language_tools';
 const staticSettings = {
     get all_settings() {
         return {
-            language: ['javascript', 'java', 'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html', 'go', 'c#', 'elixir', 'typescript', 'css'],
+            language: ['javascript', 'java', 'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html', 'c#', 'elixir', 'typescript', 'css'],
             theme: ['monokai', 'github', 'tomorrow', 'kuroir', 'twilight', 'xcode', 'textmate', 'solarized_dark', 'solarized_light', 'terminal'],
             fontSize: {
                 min: 1,
@@ -74,7 +93,7 @@ class EditorConfigItem extends Component {
                     </label>;
             case 'list':
                 const arr_options = staticSettings.all_settings[item_key].map(x => {
-                    return <option value={x}>{x}</option>;
+                    return <option key={'EditorConfigItem_option_'+x} value={x}>{x}</option>;
                 });
                 return <select value={item_value} onChange={(e) => {this.update(item_key, e.target.value)}}>{arr_options}</select>;
             default:
@@ -98,7 +117,7 @@ class EditorConfigPanel extends Component {
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
                 // distinguish different types of keys
-                elements.push(<EditorConfigItem key_name={key} value={settings[key]} updating_method={(key_name, value) => this.props.updating_method(key_name, value)}/>)
+                elements.push(<EditorConfigItem key={'EditorConfigItem'+'_'+key} key_name={key} value={settings[key]} updating_method={(key_name, value) => this.props.updating_method(key_name, value)}/>)
             }
         }
         return <div className={'EditorConfigPanel'}>{elements}</div>;
@@ -134,16 +153,26 @@ export class Editor extends Component {
         this.setState({
             settings: prev_settings
         });
+        if (key_name === 'language') {
+            this.props.updating_content('editor_language', value);
+        }
     }
+
+    componentDidMount() {
+        this.props.updating_content('editor_language', this.state.settings.language);
+    }
+
 
     render() {
         const settings = this.state.settings;
         return [
-            <EditorConfigPanel settings={settings} updating_method={(key_name, value) => this.updateSettings(key_name, value)}/>,
+            <EditorConfigPanel key={'EditorConfigPanel'} settings={settings} updating_method={(key_name, value) => this.updateSettings(key_name, value)}/>,
             <AceEditor
+                key={'CoreEditor'}
                 name={'CoreEditor'}
-                mode={settings.language}
+                mode={settings.language === 'c#' ? 'csharp':settings.language}
                 theme={settings.theme}
+                value={this.props.content}
                 setOptions={{
                     enableBasicAutocompletion: settings.enableBasicAutocompletion,
                     enableLiveAutocompletion: settings.enableLiveAutocompletion,
@@ -155,6 +184,7 @@ export class Editor extends Component {
                 showPrintMargin={settings.showPrintMargin}
                 highlightActiveLine={settings.highlightActiveLine}
                 wrapEnabled={settings.wrapEnabled}
+                onBlur={(event, editor) => this.props.updating_content('editor_content', editor.getValue())}
             />
         ];
     }
