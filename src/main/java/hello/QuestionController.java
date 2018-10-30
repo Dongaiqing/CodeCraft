@@ -18,17 +18,16 @@ public class QuestionController {
 	@Autowired
     private question_codeService question_codeService;
     @RequestMapping(value = "/code_test", method = RequestMethod.GET)
-    public @ResponseBody String processAJAXRequest(
-                @RequestParam("id") String firstname,
-                @RequestParam("lastname") String lastname   ) {
-            String response = "";
+    public @ResponseBody String getQuestion(
+                @RequestParam("id") long id) {
+            question_code hello=question_codeService.findbyid(id);
             // Process the request
             // Prepare the response string
-            return response;
+            return hello.getSource_code();
     }
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
-    public String saveHosting( @RequestParam("source_code") String code,
+    public String saveCode( @RequestParam("source_code") String code,
     		 				   @RequestParam("language") String language
     		) {
     	question_code question_code = new question_code();

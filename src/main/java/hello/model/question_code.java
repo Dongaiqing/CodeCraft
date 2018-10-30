@@ -9,19 +9,18 @@ import javax.persistence.*;
 @Entity
 @Table(name = "question_code")
 public class question_code {
-
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 	private String source_code;
 	private String language;
-	private Long id;
 
-	@Id
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
-	    this.id = id;
-	 }
-	
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getSource_code() {
 		return source_code;
 	}

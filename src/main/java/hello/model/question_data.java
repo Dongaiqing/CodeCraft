@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class question_data {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	private String title;
     private String article;

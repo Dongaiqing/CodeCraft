@@ -17,7 +17,12 @@ public class question_codeServiceImpl implements question_codeService {
 	@Override
 	public void save(question_code mq) {
 		// TODO Auto-generated method stub
+		//question_codeDao.insertquestion(mq.getSource_code(),mq.getLanguage());
 		question_codeDao.saveAndFlush(mq);
+	}
+	@Override
+	public question_code findbyid(long id) {
+		return question_codeDao.findbyid(id);
 	}
 
 
