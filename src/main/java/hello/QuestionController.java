@@ -1,7 +1,7 @@
 package hello;
 
 
-
+import org.apache.commons.codec.binary.Base64;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class QuestionController {
 	
 	@Autowired
 	 private question_codeService question_codeService;
-	
+	//
     @RequestMapping(value = "/code_test", method = RequestMethod.GET)
     public @ResponseBody List<question_data> getQuestion(
                 @RequestParam("id") long id,
@@ -38,12 +38,24 @@ public class QuestionController {
             question_data hello=new question_data();
             List<question_data> list = new ArrayList<>();
             
+            
+         
+            
+            
+            
             if(id>100) {
             	hello.setId((long) 1);
             	hello.setTitle("outofbound");
             	list.add(hello);
             	return list;
             }
+            list=question_dataService.findbyTitle(name);
+            for(int i=0;i<list.size();i++) {
+            	
+            	list.get(i).setArticle(new String(Base64.decodeBase64(list.get(i).getArticle())));
+            }
+            
+            
             // Process the request
             // Prepare the response string
             return question_dataService.findbyTitle(name);
@@ -64,8 +76,6 @@ public class QuestionController {
     	if(question_codeService.findbyid(code)==0) {
     	
     	 //System.out.println(code.getQuestion_id());
-    	 	code.setQuestion_id(2);
-    	 	System.out.println(code.getQuestion_id());
     		question_codeService.save(code);
     		code.setSource_code("saved");
     		code.setResult("saved!");

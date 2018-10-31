@@ -14,7 +14,7 @@ public interface question_codeDao extends JpaRepository<question_code, Long>{
 	@Transactional
 	void insertquestion(@Param("source_code") String source_code,@Param("language") String language,@Param("user_id") long user_id,@Param("question_id") long question_id);
 	
-	@Query(value = "select count(user_id) from question_code u where u.user_id = :user_id AND u.language=:language AND u.question_id=:question_id", nativeQuery=true)
+	@Query(value = "select count(*) from question_code u where u.user_id = :user_id AND u.language=:language AND u.question_id=:question_id", nativeQuery=true)
 	long findbyCode(@Param("user_id") long user_id,@Param("question_id") long question_id,@Param("language") String language);
 	
 	

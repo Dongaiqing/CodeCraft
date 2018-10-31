@@ -42,14 +42,14 @@ def main(args):
         i += 1
 
         try:
-            theme = str(question['question_theme'].encode('utf-8'))
-            q = str(question['question'].encode('utf-8'))
-            code = str(question['answer'].encode('utf-8'))
+            theme = str(question['question_theme'])
+            q = str(question['question'])
+            code = str(question['answer'])
         except KeyError:
             continue
 
-        code_encoded = base64.b64encode(code).decode('utf-8')
-        question_encoded = base64.b64encode(q).decode('utf-8')
+        code_encoded = base64.b64encode(code.encode()).decode('utf-8')
+        question_encoded = base64.b64encode(q.encode()).decode('utf-8')
 
         sql = "INSERT INTO question_data(answer, article, title) \
                         VALUES (\"{}\", \"{}\", \"{}\");".format(code_encoded,
