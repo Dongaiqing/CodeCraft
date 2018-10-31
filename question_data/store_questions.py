@@ -11,6 +11,7 @@ def main(args):
     fname = args.data_file_path
     db_user = args.db_user
     db_pass = args.db_pass
+    is_py_2 = args.is_py_2
 
     try:
         db = MySQLdb.connect("localhost", db_user, db_pass, "CodeCraft", charset='utf8')
@@ -42,15 +43,25 @@ def main(args):
         i += 1
 
         try:
-            theme = str(question['question_theme'])
-            q = str(question['question'])
-            code = str(question['answer'])
+            if is_py_2:
+                theme = str(question['question_theme'].encode('utf-8'))
+                q = str(question['question'].encode('utf-8'))
+                code = str(question['answer'].encode('utf-8'))
+
+                code_encoded = base64.b64encode(code).decode('utf-8')
+                question_encoded = base64.b64encode(q).decode('utf-8')
+
+            else:
+                theme = str(question['question_theme'])
+                q = str(question['question'])
+                code = str(question['answer'])
+
+                code_encoded = base64.b64encode(code.encode()).decode('utf-8')
+                question_encoded = base64.b64encode(q.encode()).decode('utf-8')
+
         except KeyError:
             continue
-
-        code_encoded = base64.b64encode(code.encode()).decode('utf-8')
-        question_encoded = base64.b64encode(q.encode()).decode('utf-8')
-
+        
         sql = "INSERT INTO question_data(answer, article, title) \
                         VALUES (\"{}\", \"{}\", \"{}\");".format(code_encoded,
                                                                  question_encoded,
@@ -81,7 +92,8 @@ if __name__ == '__main__':
                         help='the user name of the database, default is root')
     parser.add_argument('-p', dest='db_pass', type=str, default="", 
                         help='the password of the database, default is empty')
+    parser.add_argument('-python2', dest='is_py_2', action='store_true', default="False")
+    parser.set_defaults(is_py_2=False)
 
     args = parser.parse_args()
     main(args)
-
