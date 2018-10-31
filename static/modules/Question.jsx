@@ -23,6 +23,7 @@ class GetContainer extends Component {
             this.props.updating_method('potential_search_items', content);
             return;
         }
+        console.log('content is what', content);
         if (Array.isArray(content) && content.length === 0) {
             alert('Enabling TestFllight ✈️ 🛫 🛬 🛩!');
             // throw new Error('Data should not be empty array');
