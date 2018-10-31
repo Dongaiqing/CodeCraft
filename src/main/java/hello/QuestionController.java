@@ -51,8 +51,14 @@ public class QuestionController {
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
     public question_code saveCode( @RequestBody question_code code) {
-    	
-    	question_codeService.save(code);
+    	if(question_codeService.findbyid(code)==0) {
+    		question_codeService.save(code);
+    		code.setResult("saved!");
+    	}
+    	else {
+    		question_codeService.updatecode(code);
+    		code.setResult("updated!");
+    	}
     	
         // Process the request
         // Prepare the response string
