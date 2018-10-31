@@ -25,6 +25,10 @@ public class question_dataServiceImpl implements question_dataService {
 	public question_data findbyid(long id) {
 		return question_dataDao.findbyid(id);
 	}
+	@Override
+	public List<question_data> findbyTitle(String name){
+		return question_dataDao.findbyTitle(name);
+	}
 
 
 	
