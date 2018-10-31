@@ -43,8 +43,8 @@ public class QuestionController {
             
             
             
-            if(id>100) {
-            	hello.setId((long) 1);
+            if(id>283) {
+            	hello.setId((long) 0);
             	hello.setTitle("outofbound");
             	list.add(hello);
             	return list;
@@ -67,6 +67,7 @@ public class QuestionController {
     	if(code.getSource_code()=="") {
     		question_codeService.delete(code);
     		code.setResult("deleted");
+    		code.setSource_code("deleted");
     		return code;
     	}
     	
@@ -83,6 +84,7 @@ public class QuestionController {
     	}
     	else {
     		question_codeService.updatecode(code);
+    		code.setSource_code("updated");
     		code.setResult("updated!");
     	}
     	

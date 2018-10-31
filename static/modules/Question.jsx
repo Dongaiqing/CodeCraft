@@ -23,15 +23,16 @@ class GetContainer extends Component {
             this.props.updating_method('potential_search_items', content);
             return;
         }
+        console.log('content is what', content);
         if (Array.isArray(content) && content.length === 0) {
-            alert('Enabling TestFllight ✈️ 🛫 🛬 🛩!');
+            // alert('Enabling TestFllight ✈️ 🛫 🛬 🛩!');
             // throw new Error('Data should not be empty array');
             // this.props.updating_parent_method('current_question_name', 'TestFlight');
             // this.props.updating_parent_method('current_question_id', 0);
             // this.props.updating_method('should_send_request', false);
             // this.props.updating_method('current_content', 'TF!');
             this.props.updating_method('should_send_request', false);
-            this.props.updating_method('potential_search_items', [{id: 0, name: 'T'}, {id: 1, name: 'F'}]);
+            this.props.updating_method('potential_search_items', [{error: '404: while(!false){}'}]);
             return;
         }
         const curr_content = curr_data.article;
@@ -160,15 +161,15 @@ class QuestionSelectItem extends Component {
         const id = this.props.id;
         const title = this.props.title;
         const items = [
-            <dt style={{width: '%50'}}>{id}</dt>,
-            <dd style={{width: '%50', marginLeft: 'auto'}}>{title}</dd>
+            <dt style={{width: '10%'}}>{id}</dt>,
+            <dd style={{width: '90%', marginLeft: 'auto', textAlign: 'right'}}>{title}</dd>
         ];
         return <dl
             onClick={() => {
                 console.log('inside selectItem', id, title);
                 this.props.updating_methods(id, title);
             }}
-            style={{width: '50%', display: 'flex', flexWrap: 'wrap'}}>
+            style={{width: '100%', display: 'flex', flexWrap: 'wrap', cursor: 'pointer'}}>
             {items}
             </dl>;
     }
@@ -185,21 +186,33 @@ class QuestionSelectPanel extends Component {
     render() {
         const item_arr = this.props.potential_search_items;
         const arr_elems = [];
-        arr_elems.push(
-            <h3>We have found multiple entries that satisfy the requirement!</h3>
-        );
-        arr_elems.push(
-            <p>Please select one of the question below!</p>
-        );
-        arr_elems.push(
-            <dl style={{width: '50%', borderBottom: '0.05em solid grey', marginBottom: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
-                <dt style={{width: '%50'}}>Question ID</dt>
-                <dd style={{width: '%50', marginLeft: 'auto'}}>Question Name</dd>
-            </dl>
-        );
-        console.log('new statement', item_arr);
-        for (const item of item_arr) {
-            arr_elems.push(<QuestionSelectItem id={item.id} title={item.title} updating_methods={(id, title) => this.updateSearchQuery(id, title)}/>);
+        if (item_arr.length === 1 && item_arr[0].hasOwnProperty('error')) {
+            arr_elems.push(
+                <h3>{item_arr[0].error}</h3>
+            );
+            arr_elems.push(
+                <p>Click on the text below to dismiss the box</p>
+            );
+            arr_elems.push(
+                <p style={{cursor: 'pointer', fontWeight: 'bold', margin: '0 auto'}} onClick={() => this.updateSearchQuery(0, 'Count Of Smaller Numbers After Self')}>return 'This is the best website EVER!';</p>
+            );
+        } else {
+            arr_elems.push(
+                <h3>We have found multiple entries that satisfy the requirement!</h3>
+            );
+            arr_elems.push(
+                <p>Please select one of the question below!</p>
+            );
+            arr_elems.push(
+                <dl style={{width: '100%', borderBottom: '0.05em solid grey', marginBottom: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
+                    <dt style={{width: '50%', fontWeight: 'bold'}}>Question ID</dt>
+                    <dd style={{width: '50%', marginLeft: 'auto', fontWeight: 'bold', textAlign: 'right'}}>Question Name</dd>
+                </dl>
+            );
+            console.log('new statement', item_arr);
+            for (const item of item_arr) {
+                arr_elems.push(<QuestionSelectItem id={item.id} title={item.title} updating_methods={(id, title) => this.updateSearchQuery(id, title)}/>);
+            }
         }
         return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
     }
@@ -236,16 +249,16 @@ export class QuestionDisplayPanel extends Component {
                 style={{
                     marginBottom: '1em',
                     paddingLeft: '0.5em',
-                    borderLeft: '0.2em solid #229954',
+                    borderLeft: '0.3em solid #95A5A6',
                     display: 'block'
                 }}
                 key={'QuestionDisplayPanel_section'}>
                     <h2 style={{
                         color: 'white',
-                        background: '#196F3D',
+                        background: '#A6ACAF',
                         display: 'inline-block'
                     }}>
-                        Current Question Name is: {this.props.current_question_name}, Id is: {this.props.current_question_id}
+                        {this.props.current_question_id} - {this.props.current_question_name}
                     </h2>
                     <article style={{display: 'block'}}>
                         {state.current_content}
@@ -299,16 +312,16 @@ export class QuestionFeedbackPanel extends Component {
                     style={{
                         marginBottom: '1em',
                         paddingLeft: '0.5em',
-                        borderLeft: '0.2em solid #2C8DC7',
+                        borderLeft: '0.3em solid #1F618D',
                         display: 'block'
                     }}
                     key={'QuestionFeedbackPanel_section'}>
                         <h2 style={{
                             color: 'white',
-                            background: '#B2BABB',
+                            background: '#1F618D',
                             display: 'inline-block'
                         }}>
-                            Current State is: {this.props.current_question_state === false ? `Successfully Submitted! Unbelievable🤯` : 'This is a miracle'}
+                            {this.props.current_question_state === false ? `Successfully Submitted! Unbelievable! 🤯` : 'This is a miracle'}
                         </h2>
                         <article style={{display: 'block'}}>
                             {state.current_content}
