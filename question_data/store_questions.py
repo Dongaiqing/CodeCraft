@@ -21,6 +21,8 @@ def main(args):
             cursor.execute(sql)
             sql = "ALTER TABLE QUESTION_DATA MODIFY COLUMN ARTICLE LONGTEXT;"
             cursor.execute(sql)
+            sql = "ALTER TABLE QUESTION_DATA MODIFY COLUMN ANSWER LONGTEXT;"
+            cursor.execute(sql)
             db.commit()
         except (MySQLdb.Error, MySQLdb.Warning) as e:
             # Rollback in case there is any error
@@ -49,13 +51,12 @@ def main(args):
         code_encoded = base64.b64encode(str(code).encode()).decode('utf-8')
         question_encoded = base64.b64encode(str(q).encode()).decode('utf-8')
 
-        sql_code = "INSERT INTO QUESTION_CODE(LANGUAGE, SOURCE_CODE) \
-                        VALUES (\"C\", \"{}\");".format(code_encoded)
-        sql_question = "INSERT INTO QUESTION_DATA(ARTICLE, TITLE) \
-                        VALUES (\"{}\", \"{}\");".format(question_encoded, get_title_from_theme(theme))
+        sql = "INSERT INTO QUESTION_DATA(ANSWER, ARTICLE, TITLE) \
+                        VALUES (\"{}\", \"{}\", \"{}\");".format(code_encoded,
+                                                                 question_encoded,
+                                                                 get_title_from_theme(theme))
         try:
-            cursor.execute(sql_code)
-            cursor.execute(sql_question)
+            cursor.execute(sql)
             db.commit()
         except (MySQLdb.Error, MySQLdb.Warning) as e:
             # Rollback in case there is any error
