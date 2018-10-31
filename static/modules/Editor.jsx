@@ -33,7 +33,7 @@ import 'brace/snippets/html';
 import 'brace/ext/language_tools';
 
 
-const staticSettings = {
+export const staticSettings = {
     get all_settings() {
         return {
             language: ['javascript', 'java', 'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html', 'c#', 'elixir', 'typescript', 'css'],
@@ -56,6 +56,10 @@ const staticSettings = {
                 default_value: 4
             }
         }
+    },
+
+    get all_black_themes() {
+        return ['monokai', 'twilight', 'solarized_dark', 'terminal'];
     },
 
     configurationTypes(key) {
@@ -200,6 +204,8 @@ export class Editor extends Component {
         this.setState({
             settings: prev_settings
         });
+
+        // this.props.updating_content('editor_theme', prev_settings['theme']);
         if (key_name === 'language') {
             this.props.updating_content('editor_language', value);
         }
