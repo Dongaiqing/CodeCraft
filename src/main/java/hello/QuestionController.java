@@ -51,6 +51,12 @@ public class QuestionController {
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
     public question_code saveCode( @RequestBody question_code code) {
+    	
+    	if(code.getSource_code()==null) {
+    		question_codeService.delete(code);
+    		code.setResult("deleted");
+    		return code;
+    	}
     	if(question_codeService.findbyid(code)==0) {
     		question_codeService.save(code);
     		code.setResult("saved!");

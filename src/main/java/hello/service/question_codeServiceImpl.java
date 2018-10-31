@@ -30,6 +30,11 @@ public class question_codeServiceImpl implements question_codeService {
 		question_codeDao.updatecode(mq.getUser_id(),mq.getQuestion_id(),mq.getLanguage(),mq.getSource_code());
 		//question_codeDao.saveAndFlush(mq);
 	}
+	@Override
+	public void delete(question_code mq) {
+		question_codeDao.deletecode(mq.getQuestion_id());
+		
+	}
 	
 
 

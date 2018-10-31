@@ -21,4 +21,8 @@ public interface question_codeDao extends JpaRepository<question_code, Long>{
 	@Modifying
 	@Query("update question_code u set u.source_code = :source_code where u.user_id = :user_id AND u.language=:language AND u.question_id=:question_id")
 	void updatecode(@Param("user_id") long user_id,@Param("question_id") long question_id,@Param("language") String language, @Param("source_code") String source_code);
+	
+	@Modifying
+	@Query("delete from question_code u where u.question_id = :question_id")
+	void deletecode(@Param("question_id") long question_id);
 }
