@@ -18,11 +18,12 @@ class GetContainer extends Component {
 
     componentDidMount() {
         // console.log({
-        //     id: this.props.current_number
+        //     id: this.props.search_number
         // });
         axios.get(this.url, {
             params: {
-                id: this.props.current_number
+                id: this.props.search_number,
+                name: this.props.search_name
             }
         }).then((response) => {
             // console.log(response);
@@ -87,17 +88,36 @@ class QuestionSubmitButton extends Component {
 
 class QuestionIDInput extends Component {
     render() {
-        return [
+        const items = [
             <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'} style={{marginRight: '0.3em'}}>Put your question ID here!</label>,
             <input
                 key={'QuestionIDInput_input'}
                 type={'number'}
                 name={'question_number'}
                 id={'QuestionIDInput'}
-                value={this.props.current_number}
-                onChange={(e) => this.props.updating_method('current_question_number', e.target.value)}
+                value={this.props.search_number}
+                onChange={(e) => this.props.updating_method('search_question_number', e.target.value)}
             />
         ];
+        return <div>{items}</div>;
+    }
+}
+
+class QuestionNameInput extends Component {
+    render() {
+        const key = 'QuestionNameInput';
+        const items = [
+            <label key={key+'_label'} htmlFor={key} style={{marginRight: '0.3em'}}>Put your question name here!</label>,
+            <input
+                key={key+'_input'}
+                type={'text'}
+                name={'question_name'}
+                id={key}
+                value={this.props.search_name}
+                onChange={(e) => this.props.updating_method('search_question_name', e.target.value)}
+            />
+        ];
+        return <div>{items}</div>;
     }
 }
 export class QuestionDisplayPanel extends Component {
@@ -106,7 +126,8 @@ export class QuestionDisplayPanel extends Component {
         this.state = {
             should_send_request: false,
             current_content: '',
-            current_question_number: 0
+            search_question_number: 0,
+            search_question_name: ''
         };
     }
 
@@ -124,17 +145,35 @@ export class QuestionDisplayPanel extends Component {
                 style={{
                     marginBottom: '1em',
                     paddingLeft: '0.5em',
-                    borderLeft: '0.2em solid #5D6D7E'
+                    borderLeft: '0.2em solid #229954',
+                    display: 'block'
                 }}
                 key={'QuestionDisplayPanel_section'}>
-                {state.current_content}
+                    <h2 style={{
+                        color: 'white',
+                        background: '#196F3D',
+                        display: 'inline-block'
+                    }}>
+                        Current Question is: {'Whatever'}
+                    </h2>
+                    <article style={{display: 'block'}}>
+                        {state.current_content}
+                    </article>
                 </section>
             );
         }
         if (state.should_send_request === true) {
-            arr_elem.push(<GetContainer key={'QuestionDisplayPanel_GetContainer'} updating_method={(key, val) => this.updateState(key, val)} current_number={this.state.current_question_number}/>);
+            arr_elem.push(
+                <GetContainer
+                    key={'QuestionDisplayPanel_GetContainer'}
+                    updating_method={(key, val) => this.updateState(key, val)}
+                    search_number={this.state.search_question_number}
+                    search_name={this.state.search_question_name}
+                />
+            );
         }
-        arr_elem.push(<QuestionIDInput key={'QuestionDisplayPanel_QuestionIDInput'} updating_method={(key, val) => this.updateState(key, val)} current_number={this.state.current_question_number}/>);
+        arr_elem.push(<QuestionIDInput key={'QuestionDisplayPanel_QuestionIDInput'} updating_method={(key, val) => this.updateState(key, val)} search_number={this.state.search_question_number}/>);
+        arr_elem.push(<QuestionNameInput key={'QuestionDisplayPanel_QuestionNameInput'} updating_method={(key, val) => this.updateState(key, val)} search_name={this.state.search_question_name}/>);
         arr_elem.push(<QuestionGenerateButton key={'QuestionDisplayPanel_QuestionGenerateButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
         return <div
             style={{
@@ -168,10 +207,20 @@ export class QuestionFeedbackPanel extends Component {
                     style={{
                         marginBottom: '1em',
                         paddingLeft: '0.5em',
-                        borderLeft: '0.2em solid #2C8DC7'
+                        borderLeft: '0.2em solid #2C8DC7',
+                        display: 'block'
                     }}
                     key={'QuestionFeedbackPanel_section'}>
-                    {state.current_content}
+                        <h2 style={{
+                            color: 'white',
+                            background: '#21618C',
+                            display: 'inline-block'
+                        }}>
+                            Current State is: {'Srsly?'}
+                        </h2>
+                        <article style={{display: 'block'}}>
+                            {state.current_content}
+                        </article>
                     </section>
             );
         }
