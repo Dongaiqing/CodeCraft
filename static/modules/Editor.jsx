@@ -33,11 +33,11 @@ import 'brace/snippets/html';
 import 'brace/ext/language_tools';
 
 
-const staticSettings = {
+export const staticSettings = {
     get all_settings() {
         return {
             language: ['javascript', 'java', 'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html', 'c#', 'elixir', 'typescript', 'css'],
-            theme: ['monokai', 'github', 'tomorrow', 'kuroir', 'twilight', 'xcode', 'textmate', 'solarized_dark', 'solarized_light', 'terminal'],
+            theme: ['github', 'monokai', 'tomorrow', 'kuroir', 'twilight', 'xcode', 'textmate', 'solarized_dark', 'solarized_light', 'terminal'],
             fontSize: {
                 min: 1,
                 max: 100,
@@ -56,6 +56,10 @@ const staticSettings = {
                 default_value: 4
             }
         }
+    },
+
+    get all_black_themes() {
+        return ['monokai', 'twilight', 'solarized_dark', 'terminal'];
     },
 
     configurationTypes(key) {
@@ -142,7 +146,7 @@ class EditorConfigPanel extends Component {
     render() {
         const settings = this.props.settings;
         const elements = [];
-        elements.push(<h3 key={'EditorConfigPanel_header'} style={{display: 'block', marginBottom: '1em'}}>Editor Settings</h3>);
+        elements.push(<h3 key={'EditorConfigPanel_header'} style={{display: 'inline-block', marginBottom: '1em', color: 'white', background: '#D35400'}}>Editor Settings</h3>);
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
                 // distinguish different types of keys
@@ -152,7 +156,9 @@ class EditorConfigPanel extends Component {
         return <div
             style={{
                 order: 2,
-                marginLeft: '1em'
+                marginLeft: '1em',
+                paddingLeft: '1em',
+                borderLeft: '0.2em solid #D35400'
             }}
             className={'EditorConfigPanel'}>
             {elements}
@@ -198,6 +204,8 @@ export class Editor extends Component {
         this.setState({
             settings: prev_settings
         });
+
+        // this.props.updating_content('editor_theme', prev_settings['theme']);
         if (key_name === 'language') {
             this.props.updating_content('editor_language', value);
         }

@@ -17,7 +17,7 @@ public class question_codeServiceImpl implements question_codeService {
 	@Override
 	public void save(question_code mq) {
 		// TODO Auto-generated method stub
-		question_codeDao.insertquestion(mq.getSource_code(),mq.getLanguage());
+		question_codeDao.insertquestion(mq.getSource_code(),mq.getLanguage(),mq.getQuestion_id(),mq.getUser_id());
 		//question_codeDao.saveAndFlush(mq);
 	}
 	@Override

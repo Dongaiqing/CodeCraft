@@ -33,7 +33,7 @@ public class QuestionController {
     @RequestMapping(value = "/code_test", method = RequestMethod.GET)
     public @ResponseBody List<question_data> getQuestion(
                 @RequestParam("id") long id,
-                @RequestParam("name") String name
+                @RequestParam("title") String name
     		) {
             question_data hello=new question_data();
             List<question_data> list = new ArrayList<>();
@@ -51,21 +51,26 @@ public class QuestionController {
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
     public question_code saveCode( @RequestBody question_code code) {
-    	
+    	/*
     	if(code.getSource_code()==null) {
     		question_codeService.delete(code);
     		code.setResult("deleted");
     		return code;
     	}
     	if(question_codeService.findbyid(code)==0) {
+    	*/
+    	 System.out.println(code.getQuestion_id());
+    	 	code.setQuestion_id(2);
     		question_codeService.save(code);
+    		code.setSource_code("saved");
     		code.setResult("saved!");
+    /*
     	}
     	else {
     		question_codeService.updatecode(code);
     		code.setResult("updated!");
     	}
-    	
+    	*/
         // Process the request
         // Prepare the response string
         return code;    
