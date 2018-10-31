@@ -17,9 +17,11 @@ def main(args):
         cursor = db.cursor()
 
         try:
-            sql = "ALTER TABLE QUESTION_CODE MODIFY COLUMN SOURCE_CODE LONGTEXT;"
+            sql = "ALTER TABLE question_code MODIFY COLUMN SOURCE_CODE LONGTEXT;"
             cursor.execute(sql)
-            sql = "ALTER TABLE QUESTION_DATA MODIFY COLUMN ARTICLE LONGTEXT;"
+            sql = "ALTER TABLE question_data MODIFY COLUMN ARTICLE LONGTEXT;"
+            cursor.execute(sql)
+            sql = "ALTER TABLE question_data MODIFY COLUMN ANSWER LONGTEXT;"
             cursor.execute(sql)
             db.commit()
         except (MySQLdb.Error, MySQLdb.Warning) as e:
@@ -40,22 +42,21 @@ def main(args):
         i += 1
 
         try:
-            theme = question['question_theme']
-            q = question['question']
-            code = question['answer']
+            theme = str(question['question_theme'].encode('utf-8'))
+            q = str(question['question'].encode('utf-8'))
+            code = str(question['answer'].encode('utf-8'))
         except KeyError:
             continue
 
-        code_encoded = base64.b64encode(str(code).encode()).decode('utf-8')
-        question_encoded = base64.b64encode(str(q).encode()).decode('utf-8')
+        code_encoded = base64.b64encode(code).decode('utf-8')
+        question_encoded = base64.b64encode(q).decode('utf-8')
 
-        sql_code = "INSERT INTO QUESTION_CODE(LANGUAGE, SOURCE_CODE) \
-                        VALUES (\"C\", \"{}\");".format(code_encoded)
-        sql_question = "INSERT INTO QUESTION_DATA(ARTICLE, TITLE) \
-                        VALUES (\"{}\", \"{}\");".format(question_encoded, get_title_from_theme(theme))
+        sql = "INSERT INTO question_data(answer, article, title) \
+                        VALUES (\"{}\", \"{}\", \"{}\");".format(code_encoded,
+                                                                 question_encoded,
+                                                                 get_title_from_theme(theme))
         try:
-            cursor.execute(sql_code)
-            cursor.execute(sql_question)
+            cursor.execute(sql)
             db.commit()
         except (MySQLdb.Error, MySQLdb.Warning) as e:
             # Rollback in case there is any error
