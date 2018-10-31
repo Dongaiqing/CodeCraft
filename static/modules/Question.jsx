@@ -307,7 +307,7 @@ export class QuestionFeedbackPanel extends Component {
                             background: '#B2BABB',
                             display: 'inline-block'
                         }}>
-                            Current State is: {this.props.current_question_state === false ? 'Some Error Happened...' : 'This is a miracle'}
+                            Current State is: {this.props.current_question_state === false ? `Successfully Submitted! Unbelievable🤯` : 'This is a miracle'}
                         </h2>
                         <article style={{display: 'block'}}>
                             {state.current_content}
