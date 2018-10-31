@@ -75,7 +75,7 @@ def get_title_from_theme(theme):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', dest='data_file_path', type=str, default="raw_questions.json",
+    parser.add_argument('-f', dest='data_file_path', type=str, default="raw_output.json",
                         help='the directory of the json data')
     parser.add_argument('-u', dest='db_user', type=str, default="root",
                         help='the user name of the database, default is root')
