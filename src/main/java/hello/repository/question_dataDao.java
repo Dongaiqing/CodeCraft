@@ -1,4 +1,6 @@
 package hello.repository;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +17,6 @@ public interface question_dataDao extends JpaRepository<question_data, Long>{
 	void insertquestion(@Param("source_code") String source_code,@Param("language") String language);
 	@Query(value = "select u from question_data u where u.id = :id")
 	question_data findbyid(@Param("id") long id);
+	@Query(value = "select u from question_data u where u.title = :name")
+	List<question_data> findbyTitle(@Param("name") String name);
 }

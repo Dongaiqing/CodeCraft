@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 
-@Entity
+@Entity 
 @Table(name = "question_code")
 public class question_code {
 	@Id
@@ -14,7 +14,9 @@ public class question_code {
     private Long id;
 	private String source_code;
 	private String language;
-
+	private Long user_id;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -35,6 +37,12 @@ public class question_code {
 	
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	public Long getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(Long user_id) {
+		this.user_id = user_id;
 	}
 	
 }
