@@ -158,15 +158,15 @@ class QuestionNameInput extends Component {
 class QuestionSelectItem extends Component {
     render() {
         const id = this.props.id;
-        const name = this.props.name;
+        const title = this.props.title;
         const items = [
             <dt style={{width: '%50'}}>{id}</dt>,
-            <dd style={{width: '%50', marginLeft: 'auto'}}>{name}</dd>
+            <dd style={{width: '%50', marginLeft: 'auto'}}>{title}</dd>
         ];
         return <dl
             onClick={() => {
-                console.log('inside selectItem', id, name);
-                this.props.updating_methods(id, name);
+                console.log('inside selectItem', id, title);
+                this.props.updating_methods(id, title);
             }}
             style={{width: '50%', display: 'flex', flexWrap: 'wrap'}}>
             {items}
@@ -176,9 +176,9 @@ class QuestionSelectItem extends Component {
 
 
 class QuestionSelectPanel extends Component {
-    updateSearchQuery(id, name) {
+    updateSearchQuery(id, title) {
         this.props.updating_methods('search_question_number', id);
-        this.props.updating_methods('search_question_name', name);
+        this.props.updating_methods('search_question_name', title);
         this.props.updating_methods('potential_search_items', []);
         this.props.updating_methods('should_send_request', true);
     }
@@ -197,8 +197,9 @@ class QuestionSelectPanel extends Component {
                 <dd style={{width: '%50', marginLeft: 'auto'}}>Question Name</dd>
             </dl>
         );
+        console.log('new statement', item_arr);
         for (const item of item_arr) {
-            arr_elems.push(<QuestionSelectItem id={item.id} name={item.title} updating_methods={(id, name) => this.updateSearchQuery(id, name)}/>);
+            arr_elems.push(<QuestionSelectItem id={item.id} title={item.title} updating_methods={(id, title) => this.updateSearchQuery(id, title)}/>);
         }
         return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
     }
