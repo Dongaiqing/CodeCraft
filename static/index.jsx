@@ -18,7 +18,7 @@ class Main extends Component {
     }
 
     updateState(key_name, value) {
-        // console.log(key_name, value, 'a');
+        console.log('index', key_name, value);
         this.setState({
             [key_name]: value
         });
