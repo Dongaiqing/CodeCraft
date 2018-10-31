@@ -6,7 +6,7 @@ export class Header extends Component {
             margin: '2em auto',
             order: 1,
             color: 'white',
-            background: '#2471A3'
+            background: '#5DADE2'
             // borderBottom: '0.1em solid #2471A3'
         };
     }
