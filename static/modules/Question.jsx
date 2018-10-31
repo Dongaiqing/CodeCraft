@@ -24,8 +24,15 @@ class GetContainer extends Component {
             return;
         }
         if (Array.isArray(content) && content.length === 0) {
-            alert('ERRRRRRRR!');
-            throw new Error('Data should not be empty array');
+            alert('Enabling TestFllight ✈️ 🛫 🛬 🛩!');
+            // throw new Error('Data should not be empty array');
+            // this.props.updating_parent_method('current_question_name', 'TestFlight');
+            // this.props.updating_parent_method('current_question_id', 0);
+            // this.props.updating_method('should_send_request', false);
+            // this.props.updating_method('current_content', 'TF!');
+            this.props.updating_method('should_send_request', false);
+            this.props.updating_method('potential_search_items', [{id: 0, name: 'T'}, {id: 1, name: 'F'}]);
+            return;
         }
         const curr_content = curr_data.article;
         const curr_id = curr_data.id;
@@ -153,12 +160,15 @@ class QuestionSelectItem extends Component {
         const id = this.props.id;
         const name = this.props.name;
         const items = [
-            <dt style={{float: 'left', width: '%50'}}>{id}</dt>,
-            <dd style={{float: 'left', width: '%50'}}>{name}</dd>
+            <dt style={{width: '%50'}}>{id}</dt>,
+            <dd style={{width: '%50', marginLeft: 'auto'}}>{name}</dd>
         ];
         return <dl
-            onClick={() => this.props.updating_method(id, name)}
-            style={{borderBottom: '0.1em solid #7B7D7E', width: '100%'}}>
+            onClick={() => {
+                console.log('inside selectItem', id, name);
+                this.props.updating_methods(id, name);
+            }}
+            style={{width: '50%', display: 'flex', flexWrap: 'wrap'}}>
             {items}
             </dl>;
     }
@@ -170,7 +180,7 @@ class QuestionSelectPanel extends Component {
         this.props.updating_methods('search_question_number', id);
         this.props.updating_methods('search_question_name', name);
         this.props.updating_methods('potential_search_items', []);
-        this.props.updating_method('should_send_request', true);
+        this.props.updating_methods('should_send_request', true);
     }
     render() {
         const item_arr = this.props.potential_search_items;
@@ -181,10 +191,16 @@ class QuestionSelectPanel extends Component {
         arr_elems.push(
             <p>Please select one of the question below!</p>
         );
+        arr_elems.push(
+            <dl style={{width: '50%', borderBottom: '0.05em solid grey', marginBottom: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
+                <dt style={{width: '%50'}}>Question ID</dt>
+                <dd style={{width: '%50', marginLeft: 'auto'}}>Question Name</dd>
+            </dl>
+        );
         for (const item of item_arr) {
             arr_elems.push(<QuestionSelectItem id={item.id} name={item.name} updating_methods={(id, name) => this.updateSearchQuery(id, name)}/>);
         }
-        return <section style={{border: '0.1em solid #EC7063'}}>{arr_elems}</section>;
+        return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
     }
 }
 
