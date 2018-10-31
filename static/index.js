@@ -47,7 +47,11 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
     _this.state = {
       editor_content: '',
-      editor_language: ''
+      editor_language: '',
+      editor_theme: '',
+      current_question_name: '',
+      current_question_id: 0,
+      current_question_state: false
     };
     return _this;
   }
@@ -55,7 +59,7 @@ function (_Component) {
   _createClass(Main, [{
     key: "updateState",
     value: function updateState(key_name, value) {
-      console.log(value);
+      console.log('index', key_name, value);
       this.setState(_defineProperty({}, key_name, value));
     }
   }, {
@@ -66,7 +70,12 @@ function (_Component) {
       var items = [_react.default.createElement(_Header.Header, {
         key: 'Header'
       }), _react.default.createElement(_Question.QuestionDisplayPanel, {
-        key: 'QuestionDisplayPanel'
+        key: 'QuestionDisplayPanel',
+        updating_method: function updating_method(key_name, value) {
+          return _this2.updateState(key_name, value);
+        },
+        current_question_name: this.state.current_question_name,
+        current_question_id: this.state.current_question_id
       }), _react.default.createElement(_Editor.Editor, {
         key: 'Editor',
         updating_content: function updating_content(key_name, value) {
@@ -76,14 +85,22 @@ function (_Component) {
       }), _react.default.createElement(_Question.QuestionFeedbackPanel, {
         key: 'QuestionFeedbackPanel',
         content: this.state.editor_content,
-        language: this.state.editor_language
-      })];
+        language: this.state.editor_language,
+        updating_method: function updating_method(key, value) {
+          return _this2.updateState(key, value);
+        },
+        current_question_id: this.state.current_question_id,
+        current_question_name: this.state.current_question_name,
+        current_question_state: this.state.current_question_state
+      })]; // console.log(staticSettings.all_black_themes, this.state.editor_theme, staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1);
+
       return _react.default.createElement("div", {
         style: {
           display: 'flex',
           margin: '1em',
           flexDirection: 'column',
-          fontFamily: '\'Lato\', sans-serif'
+          fontFamily: '\'Lato\', sans-serif',
+          background: _Editor.staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1 ? 'white' : 'black'
         }
       }, items);
     }
