@@ -198,7 +198,7 @@ class QuestionSelectPanel extends Component {
             </dl>
         );
         for (const item of item_arr) {
-            arr_elems.push(<QuestionSelectItem id={item.id} name={item.name} updating_methods={(id, name) => this.updateSearchQuery(id, name)}/>);
+            arr_elems.push(<QuestionSelectItem id={item.id} name={item.title} updating_methods={(id, name) => this.updateSearchQuery(id, name)}/>);
         }
         return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
     }
