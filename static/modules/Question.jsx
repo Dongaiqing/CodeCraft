@@ -40,7 +40,7 @@ class GetContainer extends Component {
         axios.get(this.url, {
             params: {
                 id: this.props.search_number,
-                title: this.props.search_name
+                name: this.props.search_name
             }
         }).then((response) => {
             // console.log(response);
