@@ -23,7 +23,10 @@ class GetContainer extends Component {
             this.props.updating_method('potential_search_items', content);
             return;
         }
-
+        if (Array.isArray(content) && content.length === 0) {
+            alert('ERRRRRRRR!');
+            throw new Error('Data should not be empty array');
+        }
         const curr_content = curr_data.article;
         const curr_id = curr_data.id;
         const curr_name = curr_data.title;
@@ -40,11 +43,11 @@ class GetContainer extends Component {
         axios.get(this.url, {
             params: {
                 id: this.props.search_number,
-                name: this.props.search_name
+                title: this.props.search_name
             }
         }).then((response) => {
-            // console.log(response);
-            this.updateStatus(JSON.stringify(response.data));
+            console.log('Get', response);
+            this.updateStatus(response.data);
         }).catch((error) => {
             console.log(error);
         });
@@ -63,6 +66,7 @@ class PostContainer extends Component {
     updateStatus(content) {
         const curr_content = content.source_code;
         const curr_state = content.result === '';
+        console.log('In PostContainer', curr_content, curr_state);
         this.props.updating_method('should_send_request', false);
         this.props.updating_method('current_content', curr_content);
         this.props.updating_parent_method('current_question_state', curr_state)
@@ -79,8 +83,8 @@ class PostContainer extends Component {
             source_code: this.props.content,
             language: this.props.language
         }).then((response) => {
-            // console.log(response.data);
-            this.updateStatus(JSON.stringify(response.data));
+            console.log('Post', response.data);
+            this.updateStatus(response.data);
         }).catch((error) => {
             console.log(error);
         });
@@ -287,7 +291,7 @@ export class QuestionFeedbackPanel extends Component {
                             background: '#B2BABB',
                             display: 'inline-block'
                         }}>
-                            Current State is: {this.props.current_question_state}
+                            Current State is: {this.props.current_question_state === false ? 'Some Error Happened...' : 'This is a miracle'}
                         </h2>
                         <article style={{display: 'block'}}>
                             {state.current_content}

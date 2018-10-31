@@ -59,7 +59,7 @@ function (_Component) {
   _createClass(Main, [{
     key: "updateState",
     value: function updateState(key_name, value) {
-      // console.log(key_name, value, 'a');
+      console.log('index', key_name, value);
       this.setState(_defineProperty({}, key_name, value));
     }
   }, {
