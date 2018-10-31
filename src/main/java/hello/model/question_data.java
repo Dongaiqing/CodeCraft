@@ -12,6 +12,7 @@ public class question_data {
     private Long id;
 	private String title;
     private String article;
+    private String answer;
 
     
     public Long getId() {
@@ -32,6 +33,12 @@ public class question_data {
 	}
 	public void setArticle(String article) {
 		this.article = article;
+	}
+	public String getAnswer() {
+		return answer;
+	}
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
     
 }
