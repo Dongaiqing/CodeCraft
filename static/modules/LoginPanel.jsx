@@ -23,6 +23,7 @@ class LoginStatus extends Component {
             if (response.data === successful_login_msg) {
                 this.props.updating_method('loggedIn', true);
                 this.props.updating_parent_method('loggedIn', true);
+                this.props.updating_parent_method('author', this.props.status.username);
             }
         }).catch((error) => {
             console.log(error);

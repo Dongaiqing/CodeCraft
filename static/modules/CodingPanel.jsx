@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Editor, staticSettings} from './coding_panel_modules/Editor';
-import {Header} from './Header';
 import {QuestionFeedbackPanel, QuestionDisplayPanel} from './coding_panel_modules/Question';
 import {Comment} from "./coding_panel_modules/Comment";
+import {Rating} from "./coding_panel_modules/Rating";
 
 export class CodingPanel extends Component {
     constructor(props) {
@@ -25,14 +25,16 @@ export class CodingPanel extends Component {
     }
     render() {
         const items = [
-            <Header
-                key={'Header'}
-            />,
             <QuestionDisplayPanel
                 key={'QuestionDisplayPanel'}
                 updating_method={(key_name, value) => this.updateState(key_name, value)}
                 current_question_name={this.state.current_question_name}
                 current_question_id={this.state.current_question_id}
+            />,
+            <Rating
+                key={'CodingRating'}
+                user={this.props.user}
+                question_id={this.state.current_question_id}
             />,
             <Editor
                 key={'Editor'}
@@ -47,6 +49,11 @@ export class CodingPanel extends Component {
                 current_question_id={this.state.current_question_id}
                 current_question_name={this.state.current_question_name}
                 current_question_state={this.state.current_question_state}
+            />,
+            <Comment
+                key={'CodingCommentSection'}
+                user={this.props.user}
+                question_id={this.state.current_question_id}
             />
         ];
 

@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Editor as DraftEditor, EditorState as DraftEditorState, RichUtils as DraftRichUtils} from 'draft-js';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faArrowUp);
+library.add(faArrowDown);
 
 const comments_url = '';
 const num_comments = 10;
 /*
 * Expected data info:
 *   comment id
-*   author
+*   user
 *   comments
 *   upvotes
 *   downvotes
@@ -20,7 +26,7 @@ class FirstLevelCommentDataStructure {
     constructor() {
         this.id = 0;
         this.imageSource = '';
-        this.author = '';
+        this.user = '';
         this.comment = '';
         this.upvoteNum = 0;
         this.downvoteNum = 0;
@@ -31,7 +37,7 @@ class FirstLevelCommentDataStructure {
 class SecondLevelCommentDataStructure {
     constructor() {
         this.id = 0;
-        this.author = '';
+        this.user = '';
         this.comment = '';
         this.upvoteNum = 0;
         this.downvoteNum = 0;
@@ -55,7 +61,7 @@ class UpvoteDisplay extends Component {
     }
     render() {
         return <div>
-            <i className={'UpvoteIcon'} onClick={() => this.regulateNum()}> </i>
+            <FontAwesomeIcon icon={'arrowUp'} className={'UpvoteIcon'} onClick={() => this.regulateNum()}/>
             <p>{this.props.num}</p>
         </div>
     }
@@ -78,26 +84,26 @@ class DownvoteDisplay extends Component {
     }
     render() {
         return <div>
-            <i className={'DownvoteIcon'} onClick={() => this.regulateNum()}> </i>
+            <FontAwesomeIcon icon={'arrowDown'} onClick={() => this.regulateNum()}/>
             <p>{this.props.num}</p>
         </div>
     }
 }
 
-class AuthorInfo extends Component {
+class UserInfo extends Component {
     render() {
-        return <figure className={'AuthorInfo'}>
-            <img src={this.props.src} alt={this.props.author}/>
-            <figcaption>{this.props.author}</figcaption>
+        return <figure className={'userInfo'}>
+            <img src={this.props.src} alt={this.props.user}/>
+            <figcaption>{this.props.user}</figcaption>
         </figure>;
     }
 }
 
 class SecondLevelComment extends Component {
     render() {
-        let curr_comment = this.props.question_ref;
+        let curr_comment = this.props.comment_ref;
         return <div>
-            <div><h6>{curr_comment.author}</h6></div>
+            <div><h6>{curr_comment.user}</h6></div>
             <div><section>{curr_comment.comment}</section></div>
             <div>
                 <UpvoteDisplay num={curr_comment.upvoteNum} updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/>
@@ -127,6 +133,10 @@ class CommentEditor extends Component {
     }
 
     updateComment(string) {
+        let current_user = this.props.current_user;
+        let current_question_id = this.props.current_question_id;
+        // this variable can be null/undefined!
+        let current_parent_id = this.props.current_parent_comment_id;
         axios.post(comments_url, {
             // TODO: post parameters
         }).then((response) => {
@@ -148,19 +158,19 @@ class CommentEditor extends Component {
 
 class FirstLevelComment extends Component {
     render() {
-        let curr_comment = this.props.question_ref;
+        let curr_comment = this.props.comment_ref;
         const secondary_comments = [];
         for (let second_level_comment of curr_comment) {
-            secondary_comments.push(<SecondLevelComment question_ref={second_level_comment} updating_upvote={(id, val) => this.props.updating_upvote(id, val)} updating_downvote={(id, val) => this.props.updating_downvote(id, val)}/>);
+            secondary_comments.push(<SecondLevelComment comment_ref={second_level_comment} updating_upvote={(id, val) => this.props.updating_upvote(id, val)} updating_downvote={(id, val) => this.props.updating_downvote(id, val)}/>);
         }
         return <div>
-            <div><AuthorInfo src={curr_comment.imageSource} author={curr_comment.author}/></div>
+            <div><UserInfo src={curr_comment.imageSource} user={curr_comment.user}/></div>
             <div><section>{curr_comment.comment}</section></div>
             <div><UpvoteDisplay num={curr_comment.upvoteNum} updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/></div>
             <div><DownvoteDisplay num={curr_comment.downvoteNum} updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/></div>
             <div>{secondary_comments}</div>
 
-            <div><CommentEditor updating_comment={(id, string) => this.props.updating_comment(id, string, curr_comment.id)}/></div>
+            <div><CommentEditor updating_comment={(id, string) => this.props.updating_comment(id, string, curr_comment.id)}  current_user={this.props.current_user} current_question_id={this.props.current_question_id} current_parent_comment_id={curr_comment.id}/></div>
         </div>
     }
 }
@@ -170,7 +180,7 @@ export class Comment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            questions: [],
+            comments: [],
             pageNumber: 0
         };
     }
@@ -182,15 +192,15 @@ export class Comment extends Component {
                 allQuestions: true
             }
         }).then((response) => {
-            console.log('Get all questions:', response.data);
-            this.setState({questions: response.data});
+            console.log('Get all comments:', response.data);
+            this.setState({comments: response.data});
         })
     }
 
     updatingVote(id, val, is_upvote) {
-        let prev_questions = JSON.parse(JSON.stringify(this.state.questions));
+        let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
         let found = 0;
-        for (let first_lev_question of prev_questions) {
+        for (let first_lev_question of prev_comments) {
             if (first_lev_question.id === id) {
                 if (is_upvote) {
                     first_lev_question.upvoteNum = val;
@@ -217,14 +227,14 @@ export class Comment extends Component {
             }
         }
         this.setState({
-            questions: prev_questions
+            comments: prev_comments
         });
     }
 
     navigatePage(is_nextpage) {
         let prev_pageNumber = this.state.pageNumber;
         if (is_nextpage) {
-            if ((prev_pageNumber+1) * num_comments - this.state.questions.length < num_comments) {
+            if ((prev_pageNumber+1) * num_comments - this.state.comments.length < num_comments) {
                 this.setState({pageNumber: prev_pageNumber+1});
             }
         } else {
@@ -238,32 +248,32 @@ export class Comment extends Component {
 
         if (parent_id !== null && parent_id !== undefined) {
             let data = new SecondLevelCommentDataStructure();
-            data.author = this.props.author;
+            data.user = this.props.user;
             data.comment = string;
             data.downvoteNum = 0;
             data.upvoteNum = 0;
             data.id = id;
 
-            let prev_questions = JSON.parse(JSON.stringify(this.state.questions));
-            for (let first_lev_question of prev_questions) {
+            let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
+            for (let first_lev_question of prev_comments) {
                 if (first_lev_question.id === parent_id) {
                     first_lev_question.secondaryComments.unshift(data);
                     break;
                 }
             }
-            this.setState({questions: prev_questions});
+            this.setState({comments: prev_comments});
         } else {
             let data = new FirstLevelCommentDataStructure();
-            data.author = this.props.author;
+            data.user = this.props.user;
             data.comment = string;
             data.id = id;
             data.downvoteNum = 0;
             data.upvoteNum = 0;
             data.secondaryComments = [];
 
-            let prev_questions = JSON.parse(JSON.stringify(this.state.questions));
-            prev_questions.unshift(data);
-            this.setState({questions: prev_questions});
+            let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
+            prev_comments.unshift(data);
+            this.setState({comments: prev_comments});
         }
 
 
@@ -271,17 +281,20 @@ export class Comment extends Component {
 
     // currently the comments only allow two-level structures
     render() {
+        let user = this.props.user;
+        let current_question_id = this.props.question_id;
+
         const blocks = [];
         for (let i = this.state.pageNumber*num_comments; i < num_comments; i += 1) {
-            if (i >= this.state.questions.length) {
+            if (i >= this.state.comments.length) {
                 continue;
             }
             blocks.push(
-                <FirstLevelComment question_ref={this.state.questions[i]} updating_upvote={(id, val) => this.updatingVote(id, val, true)} updating_downvote={(id, val) => this.updatingVote(id, val, false)} updating_comment={(id, string, parent_id) => this.insertComment(id, string, parent_id)}/>
+                <FirstLevelComment comment_ref={this.state.comments[i]} updating_upvote={(id, val) => this.updatingVote(id, val, true)} updating_downvote={(id, val) => this.updatingVote(id, val, false)} updating_comment={(id, string, parent_id) => this.insertComment(id, string, parent_id)}  current_user={user} current_question_id={current_question_id}/>
             )
         }
         return <section>
-            <div><CommentEditor updating_comment={(id, string) => this.insertComment(id, string, null)}/></div>
+            <div><CommentEditor updating_comment={(id, string) => this.insertComment(id, string, null)} current_user={user} current_question_id={current_question_id}/></div>
             <div>{blocks}</div>
             <button onClick={() => this.navigatePage(true)}>Next Page</button>
             <button onClick={() => this.navigatePage(false)}>Previous Page</button>

@@ -54,7 +54,8 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
     _this.state = {
-      loggedIn: false
+      loggedIn: false,
+      user: ''
     };
     return _this;
   }
@@ -69,12 +70,12 @@ function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      return _react.default.createElement("div", null, _react.default.createElement(_LoginPanel.LoginPanel, {
+      return _react.default.createElement("div", null, _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", null, _react.default.createElement("nav", null, _react.default.createElement(_LoginPanel.LoginPanel, {
         updating_parent_method: function updating_parent_method(key, val) {
           return _this2.updateState(key, val);
         }
-      }), this.state.loggedIn ? _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", null, _react.default.createElement("nav", null, _react.default.createElement("ul", null, _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
-        to: '/home/'
+      }), this.state.loggedIn ? _react.default.createElement("ul", null, _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/'
       }, "Home")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/coding/'
       }, "Coding")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
@@ -83,22 +84,39 @@ function (_Component) {
         to: '/roadmap/'
       }, "RoadMap")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/profile/'
-      }, "Profile")))), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
-        path: '/home/',
+      }, "Profile"))) : null), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+        exact: true,
+        path: '/',
         component: _HomePanel.HomePanel
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: '/coding/',
-        component: _CodingPanel.CodingPanel
+        render: function render() {
+          return _react.default.createElement(_CodingPanel.CodingPanel, {
+            user: _this2.state.user
+          });
+        }
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: '/roulette/',
-        component: _RoulettePanel.RoulettePanel
+        render: function render() {
+          return _react.default.createElement(_RoulettePanel.RoulettePanel, {
+            user: _this2.state.user
+          });
+        }
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: '/roadmap/',
-        component: _RoadMapPanel.RoadMapPanel
+        render: function render() {
+          return _react.default.createElement(_RoadMapPanel.RoadMapPanel, {
+            user: _this2.state.user
+          });
+        }
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: '/profile/',
-        component: _ProfilePanel.ProfilePanel
-      })))) : null);
+        render: function render() {
+          return _react.default.createElement(_ProfilePanel.ProfilePanel, {
+            user: _this2.state.user
+          });
+        }
+      })))));
     }
   }]);
 

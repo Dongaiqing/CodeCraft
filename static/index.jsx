@@ -12,7 +12,8 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          loggedIn: false
+            loggedIn: false,
+            user: ''
         };
     }
 
@@ -22,41 +23,45 @@ class Main extends Component {
         });
     }
     render() {
-        return <div>
-            <LoginPanel updating_parent_method={(key, val) => this.updateState(key, val)}/>
-            {this.state.loggedIn? (<Router>
-                <div>
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to={'/home/'}>Home</Link>
-                            </li>
-                            <li>
-                                <Link to={'/coding/'}>Coding</Link>
-                            </li>
-                            <li>
-                                <Link to={'/roulette/'}>Roulette</Link>
-                            </li>
-                            <li>
-                                <Link to={'/roadmap/'}>RoadMap</Link>
-                            </li>
-                            <li>
-                                <Link to={'/profile/'}>Profile</Link>
-                            </li>
-                        </ul>
-                    </nav>
+        return (
+            <div>
+                <Router>
+                    <div>
+                        <nav>
+                            <LoginPanel updating_parent_method={(key, val) => this.updateState(key, val)}/>
+                            {this.state.loggedIn? (
+                            <ul>
+                                <li>
+                                    <Link to={'/'}>Home</Link>
+                                </li>
+                                <li>
+                                    <Link to={'/coding/'}>Coding</Link>
+                                </li>
+                                <li>
+                                    <Link to={'/roulette/'}>Roulette</Link>
+                                </li>
+                                <li>
+                                    <Link to={'/roadmap/'}>RoadMap</Link>
+                                </li>
+                                <li>
+                                    <Link to={'/profile/'}>Profile</Link>
+                                </li>
+                            </ul>) : (null)}
+                        </nav>
 
-                    <Switch>
-                        <Route path={'/home/'} component={HomePanel}/>
-                        <Route path={'/coding/'} component={CodingPanel}/>
-                        <Route path={'/roulette/'} component={RoulettePanel}/>
-                        <Route path={'/roadmap/'} component={RoadMapPanel}/>
-                        <Route path={'/profile/'} component={ProfilePanel}/>
-                    </Switch>
-                </div>
-            </Router>) : (null)}
-        </div>;
+                        <Switch>
+                            <Route exact path={'/'} component={HomePanel}/>
+                            <Route path={'/coding/'} render={() => <CodingPanel user={this.state.user}/>}/>
+                            <Route path={'/roulette/'} render={() => <RoulettePanel user={this.state.user}/>}/>
+                            <Route path={'/roadmap/'} render={() => <RoadMapPanel user={this.state.user}/>}/>
+                            <Route path={'/profile/'} render={() => <ProfilePanel user={this.state.user}/>}/>
+                        </Switch>
+                    </div>
+                </Router>
+            </div>
+        );
     }
 }
+
 
 ReactDOM.render(<Main/>, document.getElementById('reactdom'));
