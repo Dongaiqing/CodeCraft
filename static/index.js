@@ -4,11 +4,19 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactDom = _interopRequireDefault(require("react-dom"));
 
-var _Editor = require("./modules/Editor");
+var _reactRouterDom = require("react-router-dom");
 
-var _Header = require("./modules/Header");
+var _CodingPanel = require("./modules/CodingPanel");
 
-var _Question = require("./modules/Question");
+var _LoginPanel = require("./modules/LoginPanel");
+
+var _HomePanel = require("./modules/HomePanel");
+
+var _ProfilePanel = require("./modules/ProfilePanel");
+
+var _RoulettePanel = require("./modules/RoulettePanel");
+
+var _RoadMapPanel = require("./modules/RoadMapPanel");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46,63 +54,51 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
     _this.state = {
-      editor_content: '',
-      editor_language: '',
-      editor_theme: '',
-      current_question_name: '',
-      current_question_id: 0,
-      current_question_state: false
+      loggedIn: false
     };
     return _this;
   }
 
   _createClass(Main, [{
     key: "updateState",
-    value: function updateState(key_name, value) {
-      console.log('index', key_name, value);
-      this.setState(_defineProperty({}, key_name, value));
+    value: function updateState(key, val) {
+      this.setState(_defineProperty({}, key, val));
     }
   }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
-      var items = [_react.default.createElement(_Header.Header, {
-        key: 'Header'
-      }), _react.default.createElement(_Question.QuestionDisplayPanel, {
-        key: 'QuestionDisplayPanel',
-        updating_method: function updating_method(key_name, value) {
-          return _this2.updateState(key_name, value);
-        },
-        current_question_name: this.state.current_question_name,
-        current_question_id: this.state.current_question_id
-      }), _react.default.createElement(_Editor.Editor, {
-        key: 'Editor',
-        updating_content: function updating_content(key_name, value) {
-          return _this2.updateState(key_name, value);
-        },
-        content: this.state.editor_content
-      }), _react.default.createElement(_Question.QuestionFeedbackPanel, {
-        key: 'QuestionFeedbackPanel',
-        content: this.state.editor_content,
-        language: this.state.editor_language,
-        updating_method: function updating_method(key, value) {
-          return _this2.updateState(key, value);
-        },
-        current_question_id: this.state.current_question_id,
-        current_question_name: this.state.current_question_name,
-        current_question_state: this.state.current_question_state
-      })]; // console.log(staticSettings.all_black_themes, this.state.editor_theme, staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1);
-
-      return _react.default.createElement("div", {
-        style: {
-          display: 'flex',
-          margin: '1em',
-          flexDirection: 'column',
-          fontFamily: '\'Lato\', sans-serif',
-          background: _Editor.staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1 ? 'white' : 'black'
+      return _react.default.createElement("div", null, _react.default.createElement(_LoginPanel.LoginPanel, {
+        updating_parent_method: function updating_parent_method(key, val) {
+          return _this2.updateState(key, val);
         }
-      }, items);
+      }), this.state.loggedIn ? _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", null, _react.default.createElement("nav", null, _react.default.createElement("ul", null, _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/home/'
+      }, "Home")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/coding/'
+      }, "Coding")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/roulette/'
+      }, "Roulette")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/roadmap/'
+      }, "RoadMap")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: '/profile/'
+      }, "Profile")))), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+        path: '/home/',
+        component: _HomePanel.HomePanel
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        path: '/coding/',
+        component: _CodingPanel.CodingPanel
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        path: '/roulette/',
+        component: _RoulettePanel.RoulettePanel
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        path: '/roadmap/',
+        component: _RoadMapPanel.RoadMapPanel
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        path: '/profile/',
+        component: _ProfilePanel.ProfilePanel
+      })))) : null);
     }
   }]);
 

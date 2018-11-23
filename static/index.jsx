@@ -1,65 +1,61 @@
-import React, {Component} from 'react'
-import ReactDOM from 'react-dom'
-import {Editor, staticSettings} from './modules/Editor'
-import {Header} from './modules/Header'
-import {QuestionFeedbackPanel, QuestionDisplayPanel} from './modules/Question'
+import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { CodingPanel } from "./modules/CodingPanel";
+import { LoginPanel } from "./modules/LoginPanel";
+import { HomePanel } from "./modules/HomePanel";
+import { ProfilePanel } from "./modules/ProfilePanel";
+import { RoulettePanel } from "./modules/RoulettePanel";
+import { RoadMapPanel } from "./modules/RoadMapPanel";
 
 class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            editor_content: '',
-            editor_language: '',
-            editor_theme: '',
-            current_question_name: '',
-            current_question_id: 0,
-            current_question_state: false
+          loggedIn: false
         };
     }
 
-    updateState(key_name, value) {
-        console.log('index', key_name, value);
+    updateState(key, val) {
         this.setState({
-            [key_name]: value
+            [key]: val
         });
     }
     render() {
-        const items = [
-            <Header
-                key={'Header'}
-            />,
-            <QuestionDisplayPanel
-                key={'QuestionDisplayPanel'}
-                updating_method={(key_name, value) => this.updateState(key_name, value)}
-                current_question_name={this.state.current_question_name}
-                current_question_id={this.state.current_question_id}
-            />,
-            <Editor
-                key={'Editor'}
-                updating_content={(key_name, value) => this.updateState(key_name, value)}
-                content={this.state.editor_content}
-            />,
-            <QuestionFeedbackPanel
-                key={'QuestionFeedbackPanel'}
-                content={this.state.editor_content}
-                language={this.state.editor_language}
-                updating_method={(key, value) => this.updateState(key, value)}
-                current_question_id={this.state.current_question_id}
-                current_question_name={this.state.current_question_name}
-                current_question_state={this.state.current_question_state}
-            />
-        ];
+        return <div>
+            <LoginPanel updating_parent_method={(key, val) => this.updateState(key, val)}/>
+            {this.state.loggedIn? (<Router>
+                <div>
+                    <nav>
+                        <ul>
+                            <li>
+                                <Link to={'/home/'}>Home</Link>
+                            </li>
+                            <li>
+                                <Link to={'/coding/'}>Coding</Link>
+                            </li>
+                            <li>
+                                <Link to={'/roulette/'}>Roulette</Link>
+                            </li>
+                            <li>
+                                <Link to={'/roadmap/'}>RoadMap</Link>
+                            </li>
+                            <li>
+                                <Link to={'/profile/'}>Profile</Link>
+                            </li>
+                        </ul>
+                    </nav>
 
-        // console.log(staticSettings.all_black_themes, this.state.editor_theme, staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1);
-        return <div style={{
-            display: 'flex',
-            margin: '1em',
-            flexDirection: 'column',
-            fontFamily: '\'Lato\', sans-serif',
-            background: staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1 ? 'white' : 'black'
-            }}>
-            {items}
-            </div>
+                    <Switch>
+                        <Route path={'/home/'} component={HomePanel}/>
+                        <Route path={'/coding/'} component={CodingPanel}/>
+                        <Route path={'/roulette/'} component={RoulettePanel}/>
+                        <Route path={'/roadmap/'} component={RoadMapPanel}/>
+                        <Route path={'/profile/'} component={ProfilePanel}/>
+                    </Switch>
+                </div>
+            </Router>) : (null)}
+        </div>;
     }
 }
 
