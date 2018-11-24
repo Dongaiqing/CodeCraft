@@ -7,6 +7,7 @@ import { HomePanel } from "./modules/HomePanel";
 import { ProfilePanel } from "./modules/ProfilePanel";
 import { RoulettePanel } from "./modules/RoulettePanel";
 import { RoadMapPanel } from "./modules/RoadMapPanel";
+import {Header} from "./modules/Header";
 
 class Main extends Component {
     constructor(props) {
@@ -49,13 +50,16 @@ class Main extends Component {
                             </ul>) : (null)}
                         </nav>
 
-                        <Switch>
-                            <Route exact path={'/'} component={HomePanel}/>
-                            <Route path={'/coding/'} render={() => <CodingPanel user={this.state.user}/>}/>
-                            <Route path={'/roulette/'} render={() => <RoulettePanel user={this.state.user}/>}/>
-                            <Route path={'/roadmap/'} render={() => <RoadMapPanel user={this.state.user}/>}/>
-                            <Route path={'/profile/'} render={() => <ProfilePanel user={this.state.user}/>}/>
-                        </Switch>
+                        <div>
+                            <Header/>
+                            <Switch>
+                                <Route exact path={'/'} component={HomePanel}/>
+                                <Route path={'/coding/'} render={() => <CodingPanel user={this.state.user}/>}/>
+                                <Route path={'/roulette/'} render={() => <RoulettePanel user={this.state.user}/>}/>
+                                <Route path={'/roadmap/'} render={() => <RoadMapPanel user={this.state.user}/>}/>
+                                <Route path={'/profile/'} render={() => <ProfilePanel user={this.state.user}/>}/>
+                            </Switch>
+                        </div>
                     </div>
                 </Router>
             </div>

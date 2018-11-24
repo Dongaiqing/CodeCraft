@@ -1,12 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Editor as DraftEditor, EditorState as DraftEditorState, RichUtils as DraftRichUtils} from 'draft-js';
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
-
-library.add(faArrowUp);
-library.add(faArrowDown);
 
 const comments_url = '';
 const num_comments = 10;
@@ -44,7 +40,7 @@ class SecondLevelCommentDataStructure {
     }
 }
 
-class UpvoteDisplay extends Component {
+export class UpvoteDisplay extends Component {
     constructor(props) {
         super(props);
         this.state.clicked = false;
@@ -61,13 +57,13 @@ class UpvoteDisplay extends Component {
     }
     render() {
         return <div>
-            <FontAwesomeIcon icon={'arrowUp'} className={'UpvoteIcon'} onClick={() => this.regulateNum()}/>
+            <FontAwesomeIcon icon={faArrowUp} className={'UpvoteIcon'} onClick={() => this.regulateNum()}/>
             <p>{this.props.num}</p>
         </div>
     }
 }
 
-class DownvoteDisplay extends Component {
+export class DownvoteDisplay extends Component {
     constructor(props) {
         super(props);
         this.state.clicked = false;
@@ -84,7 +80,7 @@ class DownvoteDisplay extends Component {
     }
     render() {
         return <div>
-            <FontAwesomeIcon icon={'arrowDown'} onClick={() => this.regulateNum()}/>
+            <FontAwesomeIcon icon={faArrowDown} onClick={() => this.regulateNum()}/>
             <p>{this.props.num}</p>
         </div>
     }
@@ -137,6 +133,7 @@ class CommentEditor extends Component {
         let current_question_id = this.props.current_question_id;
         // this variable can be null/undefined!
         let current_parent_id = this.props.current_parent_comment_id;
+        let is_for_road_map = this.props.for_road_map;
         axios.post(comments_url, {
             // TODO: post parameters
         }).then((response) => {
@@ -186,6 +183,7 @@ export class Comment extends Component {
     }
 
     componentDidMount() {
+        let is_for_road_map = this.props.for_road_map;
         axios.get(comments_url, {
             params: {
                 // TODO: get all comments regarding the current question
@@ -283,7 +281,7 @@ export class Comment extends Component {
     render() {
         let user = this.props.user;
         let current_question_id = this.props.question_id;
-
+        let is_for_road_map = this.props.for_road_map;
         const blocks = [];
         for (let i = this.state.pageNumber*num_comments; i < num_comments; i += 1) {
             if (i >= this.state.comments.length) {
@@ -294,7 +292,7 @@ export class Comment extends Component {
             )
         }
         return <section>
-            <div><CommentEditor updating_comment={(id, string) => this.insertComment(id, string, null)} current_user={user} current_question_id={current_question_id}/></div>
+            <div><CommentEditor for_road_map={is_for_road_map} updating_comment={(id, string) => this.insertComment(id, string, null)} current_user={user} current_question_id={current_question_id}/></div>
             <div>{blocks}</div>
             <button onClick={() => this.navigatePage(true)}>Next Page</button>
             <button onClick={() => this.navigatePage(false)}>Previous Page</button>

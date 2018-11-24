@@ -18,6 +18,8 @@ var _RoulettePanel = require("./modules/RoulettePanel");
 
 var _RoadMapPanel = require("./modules/RoadMapPanel");
 
+var _Header = require("./modules/Header");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -84,7 +86,7 @@ function (_Component) {
         to: '/roadmap/'
       }, "RoadMap")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/profile/'
-      }, "Profile"))) : null), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+      }, "Profile"))) : null), _react.default.createElement("div", null, _react.default.createElement(_Header.Header, null), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: '/',
         component: _HomePanel.HomePanel
@@ -116,7 +118,7 @@ function (_Component) {
             user: _this2.state.user
           });
         }
-      })))));
+      }))))));
     }
   }]);
 

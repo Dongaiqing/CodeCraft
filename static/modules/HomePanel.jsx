@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
-import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faHeart);
 
 class About extends Component {
     constructor(props) {
@@ -12,7 +10,7 @@ class About extends Component {
     }
     render() {
         return <div>
-            <FontAwesomeIcon icon="heart" className={'About'} onClick={() => {let prev_toggled = this.state.toggled; this.setState({toggled: !prev_toggled});}}/>
+            <FontAwesomeIcon icon={faHeart} className={'About'} onClick={() => {let prev_toggled = this.state.toggled; this.setState({toggled: !prev_toggled});}}/>
             {this.state.toggled ? (<section>😋</section>) : (null)}
         </div>
     }

@@ -27,6 +27,7 @@ class DisplayRating extends Component {
         this.state.ratings = 0;
     }
     componentDidMount() {
+        let is_for_road_map = this.props.for_road_map;
         axios.get(rating_receiving_url, {
             params: {
                 // TODO: params
@@ -62,6 +63,7 @@ export class Rating extends Component {
         this.setState({rating: nextValue});
         let user = this.props.user;
         let current_question_id = this.props.question_id;
+        let is_for_road_map = this.props.for_road_map;
         axios.post(rating_submission_url, {
             // TODO: params here
         }).then((response) => {
@@ -73,7 +75,7 @@ export class Rating extends Component {
         if (this.state.is_display_rating === false) {
             return (<SubmitRating ratingOnClickHander={(nextValue, prevValue, name) => this.ratingOnClickHander(nextValue, prevValue, name)}/>);
         } else {
-            return (<DisplayRating question_id={this.props.question_id}/>);
+            return (<DisplayRating for_road_map={this.props.for_road_map} question_id={this.props.question_id}/>);
         }
     }
 }

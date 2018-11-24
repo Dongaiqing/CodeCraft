@@ -6,7 +6,7 @@ import {DisplaySavedRoadMaps} from "./roadmap_panel_modules/SavedRoadMaps";
 import {DisplayAllRoadMaps} from "./roadmap_panel_modules/AllRoadMaps";
 import {CreateNewRoadMap} from "./roadmap_panel_modules/NewRoadMap";
 
-const road_map_fetch_url = '';
+
 const road_map_add_url = '';
 
 
