@@ -5,18 +5,8 @@ import {RoadMapInfoCard} from "./RoadMapInfoDisplay";
 const road_map_fetch_url = '';
 const road_map_delete_url = '';
 
-class RoadMapDataStructure {
-    constructor() {
-        this.id = 0;
-        this.graphData = {};
-        this.name = '';
-        this.author = '';
-        this.upvoteNum = 0;
-        this.downvoteNum = 0;
-        this.comments = [];
-        // thumbnails?
-    }
-}
+const road_map_update_upvote_url = '';
+const road_map_update_downvote_url = '';
 
 export class DisplaySavedRoadMaps extends Component {
     constructor(props) {
@@ -56,11 +46,30 @@ export class DisplaySavedRoadMaps extends Component {
         })
     }
 
+    updateVotes(id, val, is_update) {
+        let user = this.props.user;
+        axios.post(is_update ? road_map_update_upvote_url : road_map_update_downvote_url, {
+            // TODO: params
+        }).then(response => {
+            let prev_roadMaps = JSON.parse(JSON.stringify(this.state.roadMaps));
+            for (let item of prev_roadMaps) {
+                if (item.id === id) {
+                    if (is_update) {
+                        item.upvoteNum = val;
+                    } else {
+                        item.downvoteNum = val;
+                    }
+                }
+            }
+            this.setState({roadMaps: prev_roadMaps});
+        })
+    }
+
     render() {
         let arr = [];
         let user = this.props.user;
         for (let data of this.state.roadMaps) {
-            arr.push(<RoadMapInfoCard profile={data} user={this.props.user} delete_roadmap={id => this.deleteRoadMap(id)}/>);
+            arr.push(<RoadMapInfoCard profile={data} user={user} delete_roadmap={id => this.deleteRoadMap(id)} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/>);
         }
         return (
             <div>
