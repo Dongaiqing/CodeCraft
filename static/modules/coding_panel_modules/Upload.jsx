@@ -66,10 +66,10 @@ export class UploadTestcase extends Component {
     submitTestcase() {
         let user = this.props.user;
         let current_question = this.props.question_id;
-        axios.post(submit_question_url, {
+        axios.post(submit_testcase_url, {
             // TODO: params
         }).then(response => {
-            if (response.data === success_submit_question_msg) {
+            if (response.data === success_submit_testcase_msg) {
                 this.setState({msg: 'Successfully Submitted Testcase!'});
             } else {
                 this.setState({msg: 'Failed to submit your Testcase!'});
