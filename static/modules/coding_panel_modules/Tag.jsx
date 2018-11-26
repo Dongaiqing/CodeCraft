@@ -3,8 +3,8 @@ import axios from 'axios';
 import {Doughnut} from 'react-chartjs-2';
 import * as stringSimilarity from 'string-similarity';
 
-const tag_submission_url = '';
-const tag_receiving_url = '';
+const tag_submission_url = '/post_tag';
+const tag_receiving_url = '/get_tag';
 
 const frequenct_threshold = 0.3;
 const similarity_threshold = 0.5;
@@ -20,7 +20,8 @@ class SubmitTags extends Component {
         let current_question_id = this.props.current_question_id;
 
         axios.post(tag_submission_url, {
-            // TODO: params
+            question_id: current_question_id,
+            tag: this.state.tagString
         }).then((response) => {
             this.props.updating_tags(this.state.tagString.split(','));
             this.props.updating_display_tags();
@@ -75,7 +76,7 @@ class DisplayTags extends Component {
 
         axios.get(tag_receiving_url, {
             params: {
-                // apply params here
+                question_id: current_question_id
             }
         }).then((response) => {
             console.log('Tag response is ', response.data);

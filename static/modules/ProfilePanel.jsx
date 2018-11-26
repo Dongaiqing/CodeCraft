@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
-const user_profile_fetching_url = '';
-const user_profile_updating_url = '';
-const get_friends_list_url = '';
+const user_profile_fetching_url = '/get_user_profile';
+const user_profile_updating_url = '/change_user_settings';
 // const user_profile_deleting_url = '';
 
 class UserProfile {
@@ -19,7 +18,7 @@ class UserProfile {
         this.uploadTestCaseCount = 0;
         this.eBucks = 0;
         this.items = []; // assume items are just texts
-        this.friends = [];
+        this.friends = []; // list of string
         this.level = 0;
     }
 }
@@ -28,10 +27,23 @@ class UserProfile {
 class FriendsInfoItem extends Component {
     constructor(props) {
         super(props);
-        this.state.clicked = false;
+        this.state = {
+            clicked: false,
+            profile: null
+        };
+    }
+    componentDidMount() {
+        let username = this.props.username;
+        axios.get(user_profile_fetching_url, {
+            params: {
+                username: username
+            }
+        }).then(response => {
+            this.setState({profile: response.data})
+        })
     }
     render() {
-        let profile = this.props.profile;
+        let profile = this.state.profile;
         if (this.state.clicked) {
             return (
                 <div>
@@ -70,29 +82,11 @@ class FriendsInfoItem extends Component {
 }
 
 class FriendsInfo extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            friendsList: []
-        };
-    }
-
-    componentDidMount() {
-        let profile = this.props.profile;
-        axios.get(get_friends_list_url, {
-            params: {
-                // TODO: params
-            }
-        }).then((response) => {
-            console.log('friends list: ', response.data);
-            this.setState({friendsList: response.data});
-        })
-    }
 
     render() {
         let arr = [];
-        for (let friend of this.state.friendsList) {
-            arr.push(<li><FriendsInfoItem profile={friend}/></li>);
+        for (let friend of this.props.profile.friends) {
+            arr.push(<li><FriendsInfoItem username={friend}/></li>);
         }
         return (
             <div>
@@ -169,7 +163,9 @@ class UserBasicInfo extends Component {
     }
     handleSettingSubmit() {
         axios.post(user_profile_updating_url, {
-            // TODO: params
+            password: this.state.newPassword,
+            email: this.state.newEmail,
+            user_id: this.props.profile.id
         }).then((response) => {
             this.setState({displaySettings: false});
             if (this.state.newEmail !== '') {
@@ -187,8 +183,15 @@ class UserBasicInfo extends Component {
             arr.push(<h4>{profile.userEmail}</h4>);
             arr.push(<button onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>);
         } else {
-            arr.push(<input type={'password'} value={this.state.newPassword} onChange={(e) => this.setState({newPassword: e.target.value})}/>);
-            arr.push(<input type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>);
+            arr.push(<div>Leave blank any input you don't want to change</div>);
+            arr.push(<div>
+                <label htmlFor={'settings_password'}>Change Password</label>
+                <input id={'settings_password'} key={'settings_password'} type={'password'} value={this.state.newPassword} onChange={(e) => this.setState({newPassword: e.target.value})}/>
+            </div>);
+            arr.push(<div>
+                <label htmlFor={'settings_email'}>Change Password</label>
+                <input id={'settings_email'} key={'settings_email'} type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>
+            </div>);
             arr.push(<button onClick={() => this.handleSettingSubmit()}>Submit</button>);
         }
         return (
@@ -201,7 +204,7 @@ export class ProfilePanel extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            user_profile: null
+            user_profile: new UserProfile()
         }
     }
     updatingEmail(newEmail) {
@@ -210,15 +213,14 @@ export class ProfilePanel extends Component{
         this.setState({user_profile: prev_profile});
     }
 
-
     componentDidMount() {
         let user = this.props.user;
         axios.get(user_profile_fetching_url, {
             params: {
-                // TODO: params
+                username: user
             }
         }).then((response) => {
-            console.log('user profile is ', response.data);
+            console.log('user profile is ', response.data, );
             this.setState({user_profile: response.data});
         })
     }

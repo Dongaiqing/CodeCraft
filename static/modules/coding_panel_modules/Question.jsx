@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 
-const sendURL = '/code_test';
-const receieveURL = '/code_test';
+const sendURL = '/get_code_test';
+const receieveURL = '/post_code_test';
 
 
 class GetContainer extends Component {
@@ -12,12 +12,13 @@ class GetContainer extends Component {
     }
 
     updateStatus(content) {
-        let curr_data;
-        if (Array.isArray(content) === false) {
-            curr_data = content;
-        } else {
-            curr_data = content[0];
-        }
+        // let curr_data;
+        // if (Array.isArray(content) === false) {
+        //     curr_data = content;
+        // } else {
+        //     curr_data = content[0];
+        // }
+        console.log(this.props.already_searched)
         if (Array.isArray(content) && content.length > 1) {
             this.props.updating_method('should_send_request', false);
             this.props.updating_method('potential_search_items', content);
@@ -35,6 +36,7 @@ class GetContainer extends Component {
             this.props.updating_method('potential_search_items', [{error: '404: while(!false){}'}]);
             return;
         }
+        let curr_data = content[0];
         const curr_content = curr_data.article;
         const curr_id = curr_data.id;
         const curr_name = curr_data.title;
@@ -42,6 +44,8 @@ class GetContainer extends Component {
         this.props.updating_parent_method('current_question_id', curr_id);
         this.props.updating_method('should_send_request', false);
         this.props.updating_method('current_content', curr_content);
+
+        this.props.updating_method('already_searched', 1-this.props.already_searched);
     }
 
     componentDidMount() {
@@ -51,7 +55,8 @@ class GetContainer extends Component {
         axios.get(this.url, {
             params: {
                 id: this.props.search_number,
-                title: this.props.search_name
+                title: this.props.search_name,
+                already_searched: this.props.already_searched
             }
         }).then((response) => {
             console.log('Get', response);
@@ -72,12 +77,9 @@ class PostContainer extends Component {
     }
 
     updateStatus(content) {
-        const curr_content = content.source_code;
-        const curr_state = content.result === '';
-        console.log('In PostContainer', curr_content, curr_state);
         this.props.updating_method('should_send_request', false);
-        this.props.updating_method('current_content', curr_content);
-        this.props.updating_parent_method('current_question_state', curr_state)
+        // this.props.updating_method('current_content', content);
+        this.props.updating_parent_method('current_question_state', content)
     }
 
     componentDidMount() {
@@ -86,7 +88,7 @@ class PostContainer extends Component {
         //     language: this.props.language
         // });
         axios.post(this.url, {
-            user_id: 0, // TODO
+            username: this.props.user, // TODO
             question_id: this.props.current_question_id,
             source_code: this.props.content,
             language: this.props.language
@@ -141,7 +143,7 @@ class QuestionNameInput extends Component {
     render() {
         const key = 'QuestionNameInput';
         const items = [
-            <label key={key+'_label'} htmlFor={key} style={{marginRight: '0.3em'}}>Put your question name here!</label>,
+            <label key={key+'_label'} htmlFor={key} style={{marginRight: '0.3em'}}>Search your question here!</label>,
             <input
                 key={key+'_input'}
                 type={'text'}
@@ -166,7 +168,6 @@ class QuestionSelectItem extends Component {
         ];
         return <dl
             onClick={() => {
-                console.log('inside selectItem', id, title);
                 this.props.updating_methods(id, title);
             }}
             style={{width: '100%', display: 'flex', flexWrap: 'wrap', cursor: 'pointer'}}>
@@ -182,6 +183,7 @@ class QuestionSelectPanel extends Component {
         this.props.updating_methods('search_question_name', title);
         this.props.updating_methods('potential_search_items', []);
         this.props.updating_methods('should_send_request', true);
+        this.props.updating_methods('already_searched', 1);
     }
     render() {
         const item_arr = this.props.potential_search_items;
@@ -226,7 +228,8 @@ export class QuestionDisplayPanel extends Component {
             current_content: '',
             search_question_number: 0,
             search_question_name: '',
-            potential_search_items: []
+            potential_search_items: [],
+            already_searched: 0
         };
     }
     updateParentState(key, val) {
@@ -261,7 +264,7 @@ export class QuestionDisplayPanel extends Component {
                         {this.props.current_question_id} - {this.props.current_question_name}
                     </h2>
                     <article style={{display: 'block'}}>
-                        {state.current_content}
+                        {state.current_content.split('\n').map(item => <div>{item}</div>)}
                     </article>
                 </section>
             );
@@ -274,6 +277,7 @@ export class QuestionDisplayPanel extends Component {
                     updating_parent_method={(key, val) => this.updateParentState(key, val)}
                     search_number={state.search_question_number}
                     search_name={state.search_question_name}
+                    already_searched={this.state.already_searched}
                 />
             );
         }
@@ -294,8 +298,8 @@ export class QuestionFeedbackPanel extends Component {
     constructor() {
         super();
         this.state = {
-            should_send_request: false,
-            current_content: ''
+            should_send_request: false
+            // current_content: ''
         };
     }
     updateState(key, val) {
@@ -306,7 +310,7 @@ export class QuestionFeedbackPanel extends Component {
     render() {
         const state = this.state;
         const arr_elem = [];
-        if (state.current_content !== '' && state.should_send_request === false) {
+        if (Object.keys(this.props.current_question_state).length > 0) {
             arr_elem.push(
                 <section
                     style={{
@@ -321,10 +325,10 @@ export class QuestionFeedbackPanel extends Component {
                             background: '#1F618D',
                             display: 'inline-block'
                         }}>
-                            {this.props.current_question_state === false ? `Successfully Submitted! Unbelievable! 🤯` : 'This is a miracle'}
+                            {this.props.current_question_state.header}
                         </h2>
                         <article style={{display: 'block'}}>
-                            {state.current_content}
+                            {this.props.current_question_state.content.split('\n').map(item => <div>{item}</div>)}
                         </article>
                     </section>
             );
@@ -339,16 +343,17 @@ export class QuestionFeedbackPanel extends Component {
                     language={this.props.language}
                     current_question_id={this.props.current_question_id}
                     current_question_name={this.props.current_question_name}
+                    user={this.props.user}
                 />
             );
         }
         arr_elem.push(<QuestionSubmitButton key={'QuestionFeedbackPanel_QuestionSubmitButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
-        return <div
+        return (<div
             style={{
                 margin: '1em',
                 order: 4
             }}>
             {arr_elem}
-            </div>;
+            </div>);
     }
 }

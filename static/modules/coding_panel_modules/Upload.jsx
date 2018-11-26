@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
-const submit_question_url = '';
-const submit_testcase_url = '';
-const success_submit_question_msg = '';
-const success_submit_testcase_msg = '';
+const submit_question_url = '/post_question';
+const submit_testcase_url = '/post_testcase';
+const success_submit_question_msg = 'Success';
+const success_submit_testcase_msg = 'Success';
 
 export class UploadQuestion extends Component {
     constructor(props) {
@@ -20,7 +20,9 @@ export class UploadQuestion extends Component {
     submitQuestion() {
         let user = this.props.user;
         axios.post(submit_question_url, {
-            // TODO: params
+            username: user,
+            title: this.state.question_name,
+            content: this.state.question_content
         }).then(response => {
             if (response.data === success_submit_question_msg) {
                 this.setState({msg: 'Successfully Submitted Question!'});
@@ -67,7 +69,9 @@ export class UploadTestcase extends Component {
         let user = this.props.user;
         let current_question = this.props.question_id;
         axios.post(submit_testcase_url, {
-            // TODO: params
+            username: user,
+            question_id: current_question,
+            content: this.state.testcase_content
         }).then(response => {
             if (response.data === success_submit_testcase_msg) {
                 this.setState({msg: 'Successfully Submitted Testcase!'});

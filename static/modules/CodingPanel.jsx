@@ -15,7 +15,7 @@ export class CodingPanel extends Component {
             editor_theme: '',
             current_question_name: '',
             current_question_id: 0,
-            current_question_state: false
+            current_question_state: {}
         };
     }
 
@@ -25,51 +25,61 @@ export class CodingPanel extends Component {
             [key_name]: value
         });
     }
-    render() {
-        const items = [
-            <QuestionDisplayPanel
-                key={'QuestionDisplayPanel'}
-                updating_method={(key_name, value) => this.updateState(key_name, value)}
-                current_question_name={this.state.current_question_name}
-                current_question_id={this.state.current_question_id}
-            />,
-            <Rating
-                key={'CodingRating'}
-                user={this.props.user}
-                question_id={this.state.current_question_id}
-            />,
-            <Editor
-                key={'Editor'}
-                updating_content={(key_name, value) => this.updateState(key_name, value)}
-                content={this.state.editor_content}
-            />,
-            <QuestionFeedbackPanel
-                key={'QuestionFeedbackPanel'}
-                content={this.state.editor_content}
-                language={this.state.editor_language}
-                updating_method={(key, value) => this.updateState(key, value)}
-                current_question_id={this.state.current_question_id}
-                current_question_name={this.state.current_question_name}
-                current_question_state={this.state.current_question_state}
-            />,
-            <Comment
-                key={'CodingCommentSection'}
-                user={this.props.user}
-                question_id={this.state.current_question_id}
-            />,
-            <UploadQuestion user={this.props.user}/>,
-            <UploadTestcase user={this.props.user} question_id={this.state.current_question_id}/>
-        ];
 
-        // console.log(staticSettings.all_black_themes, this.state.editor_theme, staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1);
-        return <div style={{
-            display: 'flex',
-            margin: '1em',
-            flexDirection: 'column',
-            fontFamily: '\'Lato\', sans-serif',
-            background: staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1 ? 'white' : 'black'
-        }}>
-            {items}
-        </div>
+    render() {
+        return (
+            <div style={{
+                display: 'flex',
+                margin: '1em',
+                flexDirection: 'column',
+                fontFamily: '\'Lato\', sans-serif',
+                background: staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1 ? 'white' : 'black'
+            }}>
+                <QuestionDisplayPanel
+                    key={'QuestionDisplayPanel'}
+                    updating_method={(key_name, value) => this.updateState(key_name, value)}
+                    current_question_name={this.state.current_question_name}
+                    current_question_id={this.state.current_question_id}
+                />
+                {
+                    this.state.current_question_id === 0 ? (null) : <Rating
+                        key={'CodingRating'}
+                        user={this.props.user}
+                        question_id={this.state.current_question_id}
+                    />
+                }
+                <Editor
+                    key={'Editor'}
+                    updating_content={(key_name, value) => this.updateState(key_name, value)}
+                    content={this.state.editor_content}
+                />
+                {
+                    this.state.current_question_id === 0 ? (null) : (<QuestionFeedbackPanel
+                        key={'QuestionFeedbackPanel'}
+                        content={this.state.editor_content}
+                        language={this.state.editor_language}
+                        updating_method={(key, value) => this.updateState(key, value)}
+                        current_question_id={this.state.current_question_id}
+                        current_question_name={this.state.current_question_name}
+                        current_question_state={this.state.current_question_state}
+                        user={this.props.user}
+                    />)
+                }
+                {
+                    this.state.current_question_id === 0 ? (null) : (<Comment
+                        key={'CodingCommentSection'}
+                        user={this.props.user}
+                        question_id={this.state.current_question_id}
+                    />)
+                }
+                <UploadQuestion key={'CodingUploadQuestion'} user={this.props.user}/>
+                <UploadTestcase key={'CodingUploadTestcase'} user={this.props.user}
+                                question_id={this.state.current_question_id}/>
+                {
+                    this.state.current_question_id === 0 ? (null) : (<Comment question_id={this.state.current_question_id} user={this.props.user}/>)
+                }
+            </div>);
+
+
     }
 }

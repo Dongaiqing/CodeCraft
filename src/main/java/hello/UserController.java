@@ -57,8 +57,10 @@ public class UserController {
     	
     	List<user> temp=userService.findByName(user.getUsername());
 	
-
-    	return temp.get(0).getId();
+        if (temp.isEmpty())
+            return 1;
+        else return 0;
+//    	return temp.get(0).getId();
     }
 
 }

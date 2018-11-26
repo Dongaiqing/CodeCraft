@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {RoadMapInfoCard} from "./RoadMapInfoDisplay";
 
-const road_map_fetch_url = '';
-const road_map_delete_url = '';
+const road_map_fetch_url = '/get_user_roadmap';
+const road_map_delete_url = '/delete_user_roadmap';
 
-const road_map_update_upvote_url = '';
-const road_map_update_downvote_url = '';
+const road_map_update_upvote_url = '/upvote_roadmap';
+const road_map_update_downvote_url = '/downvote_roadmap';
 
 export class DisplaySavedRoadMaps extends Component {
     constructor(props) {
@@ -21,7 +21,7 @@ export class DisplaySavedRoadMaps extends Component {
         let user = this.props.user;
         axios.get(road_map_fetch_url, {
             params: {
-                // TODO: params
+                username: user
             }
         }).then((response) => {
             this.setState({roadMaps: response.data});
@@ -31,7 +31,8 @@ export class DisplaySavedRoadMaps extends Component {
     deleteRoadMap(id) {
         let user = this.props.user;
         axios.post(road_map_delete_url, {
-            // TODO: params
+            username: user,
+            roadmap_id: id
         }).then((response) => {
             let prev_roadmaps = JSON.parse(JSON.stringify(this.state.roadMaps));
             let counter = 0;
@@ -49,7 +50,8 @@ export class DisplaySavedRoadMaps extends Component {
     updateVotes(id, val, is_update) {
         let user = this.props.user;
         axios.post(is_update ? road_map_update_upvote_url : road_map_update_downvote_url, {
-            // TODO: params
+            roadmap_id: id,
+            value: val
         }).then(response => {
             let prev_roadMaps = JSON.parse(JSON.stringify(this.state.roadMaps));
             for (let item of prev_roadMaps) {

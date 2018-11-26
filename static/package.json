@@ -28,6 +28,8 @@
     "css-loader": "^1.0.1",
     "d3-hierarchy": "^1.1.8",
     "draft-js": "^0.10.5",
+    "draft-js-export-html": "^1.2.0",
+    "draft-js-utils": "^1.2.0",
     "lodash": "^4.17.11",
     "react": "^16.6.3",
     "react-ace": "^6.2.0",

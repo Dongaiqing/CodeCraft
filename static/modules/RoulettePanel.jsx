@@ -164,7 +164,7 @@ export class RoulettePanel extends Component{
         let user = this.props.user;
         axios.get(get_user_profile_url, {
             params: {
-                // TODO: params
+                username: user
             }
         }).then((response) => {
             this.setState({balance: response.data.eBucks, existing_items: response.data.items});
