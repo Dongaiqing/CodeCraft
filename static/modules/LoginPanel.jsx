@@ -11,7 +11,6 @@ class LoginStatus extends Component {
         this.state = {
             feedback: ''
         };
-        this.url = login_url;
     }
     componentDidMount() {
         axios.post(this.props.status.isLogin ? login_url : register_url, {
@@ -19,15 +18,13 @@ class LoginStatus extends Component {
             password: this.props.status.password,
             email: this.props.status.email
         }).then((response) => {
-            console.log('Post', response.data);
-
-            this.props.updating_method('shouldSubmit', false);
-
+            console.log('Post in LoginStatus', response.data);
             // if login succeeded
             if (response.data === successful_login_msg) {
-                this.props.updating_parent_method('loggedIn', true);
-                this.props.updating_parent_method('author', this.props.status.username);
                 this.setState({feedback: 'Successfully ' + this.props.status.isLogin ? 'Logged in!' : 'Registered!'});
+                this.props.updating_parent_method('loggedIn', true);
+                this.props.updating_method('shouldSubmit', false);
+                this.props.updating_parent_method('author', this.props.status.username);
             } else {
                 this.setState({feedback: 'Failed to ' + this.props.status.isLogin ? 'Logged in!' : 'Registered!'});
             }

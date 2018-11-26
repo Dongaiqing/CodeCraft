@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Doughnut} from 'react-chartjs-2';
+import * as stringSimilarity from 'string-similarity';
 
 const tag_submission_url = '';
 const tag_receiving_url = '';
 
 const frequenct_threshold = 0.3;
+const similarity_threshold = 0.5;
 
 class SubmitTags extends Component {
     constructor(props) {
@@ -48,6 +50,26 @@ class DisplayTags extends Component {
         super(props);
         this.state.chartData = {};
     }
+
+    generateFrequency(data) {
+        let dict = data.map(item => {return {[item] : 1}});
+        let temp_array = data.splice();
+        for (let item of data) {
+            let index_array = [];
+            let index = 0;
+            for (let key of temp_array) {
+                if (stringSimilarity.compareTwoStrings(item, key) > similarity_threshold) {
+                    dict[item] += 1;
+                    index_array.push(index);
+                }
+                index += 1;
+            }
+            for (let i of index_array) {
+                temp_array.splice(i, 1);
+            }
+        }
+        return dict;
+    }
     componentDidMount() {
         let current_question_id = this.props.current_question_id;
 
@@ -57,10 +79,10 @@ class DisplayTags extends Component {
             }
         }).then((response) => {
             console.log('Tag response is ', response.data);
-            let raw_data = response.data;
-            let max_frequency = Math.max.apply(Math, raw_data.map(function(o) { return o.tagFrequency; }));
+            let raw_data = this.generateFrequency(response.data);
+            let max_frequency = Math.max.apply(Math, raw_data.map(item => item.tagFrequency));
 
-            let temp_data = raw_data.filter(item => item.tagFrequency >= max_frequency * frequenct_threshold);
+            let temp_data = raw_data.filter(item => item.tagFrequency / max_frequency >= frequenct_threshold);
             let random_color = temp_data.map(() => '#'+(Math.random()*0xFFFFFF<<0).toString(16));
             let chart_data = {
                 labels: Object.keys(temp_data),
