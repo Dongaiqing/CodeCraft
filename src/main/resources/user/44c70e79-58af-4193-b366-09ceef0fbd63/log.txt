@@ -1,0 +1,5 @@
+printWrite: Here is the standard output of the command:
+
+Hello, World
+printWrite: Here is the standard error of the command (if any):
+

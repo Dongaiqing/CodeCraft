@@ -1,10 +1,16 @@
 package hello;
 
-
+import util.RunCode;
+import util.SourceCode;
 import org.apache.commons.codec.binary.Base64;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +69,26 @@ public class QuestionController {
     @RequestMapping(value = "/code_test", method = RequestMethod.POST)
 	@ResponseBody
     public question_code saveCode( @RequestBody question_code code) {
-    	
+    	SourceCode UserCode=new SourceCode("hello",code.getSource_code(),"java");
+    	RunCode TheProcess=new RunCode(UserCode);
+    	Path hello = TheProcess.executeCode();
+    	try {
+			String data = "";
+		    data = new String(Files.readAllBytes(Paths.get(hello+"/"+"log.txt")));
+		    System.out.println(data);
+		    
+
+		    System.out.println("done reading file");
+		    code.setSource_code(data);
+    		code.setResult(data);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	/*
     	if(code.getSource_code()=="") {
     		question_codeService.delete(code);
     		code.setResult("deleted");
@@ -90,6 +115,9 @@ public class QuestionController {
     	
         // Process the request
         // Prepare the response string
+    	*/
+    	code.setSource_code("hello \n hello");
+    	code.setSource_code("hello \n hello");
         return code;    
     }
 }
