@@ -1,0 +1,9 @@
+printWrite: Here is the standard output of the command:
+
+printWrite: Here is the standard error of the command (if any):
+
+hello.java:1: error: class, interface, or enum expected
+hello;
+^
+1 error
+Error: Could not find or load main class hello
