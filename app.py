@@ -29,10 +29,10 @@ class Queries():
         return 'SELECT title FROM QuestionCode WHERE title LIKE %s OR article LIKE %s'
     @staticmethod
     def storeQuestionAnswer():
-        return 'INSERT INTO QuestionSubmission(sourceCode, sourceLanguage, userID, questionID, result) VALUES (%s,%s,%s,%s,%s)'
+        return 'INSERT INTO QuestionSubmission(sourceCode, sourceLanguage, userID, questionID, result) VALUES (%s,%s,(SELECT id FROM UserProfile WHERE username=%s),%s,%s)'
     @staticmethod
     def updateQuestionAnswer():
-        return 'UPDATE QuestionSubmission SET sourceCode=%s, result=%s, sourceLanguage=%s WHERE userID=%s AND questionID=%s'
+        return 'UPDATE QuestionSubmission SET sourceCode=%s, result=%s, sourceLanguage=%s WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND questionID=%s'
     @staticmethod
     def getAllRoadmapTopLevelComments():
         return 'SELECT * FROM Comments WHERE Comments.id in (SELECT commentsID FROM RoadMap_Comments WHERE roadmapID = %s) AND Comments.id in (SELECT commentsID FROM Comments_Comments)'
@@ -114,13 +114,13 @@ class Queries():
         return 'UPDATE RoadMap SET downvoteNum=%s WHERE id=%s'
     @staticmethod
     def insertUserProfile_RoadMap():
-        return 'INSERT INTO UserProfile_RoadMap(userID, roadmapID) VALUES((SELECT id FROM UserProfile WHERE id=%s), (SELECT id FROM RoadMap WHERE id=%s))'
+        return 'INSERT INTO UserProfile_RoadMap(userID, roadmapID) VALUES((SELECT id FROM UserProfile WHERE username=%s), (SELECT id FROM RoadMap WHERE id=%s))'
     @staticmethod
     def deleteUserProfile_RoadMap():
-        return 'DELETE FROM UserProfile_RoadMap WHERE userID=%s AND roadmapsID=%s'
+        return 'DELETE FROM UserProfile_RoadMap WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND roadmapsID=%s'
     @staticmethod
     def getAllUserProfile_RoadMap():
-        return 'SELECT * FROM UserProfile_RoadMap WHERE userID=%s'
+        return 'SELECT * FROM UserProfile_RoadMap WHERE userID=(SELECT id FROM UserProfile WHERE username=%s)'
     @staticmethod
     def insertRoadMap():
         return 'INSERT INTO RoadMap(description, graphData, title, userID, upvoteNum, downvoteNum, totalRating, numRating) VALUES(%s,%s,%s,(SELECT id FROM UserProfile WHERE username=%s),%s,%s,%s,%s)'
@@ -232,7 +232,7 @@ def sendCodeANDreceiveResponse():
         return jsonify(cursor.fetchall())
     elif request.method == 'POST':
         data = request.get_json()
-        if 'user_id' not in data or 'question_id' not in data or 'source_code' not in data or 'language' not in data:
+        if 'username' not in data or 'question_id' not in data or 'source_code' not in data or 'language' not in data:
             failed = {}
             failed['header'] = 'Failed to submit your answer'
             failed['content'] = 'You have input invalid information'
@@ -245,7 +245,7 @@ def sendCodeANDreceiveResponse():
         }
         conn = get_conn()
         cursor = conn.cursor()
-        user_id = data['user_id']
+        username = data['username']
         source_code = data['source_code']
         language = data['language']
         question_id = data['question_id']
@@ -254,9 +254,9 @@ def sendCodeANDreceiveResponse():
         if executable is None:
             try:
                 cursor.execute(Queries.storeQuestionAnswer(),
-                               (source_code, language, user_id, question_id, 'default'))
+                               (source_code, language, username, question_id, 'default'))
             except Exception:
-                cursor.execute((Queries.updateQuestionAnswer(), (source_code, 'default', language, user_id, question_id)))
+                cursor.execute((Queries.updateQuestionAnswer(), (source_code, 'default', language, username, question_id)))
             conn.commit()
             saved = {}
             saved['header'] = 'Success'
@@ -265,8 +265,8 @@ def sendCodeANDreceiveResponse():
         else:
             result = ''
             def execute_code():
-                temp_filename = 'temp'+user_id+question_id
-                temp_outputname = 'out'+user_id+question_id
+                temp_filename = 'temp'+username+question_id
+                temp_outputname = 'out'+username+question_id
                 if executable == 'rb':
                     complete_filename = temp_filename+'.rb'
                     with open(complete_filename, 'w') as file:
@@ -307,9 +307,9 @@ def sendCodeANDreceiveResponse():
                     os.remove(temp_outputname)
             try:
                 cursor.execute(Queries.storeQuestionAnswer(),
-                               (source_code, language, user_id, question_id, result))
+                               (source_code, language, username, question_id, result))
             except Exception:
-                cursor.execute((Queries.updateQuestionAnswer(), (source_code, result, language, user_id, question_id)))
+                cursor.execute((Queries.updateQuestionAnswer(), (source_code, result, language, username, question_id)))
             conn.commit()
             saved = {}
             saved['header'] = 'Success'
@@ -504,11 +504,11 @@ def updateRoadmapUpvote():
 @app.route('/add_to_fav_roadmap', methods=['POST'])
 def addFavRoadmap():
     data = request.get_json()
-    user_id = data['user_id']
+    username = data['username']
     roadmap_id = data['roadmap_id']
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.insertUserProfile_RoadMap(), (user_id, roadmap_id))
+    cursor.execute(Queries.insertUserProfile_RoadMap(), (username, roadmap_id))
     conn.commit()
     cursor.close()
     return jsonify(0)
@@ -534,10 +534,10 @@ def saveRoadMap():
 
 @app.route('/get_user_roadmap', methods=['POST'])
 def getAllUserFavs():
-    user_id = request.args.get('user_id')
+    username = request.args.get('username')
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.getAllUserProfile_RoadMap(), (user_id))
+    cursor.execute(Queries.getAllUserProfile_RoadMap(), (username))
     result = cursor.fetchall()
     conn.commit()
     cursor.close()
@@ -546,14 +546,39 @@ def getAllUserFavs():
 @app.route('/delete_user_roadmap', methods=['POST'])
 def deleteUserFav():
     data = request.get_json()
-    user_id = data['user_id']
+    username = data['username']
     roadmap_id = data['roadmap_id']
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.deleteUserProfile_RoadMap(), (user_id, roadmap_id))
+    cursor.execute(Queries.deleteUserProfile_RoadMap(), (username, roadmap_id))
     conn.commit()
     cursor.close()
     return jsonify(0)
+
+@app.route('/get_user_profile', methods=['GET'])
+def getUserprofile():
+    username = request.args.get('username')
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.getUserProfile(), username)
+    result = cursor.fetchone()
+    cursor.close()
+    return jsonify(result)
+
+@app.route('/change_user_settings', methods=['POST'])
+def changeUserSetting():
+    data = request.get_json()
+    password = data['password']
+    email = data['email']
+    user_id = data['user_id']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.updateUserProfilepassword(), (password, user_id))
+    cursor.execute(Queries.updateUserProfileuseremail(), (email, user_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
+
 
 if __name__ == '__main__':
     app.run()
