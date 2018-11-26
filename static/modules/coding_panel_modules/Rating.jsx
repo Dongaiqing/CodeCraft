@@ -13,7 +13,7 @@ class SubmitRating extends Component {
                 <StarRatingComponent
                     name="Rating"
                     starCount={5}
-                    value={this.state.rating}
+                    value={this.props.rating}
                     onStarClick={(nextValue, prevValue, name) => this.props.ratingOnClickHander(nextValue, prevValue, name)}
                 />
             </div>
@@ -73,7 +73,7 @@ export class Rating extends Component {
 
     render() {
         if (this.state.is_display_rating === false) {
-            return (<SubmitRating ratingOnClickHander={(nextValue, prevValue, name) => this.ratingOnClickHander(nextValue, prevValue, name)}/>);
+            return (<SubmitRating rating={this.state.rating} ratingOnClickHander={(nextValue, prevValue, name) => this.ratingOnClickHander(nextValue, prevValue, name)}/>);
         } else {
             return (<DisplayRating for_road_map={this.props.for_road_map} question_id={this.props.question_id}/>);
         }

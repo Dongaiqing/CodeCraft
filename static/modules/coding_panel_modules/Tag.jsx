@@ -17,7 +17,6 @@ class SubmitTags extends Component {
         let current_user = this.props.current_user;
         let current_question_id = this.props.current_question_id;
 
-
         axios.post(tag_submission_url, {
             // TODO: params
         }).then((response) => {

@@ -13,9 +13,14 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loggedIn: false,
+            loggedIn: true,
             user: ''
         };
+    }
+    componentWillMount() {
+        window.onbeforeunload(() => {
+            return "Do not refresh your page!!!";
+        })
     }
 
     updateState(key, val) {
@@ -29,23 +34,23 @@ class Main extends Component {
                 <Router>
                     <div>
                         <nav>
-                            <LoginPanel updating_parent_method={(key, val) => this.updateState(key, val)}/>
+                            <LoginPanel loggedIn={this.state.loggedIn} updating_parent_method={(key, val) => this.updateState(key, val)}/>
                             {this.state.loggedIn? (
                             <ul>
                                 <li>
                                     <Link to={'/'}>Home</Link>
                                 </li>
                                 <li>
-                                    <Link to={'/coding/'}>Coding</Link>
+                                    <Link to={'/coding'}>Coding</Link>
                                 </li>
                                 <li>
-                                    <Link to={'/roulette/'}>Roulette</Link>
+                                    <Link to={'/roulette'}>Roulette</Link>
                                 </li>
                                 <li>
-                                    <Link to={'/roadmap/'}>RoadMap</Link>
+                                    <Link to={'/roadmap'}>RoadMap</Link>
                                 </li>
                                 <li>
-                                    <Link to={'/profile/'}>Profile</Link>
+                                    <Link to={'/profile'}>Profile</Link>
                                 </li>
                             </ul>) : (null)}
                         </nav>
@@ -54,10 +59,10 @@ class Main extends Component {
                             <Header/>
                             <Switch>
                                 <Route exact path={'/'} component={HomePanel}/>
-                                <Route path={'/coding/'} render={() => <CodingPanel user={this.state.user}/>}/>
-                                <Route path={'/roulette/'} render={() => <RoulettePanel user={this.state.user}/>}/>
-                                <Route path={'/roadmap/'} render={() => <RoadMapPanel user={this.state.user}/>}/>
-                                <Route path={'/profile/'} render={() => <ProfilePanel user={this.state.user}/>}/>
+                                <Route path={'/coding'} render={() => <CodingPanel user={this.state.user}/>}/>
+                                <Route path={'/roulette'} render={() => <RoulettePanel user={this.state.user}/>}/>
+                                <Route path={'/roadmap'} render={() => <RoadMapPanel user={this.state.user}/>}/>
+                                <Route path={'/profile'} render={() => <ProfilePanel user={this.state.user}/>}/>
                             </Switch>
                         </div>
                     </div>

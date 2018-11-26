@@ -6,7 +6,9 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 class About extends Component {
     constructor(props) {
         super(props);
-        this.state.toggled = false;
+        this.state = {
+            toggled: false
+        };
     }
     render() {
         return <div>

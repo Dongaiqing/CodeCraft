@@ -10,7 +10,9 @@ const add_fav_roadmap_url = '';
 export class DisplayAllRoadMaps extends Component {
     constructor(props) {
         super(props);
-        this.state.all_roadmaps = [];
+        this.state = {
+            all_roadmaps: []
+        };
     }
     componentDidMount() {
         axios.get(fetch_all_url, {
