@@ -2,6 +2,8 @@ package hello;
 
 import util.RunCode;
 import util.SourceCode;
+
+import org.apache.catalina.User;
 import org.apache.commons.codec.binary.Base64;
 
 import java.nio.file.Path;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import hello.service.UserService;
 import hello.service.question_codeService;
 import hello.service.question_dataService;
-import hello.model.User;
+import hello.model.user;
 import hello.model.question_code;
 import hello.model.question_data;
 
@@ -35,29 +37,28 @@ public class UserController {
     private UserService userService;
 	//
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public long registration(@RequestBody User user) {
+    @ResponseBody
+    public long  registration(@RequestBody user user) {
     	
-        if(userService.findByName(user.getUsername())!=null){
+        if(userService.findQuantity(user.getUsername())==0){
         	userService.save(user);
         }
         else {
         	return 0;
         }
-        User temp=userService.findByName(user.getUsername());
+        
+        List<user> temp=userService.findByName(user.getUsername());
 
-
-        return temp.getId();
+        return temp.get(0).getId();
     }
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public long login(@RequestBody User user) {
+    @ResponseBody
+    public long login(@RequestBody user user) {
     	
-        if(userService.findByName(user.getUsername())!=null){
-        	userService.save(user);
-        }
-        User temp=userService.findByName(user.getUsername());
+    	List<user> temp=userService.findByName(user.getUsername());
+	
 
-
-        return temp.getId();
+    	return temp.get(0).getId();
     }
 
 }
