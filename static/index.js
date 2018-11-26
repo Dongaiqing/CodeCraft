@@ -63,13 +63,6 @@ function (_Component) {
   }
 
   _createClass(Main, [{
-    key: "componentWillMount",
-    value: function componentWillMount() {
-      window.onbeforeunload(function () {
-        return "Do not refresh your page!!!";
-      });
-    }
-  }, {
     key: "updateState",
     value: function updateState(key, val) {
       this.setState(_defineProperty({}, key, val));

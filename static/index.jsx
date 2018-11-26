@@ -17,11 +17,6 @@ class Main extends Component {
             user: ''
         };
     }
-    componentWillMount() {
-        window.onbeforeunload(() => {
-            return "Do not refresh your page!!!";
-        })
-    }
 
     updateState(key, val) {
         this.setState({
