@@ -19,14 +19,6 @@ CREATE TABLE IF NOT EXISTS UserProfile_Items (
   FOREIGN KEY (userID) REFERENCES UserProfile(id)
 );
 
-CREATE TABLE IF NOT EXISTS UserProfile_Friends(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  userID INT,
-  friendName INT,
-  FOREIGN KEY (userID) REFERENCES UserProfile(id),
-  FOREIGN KEY (friendName) REFERENCES UserProfile(username)
-);
-
 CREATE TABLE IF NOT EXISTS UserProfile_Friends (
   id INT PRIMARY KEY AUTO_INCREMENT,
   userID INT,

@@ -79,7 +79,7 @@ class Queries():
         return 'UPDATE RoadMap SET totalRating=%s, numRating=%s WHERE id=%s'
     @staticmethod
     def getQuestionTags():
-        return 'SELECT tag FROM QuestionCode_Tag WHERE questionID=%s'
+        return 'SELECT tag FROM QuestionCode_Tag WHERE questionID=%s;'
     @staticmethod
     def insertQuestionTag():
         return 'INSERT INTO QuestionCode_Tag(questionID, tag) VALUES((SELECT id FROM QuestionCode WHERE id=%s), %s)'
@@ -449,11 +449,14 @@ def postRating():
 @app.route('/post_tag', methods=['POST'])
 def postTag():
     data = request.get_json()
-    tag = data['tag']
+    print(data)
+    tags = data['tags']
     question_id = data['question_id']
+
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.insertQuestionTag(), question_id, tag)
+    for tag in tags:
+        cursor.execute(Queries.insertQuestionTag(), (question_id, tag))
     conn.commit()
     cursor.close()
     return jsonify(0)
@@ -463,7 +466,8 @@ def getTag():
     question_id = request.args.get('question_id')
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.getQuestionTags(), question_id)
+    print(question_id)
+    cursor.execute(Queries.getQuestionTags(), (question_id))
     result = [x[0] for x in cursor.fetchall()]
     conn.commit()
     cursor.close()
