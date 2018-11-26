@@ -46,7 +46,7 @@ class Queries():
 
     @staticmethod
     def getAllQuestionTopComments():
-        return 'SELECT * FROM Comments WHERE Comments.id in (SELECT commentsID FROM QuestionCode_Comments WHERE questionID = %s) AND Comments.id in (SELECT commentsID FROM Comments_Comments)'
+        return 'SELECT * FROM Comments WHERE Comments.id in (SELECT commentsID FROM QuestionCode_Comments WHERE questionID = %s) AND Comments.id not in (SELECT secondaryCommentsID FROM Comments_Comments)'
     @staticmethod
     def getAllQuestionSecondLevelComments():
         return 'SELECT * FROM Comments WHERE Comments.id in (SELECT commentsID FROM QuestionCode_Comments WHERE questionID = %s) AND Comments.id in (SELECT secondaryCommentsID FROM Comments_Comments WHERE Comments_Comments.commentsID = %s)'
@@ -359,6 +359,25 @@ def getComments():
         print(first_level)
         return jsonify(first_level)
 
+@app.route('/update_comments', methods=['POST'])
+def upvoteComment():
+    data = request.get_json()
+    comment_id = data['comment_id']
+    value = data['value']
+    is_upvote = data['is_upvote']
+
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    if is_upvote == 1:
+        #upvoting
+        cursor.execute('UPDATE Comments SET upvoteNum=%s WHERE id=%s', (value, comment_id))
+    else:
+        cursor.execute('UPDATE Comments SET downvote=%s WHERE id=%s', (value, comment_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
+
 @app.route('/post_comments', methods=['POST'])
 def postComments():
     data = request.get_json()
@@ -375,16 +394,16 @@ def postComments():
         # insert into roadmap
         cursor.execute(Queries.insertIntoComments(), ('default', username, content, 0, 0))
         cursor.execute(Queries.getCommentID(), ('default', username, content))
-        comment_id = cursor.fetchone()[0]
+        comment_id = cursor.fetchone()
         cursor.execute(Queries.insertIntoRoadMap_Comments(), (question_id, comment_id))
-        if parent_comment_id == -1:
+        if parent_comment_id != -1:
             cursor.execute(Queries.insertIntoSubComments(), (parent_comment_id, comment_id))
     else:
         cursor.execute(Queries.insertIntoComments(), ('default', username, content, 0, 0))
         cursor.execute(Queries.getCommentID(), ('default', username, content))
-        comment_id = cursor.fetchone()[0]
+        comment_id = cursor.fetchone()
         cursor.execute(Queries.insertIntoQuestionCode_Comments(), (question_id, comment_id))
-        if parent_comment_id == -1:
+        if parent_comment_id != -1:
             cursor.execute(Queries.insertIntoSubComments(), (parent_comment_id, comment_id))
     conn.commit()
     cursor.close()
@@ -400,7 +419,7 @@ def getRating():
         cursor.execute(Queries.getRoadmapRating(), (question_id))
     else:
         cursor.execute(Queries.getQuestionRating(), (question_id))
-    result = cursor.fetchone()[0]
+    result = cursor.fetchone()
     cursor.close()
     if (result[0] == 0) :
         return jsonify(0)
@@ -417,12 +436,12 @@ def postRating():
     cursor = conn.cursor()
     if is_for_road_map == 0:
         cursor.execute(Queries.getQuestionRating(), (question_id))
-        result = cursor.fetchone()[0]
+        result = cursor.fetchone()
         print(question_id)
         cursor.execute(Queries.updateQuestionRating(), (result[0]+value, result[1]+1, question_id))
     else:
         cursor.execute(Queries.getRoadmapRating(), (question_id))
-        result = cursor.fetchone()[0]
+        result = cursor.fetchone()
         cursor.execute(Queries.updateRoadmapRating(), (result[0]+value, result[1]+1, question_id))
     cursor.close()
     return jsonify(0)
@@ -461,7 +480,7 @@ def postQuestion():
     cursor = conn.cursor()
 
     cursor.execute(Queries.getUserProfile(), (username))
-    result = cursor.fetchone()[0]
+    result = cursor.fetchone()
     cursor.execute(Queries.updateUserProfileuploadQuestionCount(), (result[7]+1, result[0]))
     cursor.execute(Queries.insertIntoQuestionCode(), (title, content, 'default', 0, 0, username))
     conn.commit()
@@ -479,7 +498,7 @@ def postTestcase():
     cursor = conn.cursor()
 
     cursor.execute(Queries.getUserProfile(), (username))
-    result = cursor.fetchone()[0]
+    result = cursor.fetchone()
     cursor.execute(Queries.updateUserProfileuploadTestCaseCount(), (result[8] + 1, result[0]))
     cursor.execute(Queries.insertTestcases(), (question_id, content))
     conn.commit()
@@ -494,7 +513,7 @@ def getAllRoadmaps():
     result = []
     for x in cursor.fetchall():
         cursor.execute('SELECT username FROM UserProfile WHERE id=%s', (x[4]))
-        username = cursor.fetchone()[0]
+        username = cursor.fetchone()
         cursor.execute(Queries.getAllRoadmapTopLevelComments(), (x[0]))
         first_level = [
             {'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]} for
@@ -554,20 +573,20 @@ def saveRoadMap():
     title = data['title']
     description = data['description']
     author = data['author']
-    graphData = data['graphData']
+    graphData = json.dumps(data['graphData'])
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute(Queries.insertRoadMap(), (description, graphData, title, author, 0, 0, 0, 0))
-    cursor.execute(Queries.getUserProfile(), author)
-    user_id = cursor.fetchone()[0]
+    # cursor.execute(Queries.getUserProfile(), author)
+    # user_id = cursor.fetchone()
     cursor.execute(Queries.getRoadMapID(), (description, graphData, title))
     roadmap_id = cursor.fetchone()[0]
-    cursor.execute(Queries.insertUserProfile_RoadMap(), (user_id, roadmap_id))
+    cursor.execute(Queries.insertUserProfile_RoadMap(), (author, roadmap_id))
     conn.commit()
     cursor.close()
     return jsonify('Success')
 
-@app.route('/get_user_roadmap', methods=['POST'])
+@app.route('/get_user_roadmap', methods=['GET'])
 def getAllUserFavs():
     username = request.args.get('username')
     conn = get_conn()
@@ -578,7 +597,7 @@ def getAllUserFavs():
         cursor.execute('SELECT * FROM RoadMap WHERE id=%s', (k[2]))
         x = cursor.fetchone()
         cursor.execute('SELECT username FROM UserProfile WHERE id=%s', (x[4]))
-        username = cursor.fetchone()[0]
+        username = cursor.fetchone()
         cursor.execute(Queries.getAllRoadmapTopLevelComments(), (x[0]))
         first_level = [{'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]} for y in cursor.fetchall()]
         for item in first_level:
@@ -647,6 +666,38 @@ def changeUserSetting():
     conn.commit()
     cursor.close()
     return jsonify(0)
+
+@app.route('/update_balance_and_items', methods=['POST'])
+def updateBalanceAndItems():
+    data = request.get_json()
+    username = data['username']
+    new_items = data['new_items']
+    new_balance = data['new_balance']
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    for new_item in new_items:
+        cursor.execute('INSERT INTO UserProfile_Items(userID, itemStr) VALUES((SELECT id FROM UserProfile WHERE username=%s), %s)', (username, new_item))
+    cursor.execute('UPDATE UserProfile SET eBucks=%s WHERE username=%s', (new_balance, username))
+    conn.commit()
+    cursor.close()
+    return jsonify('Success')
+
+@app.route('/check_valid_question_id', methods=['POST'])
+def checkValidQuestionID():
+    data = request.get_json()
+    question_id = data['question_id']
+
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT title FROM QuestionCode WHERE id=%s', (question_id))
+
+    result = cursor.fetchone()[0]
+    cursor.close()
+    if result is None:
+        return jsonify({'msg': 'Failed'})
+    return jsonify({'msg': 'Success', 'name': result})
 
 
 if __name__ == '__main__':
