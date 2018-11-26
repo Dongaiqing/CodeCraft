@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS QuestionCode (
   title VARCHAR(1000),
   article TEXT,
   answer TEXT,
-  rating INT,
+  totalRating INT,
+  numRating INT,
   author VARCHAR(1000)
 );
 
@@ -61,7 +62,9 @@ CREATE TABLE IF NOT EXISTS RoadMap (
   title VARCHAR(1000),
   userID INT,
   upvoteNum INT,
-  downvoteNum INT
+  downvoteNum INT,
+  totalRating INT,
+  numRating INT
 );
 
 CREATE TABLE IF NOT EXISTS Comments (
@@ -95,4 +98,11 @@ CREATE TABLE IF NOT EXISTS RoadMap_Comments(
   commentsID INT,
   FOREIGN KEY (roadmapID) REFERENCES RoadMap(id),
   FOREIGN KEY (commentsID) REFERENCES Comments(id)
+);
+
+CREATE TABLE IF NOT EXISTS QuestionCode_Testcases(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  questionID INT,
+  testcase TEXT,
+  FOREIGN KEY (questionID) REFERENCES QuestionCode(id),
 );
