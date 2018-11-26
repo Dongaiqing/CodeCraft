@@ -8,7 +8,7 @@ const get_friends_list_url = '';
 
 class UserProfile {
     constructor() {
-        this.id = '';
+        this.id = 0;
         this.username = '';
         this.userEmail = '';
         this.userNewPassword = '';

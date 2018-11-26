@@ -56,7 +56,7 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
     _this.state = {
-      loggedIn: true,
+      loggedIn: false,
       user: ''
     };
     return _this;
