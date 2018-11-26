@@ -103,6 +103,30 @@ class Queries():
     @staticmethod
     def insertTestcases():
         return 'INSERT INTO QuestionCode_Testcases(questionID, testcase) VALUES((SELECT id FROM QuestionCode WHERE id=%s), %s)'
+    @staticmethod
+    def getAllRoadmap():
+        return 'SELECT * FROM RoadMap'
+    @staticmethod
+    def updateRoadmapUpvote():
+        return 'UPDATE RoadMap SET upvoteNum=%s WHERE id=%s'
+    @staticmethod
+    def updateRoadmapDownvote():
+        return 'UPDATE RoadMap SET downvoteNum=%s WHERE id=%s'
+    @staticmethod
+    def insertUserProfile_RoadMap():
+        return 'INSERT INTO UserProfile_RoadMap(userID, roadmapID) VALUES((SELECT id FROM UserProfile WHERE id=%s), (SELECT id FROM RoadMap WHERE id=%s))'
+    @staticmethod
+    def deleteUserProfile_RoadMap():
+        return 'DELETE FROM UserProfile_RoadMap WHERE userID=%s AND roadmapsID=%s'
+    @staticmethod
+    def getAllUserProfile_RoadMap():
+        return 'SELECT * FROM UserProfile_RoadMap WHERE userID=%s'
+    @staticmethod
+    def insertRoadMap():
+        return 'INSERT INTO RoadMap(description, graphData, title, userID, upvoteNum, downvoteNum, totalRating, numRating) VALUES(%s,%s,%s,(SELECT id FROM UserProfile WHERE username=%s),%s,%s,%s,%s)'
+    @staticmethod
+    def getRoadMapID():
+        return 'SELECT id FROM RoadMap WHERE description=%s AND graphData=%s AND title=%s'
 
 @app.route('/')
 def index():
@@ -444,6 +468,92 @@ def postTestcase():
     cursor.close()
     return jsonify('Success')
 
+@app.route('/all_roadmap', methods=['GET'])
+def getAllRoadmaps():
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.getAllRoadmap())
+    result = cursor.fetchall()
+    cursor.close()
+    return jsonify(result)
+
+@app.route('/upvote_roadmap', methods=['POST'])
+def updateRoadmapUpvote():
+    data = request.get_json()
+    roadmap_id = data['roadmap_id']
+    value = data['value']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.updateRoadmapUpvote(), (value, roadmap_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
+
+@app.route('/downvote_roadmap', methods=['POST'])
+def updateRoadmapUpvote():
+    data = request.get_json()
+    roadmap_id = data['roadmap_id']
+    value = data['value']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.updateRoadmapDownvote(), (value, roadmap_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
+
+@app.route('/add_to_fav_roadmap', methods=['POST'])
+def addFavRoadmap():
+    data = request.get_json()
+    user_id = data['user_id']
+    roadmap_id = data['roadmap_id']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.insertUserProfile_RoadMap(), (user_id, roadmap_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
+
+@app.route('/save_user_roadmap', methods=['POST'])
+def saveRoadMap():
+    data = request.get_json()
+    title = data['title']
+    description = data['description']
+    author = data['author']
+    graphData = data['graphData']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.insertRoadMap(), (description, graphData, title, author, 0, 0, 0, 0))
+    cursor.execute(Queries.getUserProfile(), author)
+    user_id = cursor.fetchone()['id']
+    cursor.execute(Queries.getRoadMapID(), (description, graphData, title))
+    roadmap_id = cursor.fetchone()['id']
+    cursor.execute(Queries.insertUserProfile_RoadMap(), (user_id, roadmap_id))
+    conn.commit()
+    cursor.close()
+    return jsonify('Success')
+
+@app.route('/get_user_roadmap', methods=['POST'])
+def getAllUserFavs():
+    user_id = request.args.get('user_id')
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.getAllUserProfile_RoadMap(), (user_id))
+    result = cursor.fetchall()
+    conn.commit()
+    cursor.close()
+    return jsonify(result)
+
+@app.route('/delete_user_roadmap', methods=['POST'])
+def deleteUserFav():
+    data = request.get_json()
+    user_id = data['user_id']
+    roadmap_id = data['roadmap_id']
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(Queries.deleteUserProfile_RoadMap(), (user_id, roadmap_id))
+    conn.commit()
+    cursor.close()
+    return jsonify(0)
 
 if __name__ == '__main__':
     app.run()

@@ -64,7 +64,8 @@ CREATE TABLE IF NOT EXISTS RoadMap (
   upvoteNum INT,
   downvoteNum INT,
   totalRating INT,
-  numRating INT
+  numRating INT,
+  FOREIGN KEY (userID) REFERENCES UserProfile(id)
 );
 
 CREATE TABLE IF NOT EXISTS Comments (
@@ -104,5 +105,13 @@ CREATE TABLE IF NOT EXISTS QuestionCode_Testcases(
   id INT PRIMARY KEY AUTO_INCREMENT,
   questionID INT,
   testcase TEXT,
-  FOREIGN KEY (questionID) REFERENCES QuestionCode(id),
+  FOREIGN KEY (questionID) REFERENCES QuestionCode(id)
+);
+
+CREATE TABLE IF NOT EXISTS UserProfile_RoadMap(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  userID INT,
+  roadmapID INT,
+  FOREIGN KEY (userID) REFERENCES UserProfile(id),
+  FOREIGN KEY (roadmapID) REFERENCES RoadMap(id)
 );
