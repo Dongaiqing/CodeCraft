@@ -13,11 +13,11 @@ public class comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	private long firstlevelid;
-    private String imageSource;
+    private String imagesource;
     private String user;
     private String comment;
-    private int upvoteNum;
-    private int downvoteNum;
+    private int upvotenum;
+    private int downvotenum;
     @JoinTable(
             name = "comments",
             joinColumns = @JoinColumn(
@@ -32,10 +32,10 @@ public class comment {
     @ManyToMany
     private List<comment> comments;
 	public String getImagesource() {
-		return imageSource;
+		return imagesource;
 	}
 	public void setImagesource(String imagesource) {
-		this.imageSource = imagesource;
+		this.imagesource = imagesource;
 	}
 	public String getUser() {
 		return user;
@@ -50,16 +50,16 @@ public class comment {
 		this.comment = comment;
 	}
 	public int getUpvotenum() {
-		return upvoteNum;
+		return upvotenum;
 	}
 	public void setUpvotenum(int upvotenum) {
-		this.upvoteNum = upvotenum;
+		this.upvotenum = upvotenum;
 	}
 	public int getDownvotenum() {
-		return downvoteNum;
+		return downvotenum;
 	}
 	public void setDownvotenum(int downvotenum) {
-		this.downvoteNum = downvotenum;
+		this.downvotenum = downvotenum;
 	}
 	public List<comment> getComments() {
 		return comments;

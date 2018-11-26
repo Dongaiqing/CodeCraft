@@ -79,7 +79,6 @@ public class QuestionController {
 		    
 
 		    System.out.println("done reading file");
-		    code.setSource_code(data);
     		code.setResult(data);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -116,8 +115,7 @@ public class QuestionController {
         // Process the request
         // Prepare the response string
     	*/
-    	code.setSource_code("hello \n hello");
-    	code.setSource_code("hello \n hello");
+    	question_codeService.save(code);
         return code;    
     }
 }

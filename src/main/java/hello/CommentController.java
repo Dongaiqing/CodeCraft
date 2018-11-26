@@ -53,6 +53,8 @@ public class CommentController {
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     @ResponseBody
     public long pushcomment(@RequestBody comment comment) {
+    	System.out.println(comment.getImagesource());
+    	System.out.println(comment.getComment());
 		commentService.save(comment);
 		return 0;
     	
