@@ -7,9 +7,9 @@ import hello.model.user;
 public interface UserService {
     void save(user user);
 
-    user findById(int id);
+//    user findById(int id);
     
-    List<user> findByName(String name);
+    user findByName(String name);
     
-    long findQuantity(String name);
+//    long findQuantity(String name);
 }

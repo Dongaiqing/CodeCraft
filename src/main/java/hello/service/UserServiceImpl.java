@@ -24,19 +24,19 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-	@Override
-	public user findById(int id) {
-		return userDao.findById(id);
-	}
+//	@Override
+//	public user findById(int id) {
+//		return userDao.findById(id);
+//	}
 
 	@Override
-	public List<user> findByName(String name) {
+	public user findByName(String name) {
 		return userDao.findByName(name);
 	}
 
-	@Override
-	public long findQuantity(String name) {
-		
-		return userDao.findQuantity(name);
-	}
+//	@Override
+//	public long findQuantity(String name) {
+//
+//		return userDao.findQuantity(name);
+//	}
 }

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
-const user_profile_fetching_url = '';
+const user_profile_fetching_url = '/getProfile';
 const user_profile_updating_url = '';
-const get_friends_list_url = '';
+// const get_friends_list_url = '';
 // const user_profile_deleting_url = '';
 
 class UserProfile {

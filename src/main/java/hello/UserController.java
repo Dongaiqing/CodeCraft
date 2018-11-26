@@ -1,5 +1,7 @@
 package hello;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import util.RunCode;
 import util.SourceCode;
 
@@ -10,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,38 +33,55 @@ import hello.model.user;
 import hello.model.question_code;
 import hello.model.question_data;
 
+
 @Controller
 public class UserController {
 
-	@Autowired
+    @Autowired
     private UserService userService;
-	//
+
+    //
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseBody
-    public long  registration(@RequestBody user user) {
-    	
-        if(userService.findQuantity(user.getUsername())==0){
-        	userService.save(user);
-        }
-        else {
-        	return 0;
-        }
-        
-        List<user> temp=userService.findByName(user.getUsername());
+    public long registration(@RequestBody user user) {
 
-        return temp.get(0).getId();
+//        if (userService.findQuantity(user.getUsername()) == 0) {
+        userService.save(user);
+//        } else {
+//            return 0;
+//        }
+
+        user usr = userService.findByName(user.getUsername());
+
+        return usr == null ? 1 : 0;
     }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public long login(@RequestBody user user) {
-    	
-    	List<user> temp=userService.findByName(user.getUsername());
-	
+    public String login(@RequestBody user user) {
 
-    	return temp.get(0).getId();
+        user temp = userService.findByName(user.getUsername());
+
+        return temp.getUsername();
     }
 
+    @RequestMapping(value = "/getProfile", method = RequestMethod.POST)
+    public @ResponseBody JSONObject getUserProfile(
+                @RequestParam("name") String name) {
+        JSONObject response = new JSONObject();
+        user user = userService.findByName(name);
+        response.put("username", user.getUsername());
+        response.put("userEmail", user.getEmail());
+        response.put("userPicSource", user.getPicSource());
+        response.put("correctQuestionCount", user.getCorrectQuestionCount());
+        response.put("commentCount", user.getCommentCount());
+        response.put("uploadQuestionCount", user.getUploadQuestionCount());
+        response.put("uploadTestCaseCount", user.getUploadTestCaseCount());
+        response.put("eBucks", user.geteBucks());
+        response.put("level", user.getLevel());
+        JSONArray friends = new JSONArray();
+        response.put("friends", friends);
+
+        return response;
+    }
 }
-
-
-
