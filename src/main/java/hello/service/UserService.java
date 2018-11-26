@@ -1,11 +1,15 @@
 package hello.service;
 
-import hello.model.User;
+import java.util.List;
+
+import hello.model.user;
 
 public interface UserService {
-    void save(User user);
+    void save(user user);
 
-    User findById(int id);
+    user findById(int id);
     
-    User findByName(String name);
+    List<user> findByName(String name);
+    
+    long findQuantity(String name);
 }
