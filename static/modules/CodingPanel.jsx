@@ -3,6 +3,8 @@ import {Editor, staticSettings} from './coding_panel_modules/Editor';
 import {QuestionFeedbackPanel, QuestionDisplayPanel} from './coding_panel_modules/Question';
 import {Comment} from "./coding_panel_modules/Comment";
 import {Rating} from "./coding_panel_modules/Rating";
+import {UploadQuestion} from "./coding_panel_modules/Upload";
+import {UploadTestcase} from "./coding_panel_modules/Upload";
 
 export class CodingPanel extends Component {
     constructor(props) {
@@ -54,7 +56,9 @@ export class CodingPanel extends Component {
                 key={'CodingCommentSection'}
                 user={this.props.user}
                 question_id={this.state.current_question_id}
-            />
+            />,
+            <UploadQuestion user={this.props.user}/>,
+            <UploadTestcase user={this.props.user} question_id={this.state.current_question_id}/>
         ];
 
         // console.log(staticSettings.all_black_themes, this.state.editor_theme, staticSettings.all_black_themes.indexOf(this.state.editor_theme) === -1);

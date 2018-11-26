@@ -6,17 +6,9 @@ import 'brace/mode/html'
 import 'brace/mode/javascript'
 import 'brace/mode/python'
 import 'brace/mode/ruby'
-import 'brace/mode/mysql'
-import 'brace/mode/mysql'
-import 'brace/mode/sass'
 import 'brace/mode/markdown'
-import 'brace/mode/json'
-import 'brace/mode/html'
 // import 'brace/mode/go';
 import 'brace/mode/csharp'
-import 'brace/mode/elixir'
-import 'brace/mode/typescript'
-import 'brace/mode/css'
 
 import 'brace/theme/github'
 import 'brace/theme/xcode'
@@ -36,7 +28,7 @@ import 'brace/ext/language_tools';
 export const staticSettings = {
     get all_settings() {
         return {
-            language: ['javascript', 'java', 'python', 'xml', 'ruby', 'sass', 'markdown', 'mysql', 'json', 'html', 'c#', 'elixir', 'typescript', 'css'],
+            language: ['javascript', 'java', 'python', 'ruby', 'markdown', 'html', 'c#'],
             theme: ['github', 'monokai', 'tomorrow', 'kuroir', 'twilight', 'xcode', 'textmate', 'solarized_dark', 'solarized_light', 'terminal'],
             fontSize: {
                 min: 1,

@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const login_url = '/login';
 const register_url = '/registration';
-const successful_login_msg = '';
+const successful_login_msg = 0;
 
 class LoginStatus extends Component {
     constructor(props) {
@@ -18,13 +18,16 @@ class LoginStatus extends Component {
             email: this.props.status.email
         }).then((response) => {
             console.log('Post', response.data);
-            this.setState({feedback: response.data});
+
             this.props.updating_method('shouldSubmit', false);
 
             // if login succeeded
             if (response.data === successful_login_msg) {
                 this.props.updating_parent_method('loggedIn', true);
                 this.props.updating_parent_method('author', this.props.status.username);
+                this.setState({feedback: 'Successfully ' + this.props.status.isLogin ? 'Logged in!' : 'Registered!'});
+            } else {
+                this.setState({feedback: 'Failed to ' + this.props.status.isLogin ? 'Logged in!' : 'Registered!'});
             }
         }).catch((error) => {
             console.log(error);
@@ -62,7 +65,7 @@ class LoginForm extends Component {
                 <input type={'password'} id={password_id} value={this.props.status.password} name={'password'} onChange={(e) => this.updateInput(e)}/>
             </div>
             {register_email}
-            <button onClick={() => this.props.updating_method({'shouldSubmit': !this.props.status.shouldSubmit})}>Submit</button>
+            <button onClick={(e) => {e.preventDefault(); this.props.updating_method({'shouldSubmit': !this.props.status.shouldSubmit})}}>Submit</button>
         </form>
     }
 }
@@ -102,12 +105,9 @@ export class LoginPanel extends Component {
         if (this.props.loggedIn === false) {
             return (
                 <div>
-                    {(() => {
-                        if (this.state.shouldSubmit === true) {
-                            return (<LoginStatus status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}  updating_parent_method={(key_name, value) => this.props.updating_parent_method(key_name, value)}/>)
-                        }
-                        return (null)
-                    })()}
+                    {
+                        this.state.shouldSubmit ? (<LoginStatus status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}  updating_parent_method={(key_name, value) => this.props.updating_parent_method(key_name, value)}/>) : (null)
+                    }
                     <LoginForm loggedIn={this.props.loggedIn} status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}/>
                     <LoginToggleButton status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}/>
                 </div>
