@@ -3,11 +3,12 @@ package hello.service;
 
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hello.model.User;
+import hello.model.user;
 import hello.repository.UserDao;
 
 @Service
@@ -17,19 +18,25 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public void save(User user) {
+	public void save(user user) {
 		// TODO Auto-generated method stub
 		userDao.save(user);
 		
 	}
 
 	@Override
-	public User findById(int id) {
+	public user findById(int id) {
 		return userDao.findById(id);
 	}
 
 	@Override
-	public User findByName(String name) {
+	public List<user> findByName(String name) {
 		return userDao.findByName(name);
+	}
+
+	@Override
+	public long findQuantity(String name) {
+		
+		return userDao.findQuantity(name);
 	}
 }

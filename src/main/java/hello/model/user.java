@@ -5,15 +5,16 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class user {
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
     private String password;
     private String email;
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }
