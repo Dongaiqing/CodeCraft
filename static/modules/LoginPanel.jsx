@@ -8,7 +8,9 @@ const successful_login_msg = 0;
 class LoginStatus extends Component {
     constructor(props) {
         super(props);
-        this.state.feedback = '';
+        this.state = {
+            feedback: ''
+        };
         this.url = login_url;
     }
     componentDidMount() {
@@ -65,7 +67,7 @@ class LoginForm extends Component {
                 <input type={'password'} id={password_id} value={this.props.status.password} name={'password'} onChange={(e) => this.updateInput(e)}/>
             </div>
             {register_email}
-            <button onClick={(e) => {e.preventDefault(); this.props.updating_method({'shouldSubmit': !this.props.status.shouldSubmit})}}>Submit</button>
+            <button onClick={(e) => {e.preventDefault(); let prev_status = this.props.status.shouldSubmit; this.props.updating_method('shouldSubmit', !prev_status)}}>Submit</button>
         </form>
     }
 }

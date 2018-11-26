@@ -33,6 +33,7 @@ class FirstLevelCommentDataStructure {
 class SecondLevelCommentDataStructure {
     constructor() {
         this.id = 0;
+        this.imageSource = '';
         this.user = '';
         this.comment = '';
         this.upvoteNum = 0;
