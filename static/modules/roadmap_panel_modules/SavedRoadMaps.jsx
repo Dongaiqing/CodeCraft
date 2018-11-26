@@ -75,7 +75,6 @@ export class DisplaySavedRoadMaps extends Component {
         }
         return (
             <div>
-                <h2>Your saved roadmaps</h2>
                 <div>{arr}</div>
             </div>
         );

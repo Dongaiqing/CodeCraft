@@ -46,21 +46,23 @@ class RoadMapPopup extends Component {
         return (
             <Popup open={this.props.open} closeOnDocumentClick onClose={() => this.props.onClose()}>
                 <div>
-                    <RoadMapDraw data={profile.graphData}/>
+                    <div>
+                        <RoadMapDraw data={profile.graphData}/>
+                    </div>
+                    <div><h4>Name: {profile.name}</h4></div>
+                    <div><h4>Author: {profile.author}</h4></div>
+                    <div>
+                        <h4>Description</h4>
+                        <section>{profile.description}</section>
+                    </div>
+                    <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
+                    <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
+                    <div><Rating user={this.props.user} question_id={profile.id} for_road_map={true}/></div>
+                    {delete_button}
+                    {like_button}
+                    <div><Comment user={this.props.user} question_id={profile.id} for_road_map={true}/></div>
+                    <div><button onClick={() => this.props.onClose()}>Close</button></div>
                 </div>
-                <div><h4>Name: {profile.name}</h4></div>
-                <div><h4>Author: {profile.author}</h4></div>
-                <div>
-                    <h4>Description</h4>
-                    <section>{profile.description}</section>
-                </div>
-                <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
-                <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
-                <div><Rating user={this.props.user} question_id={profile.id} for_road_map={true}/></div>
-                {delete_button}
-                {like_button}
-                <div><Comment user={this.props.user} question_id={profile.id} for_road_map={true}/></div>
-                <div><button onClick={() => this.props.onClose()}>Close</button></div>
             </Popup>
         );
     }
@@ -89,7 +91,7 @@ export class RoadMapInfoCard extends Component {
         let user = this.props.user;
         return (
             <div>
-                <div onClick={() => this.setState({clicked: !this.state.clicked})}>
+                <div onClick={() => this.setState({clicked: true})}>
                     <div><h4>Name: {profile.name}</h4></div>
                     <div><h4>Author: {profile.author}</h4></div>
                     <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
@@ -106,7 +108,7 @@ export class RoadMapInfoCard extends Component {
                         user={user}
                         profile={profile}
                         open={this.state.clicked}
-                        onClose={() => this.setState({clicked: !this.state.clicked})}
+                        onClose={() => this.setState({clicked: false})}
                         updating_upvote={val => this.props.updating_upvote(profile.id, val)}
                         updating_downvote={val => this.props.updating_downvote(profile.id, val)}
                         delete_roadmap={() => this.props.delete_roadmap ? this.props.delete_roadmap(profile.id) : null}

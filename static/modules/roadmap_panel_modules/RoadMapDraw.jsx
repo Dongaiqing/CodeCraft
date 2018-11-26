@@ -12,8 +12,8 @@ import { LinearGradient } from '@vx/gradient';
 * */
 
 function Node({ node, events }) {
-    const width = 40;
-    const height = 20;
+    const width = 80;
+    const height = 40;
     return (
         <Group top={node.x} left={node.y}>
             {node.depth === 0 &&
@@ -60,6 +60,7 @@ function Link({ link }) {
             stroke="#374469"
             strokeWidth="1"
             fill="none"
+            distance={30}
         />
     );
 }
@@ -70,13 +71,13 @@ export class RoadMapDraw extends Component {
         // expected data structure: a json object with {name: 'id: Name', children: []}
         const data = hierarchy(raw_data);
         const config = {
-            width: '10em',
-            height: '5em',
+            width: 400,
+            height: 400,
             margin: {
-                top: '1em',
-                left: '1em',
-                bottom: '1em',
-                right: '1em'
+                top: 50,
+                left: 50,
+                bottom: 50,
+                right: 50
             }
         };
 
@@ -87,7 +88,7 @@ export class RoadMapDraw extends Component {
                     <rect
                         width={config.width}
                         height={config.height}
-                        rx={14}
+                        rx={25}
                         fill="#272b4d"
                     />
                     <Tree

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {RoadMapDraw} from "./RoadMapDraw";
 
-
+const check_id_url = '/check_valid_question_id';
+const check_id_success_msg = 'Success';
 const save_url = '/save_user_roadmap';
 const save_success_msg = 'Success';
 
@@ -13,7 +14,7 @@ export class CreateNewRoadMap extends Component {
         this.state = {
             title: '',
             description: '',
-            data: {name: '-1: entry'},
+            data: {name: '-1: entry', children: []},
             current_node_id: -1,
             current_parent_id: -1,
             is_successfully_added: true,
@@ -23,30 +24,32 @@ export class CreateNewRoadMap extends Component {
     }
 
     recursiveAdd(curr_obj, node_id, node_name, parent_id) {
-        for(let item of curr_obj) {
-            let id = item.name.replace(/(^\d+)(.+$)/i,'$1');
-            if (id === parent_id) {
-                if (!('children' in item)) {
-                    item.children = [];
-                }
-                item.children.push({name: node_id.toString()+' '+node_name});
-                return 'done';
+        let id = curr_obj.name.split(':')[0];
+        if (id === parent_id.toString()) {
+            if (!('children' in curr_obj)) {
+                item.children = [];
             }
-            if ('children' in item) {
-                return this.recursiveAdd(item.children, node_id, node_name, parent_id);
+            curr_obj.children.push({name: node_id.toString()+': '+node_name, children: []});
+
+            return 'done';
+        }
+        for(let item of curr_obj['children']) {
+            if (this.recursiveAdd(item, node_id, node_name, parent_id) === 'done') {
+                return 'done';
             }
         }
         return 'undone';
     }
 
-    recuriveFindName(curr_obj, node_id) {
-        for(let item of curr_obj) {
-            let id = item.name.replace(/(^\d+)(.+$)/i,'$1');
-            if (id === node_id) {
-                return item.name;
-            }
-            if ('children' in item) {
-                return this.recursiveAdd(item.children, node_id, node_name, parent_id);
+    recursiveFind(curr_obj, node_id) {
+        let id = curr_obj.name.split(':')[0];
+        if (id === curr_obj.toString()) {
+
+            return 'done';
+        }
+        for(let item of curr_obj['children']) {
+            if (this.recursiveAdd(item, node_id) === 'done') {
+                return 'done';
             }
         }
         return 'undone';
@@ -55,32 +58,34 @@ export class CreateNewRoadMap extends Component {
     addNoteToData() {
         let node_id = this.state.current_node_id;
         let parent_id = this.state.current_parent_id;
-        let sent_data = [];
-        if (parent_id === -1) {
-            sent_data.push(node_id);
-        } else {
-            sent_data.push(node_id, parent_id);
+        if (this.recursiveFind(parent_id) !== 'done') {
+            return;
         }
-        let node_name = this.recuriveFindName(this.state.data, node_id);
-        if (node_name !== 'undone') {
-            let prev_data = JSON.parse(JSON.stringify(this.state.data));
-            let result = this.recursiveAdd(prev_data, node_id, node_name, parent_id);
-            this.setState({data: prev_data, is_successfully_added: result === 'done'});
-        } else {
-            this.setState({is_successfully_added: false});
-        }
+        axios.post(check_id_url, {
+            question_id: node_id
+        }).then(response => {
+            if (response.data['msg'] === check_id_success_msg) {
+                let node_name = response.data['name'];
+                let prev_data = JSON.parse(JSON.stringify(this.state.data));
+                let result = this.recursiveAdd(prev_data, node_id, node_name, parent_id);
+                console.log(prev_data, node_id, node_name, parent_id);
+                this.setState({data: prev_data, is_successfully_added: result === 'done'});
+            } else {
+                this.setState({is_successfully_added: false});
+            }
+        })
     }
 
     recursiveDelete(curr_obj, node_id) {
-        for (let item of curr_obj) {
-            if ('children' in item) {
-                let children_arr = item.children.map(item => item.name.replace(/(^\d+)(.+$)/i,'$1'));
-                let index = children_arr.indexOf(node_id);
-                if (index !== -1) {
-                    item.children.splice(index, 1);
-                    return 'done';
-                }
-                return this.recursiveDelete(item.children, node_id);
+        let children_arr = curr_obj.children.map(item => item.name.split(':')[0]);
+        let index = children_arr.indexOf(node_id.toString());
+        if (index !== -1) {
+            curr_obj.children.splice(index, 1);
+            return 'done';
+        }
+        for (let item of curr_obj['children']) {
+            if (this.recursiveDelete(item, node_id) === 'done') {
+                return 'done';
             }
         }
         return 'undone';
@@ -88,14 +93,20 @@ export class CreateNewRoadMap extends Component {
 
     deleteNodeFromData() {
         let node_id = this.state.current_node_id;
-        let node_name = this.recuriveFindName(this.state.data, node_id);
-        if (node_name !== 'undone') {
-            let prev_data = JSON.parse(JSON.stringify(this.state.data));
-            let result = this.recursiveDelete(prev_data, node_id);
-            this.setState({data: prev_data, is_successfully_added: result === 'done'});
-        } else {
-            this.setState({is_successfully_added: false});
+        if (this.recursiveFind(node_id) !== 'done') {
+            return;
         }
+        axios.post(check_id_url, {
+            question_id: node_id
+        }).then(response => {
+            if (response.data.msg === check_id_success_msg) {
+                let prev_data = JSON.parse(JSON.stringify(this.state.data));
+                let result = this.recursiveDelete(prev_data, node_id);
+                this.setState({data: prev_data, is_successfully_added: result === 'done'});
+            } else {
+                this.setState({is_successfully_added: false});
+            }
+        })
     }
 
     saveDiagram() {

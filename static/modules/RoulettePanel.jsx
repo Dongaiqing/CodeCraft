@@ -6,16 +6,16 @@ const all_font_names = ["Roboto", "Open Sans", "Lato", "Montserrat", "Roboto Con
 
 const all_theme_names = ['bold', 'fluent', 'material'];
 
-const get_user_profile_url = '';
-const update_user_profile_url = '';
+const get_user_profile_url = '/get_user_profile';
+const update_user_profile_url = '/update_balance_and_items';
 
-const update_success_msg = '';
+const update_success_msg = 'Success';
 
 const theme_pool_entrance_limit = 100;
 const font_pool_entrance_limit = 10;
 
 const random_items = (arr, num) => {
-    return _.shuffle(arr).slice(0, num+1);
+    return _.shuffle(arr).slice(0, num);
 };
 
 class FontPool extends React.PureComponent {
@@ -24,13 +24,14 @@ class FontPool extends React.PureComponent {
         this.state = {
             showListclicked: false,
             is_1_clicked: false,
-            is_10_clicked: false
+            is_10_clicked: false,
+            items_chosen: []
         };
     }
 
     getCurrentPool() {
         let existing_items = new Set(this.props.existing_items);
-        return all_font_names.filter(item => !existing_items.has(item));
+        return all_font_names.filter(item => !(existing_items.has(item)));
     }
 
     handleButtonClick(is_1) {
@@ -84,13 +85,14 @@ class ThemePool extends React.PureComponent {
         this.state = {
             showListclicked: false,
             is_1_clicked: false,
-            is_10_clicked: false
+            is_10_clicked: false,
+            items_chosen: []
         };
     }
 
     getCurrentPool() {
         let existing_items = new Set(this.props.existing_items);
-        return all_theme_names.filter(item => !existing_items.has(item));
+        return all_theme_names.filter(item => !(existing_items.has(item)));
     }
 
     handleButtonClick(is_1) {
@@ -167,6 +169,7 @@ export class RoulettePanel extends Component{
                 username: user
             }
         }).then((response) => {
+            response.data.eBucks = 1000;
             this.setState({balance: response.data.eBucks, existing_items: response.data.items});
         })
     }
@@ -174,11 +177,17 @@ export class RoulettePanel extends Component{
     updateStorage(newItem, newBalance) {
         let user = this.props.user;
         axios.post(update_user_profile_url, {
-            // TODO: params
+            username: user,
+            new_items: newItem,
+            new_balance: newBalance
         }).then((response) => {
             if (response.data === update_success_msg) {
                 let prev_items = this.state.existing_items.slice();
-                prev_items.push(newItem);
+                if (Array.isArray(newItem)) {
+                    prev_items.extend(newItem);
+                } else {
+                    prev_items.push(newItem);
+                }
                 this.setState({existing_items: prev_items, balance: newBalance});
             }
         });
@@ -186,6 +195,7 @@ export class RoulettePanel extends Component{
 
     render() {
         let balance = this.state.balance;
+        console.log(balance);
         if (balance < font_pool_entrance_limit) {
             return (
                 <section><h3>Your balance is not enough!</h3></section>

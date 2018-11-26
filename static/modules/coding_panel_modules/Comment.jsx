@@ -7,6 +7,7 @@ import {faArrowUp, faArrowDown} from '@fortawesome/free-solid-svg-icons';
 
 const post_comments_url = '/post_comments';
 const get_comments_url = '/get_comments';
+const update_comments_url = '/update_comments';
 const num_comments = 10;
 /*
 * Expected data info:
@@ -227,45 +228,51 @@ export class Comment extends Component {
                 question_id: this.props.question_id
             }
         }).then((response) => {
-            console.log('Get all comments:', response.data);
-            if (Object.keys(response.data).length === 0) {
+            console.log('Get all comments:', response.data, Object.keys(response.data).length);
+            if (Object.keys(response.data).length > 0) {
                 this.setState({comments: response.data});
             }
         })
     }
 
     updatingVote(id, val, is_upvote) {
-        let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
-        let found = 0;
-        for (let first_lev_question of prev_comments) {
-            if (first_lev_question.id === id) {
-                if (is_upvote) {
-                    first_lev_question.upvoteNum = val;
-                } else {
-                    first_lev_question.downvoteNum = val;
-                }
-                found = 1;
-                break;
-            }
-
-            for (let second_lev_question of first_lev_question.secondaryComments) {
-                if (second_lev_question.id === id) {
+        axios.post(update_comments_url, {
+            comment_id: id,
+            value: val,
+            is_upvote: is_upvote === true ? 1 : 0
+        }).then(response => {
+            let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
+            let found = 0;
+            for (let first_lev_question of prev_comments) {
+                if (first_lev_question.id === id) {
                     if (is_upvote) {
-                        second_lev_question.upvoteNum = val;
+                        first_lev_question.upvoteNum = val;
                     } else {
-                        second_lev_question.downvoteNum = val;
+                        first_lev_question.downvoteNum = val;
                     }
                     found = 1;
                     break;
                 }
+
+                for (let second_lev_question of first_lev_question.secondaryComments) {
+                    if (second_lev_question.id === id) {
+                        if (is_upvote) {
+                            second_lev_question.upvoteNum = val;
+                        } else {
+                            second_lev_question.downvoteNum = val;
+                        }
+                        found = 1;
+                        break;
+                    }
+                }
+                if (found === 1) {
+                    break;
+                }
             }
-            if (found === 1) {
-                break;
-            }
-        }
-        this.setState({
-            comments: prev_comments
-        });
+            this.setState({
+                comments: prev_comments
+            });
+        })
     }
 
     navigatePage(is_nextpage) {
