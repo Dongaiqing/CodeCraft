@@ -22,10 +22,13 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void save(comment comment) {
 		// TODO Auto-generated method stub
-		List<comment> hello = new ArrayList<>();
-		hello.add(comment);
-		comment.setComments(hello);
 		commentDao.save(comment);
+		
+	}
+
+	@Override
+	public List<comment> findcomment(int id) {
+		return commentDao.findByid(id);
 		
 	}
 

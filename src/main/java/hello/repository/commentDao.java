@@ -16,12 +16,13 @@ public interface commentDao extends JpaRepository<comment, Long> {
 
 	
 	/*
-    @Query(value = "select u from user u where u.user_id = :user_id", nativeQuery=true)
+    @Query(value = "select u from comment u where u.user_id = :user_id", nativeQuery=true)
     user findById(@Param("user_id")int user_id);
-    
-    @Query(value = "select * from user u where u.username = :name", nativeQuery=true)
-    List<user> findByName(@Param("name")String name);
-    
+    */
+    @Query(value = "select * from comment u where u.id = :id", nativeQuery=true)
+    List<comment> findByid(@Param("id")int id);
+   
+    /*
     @Query(value = "select count(*) from user u where u.username = :name", nativeQuery=true)
     long findQuantity(@Param("name")String name);
     
