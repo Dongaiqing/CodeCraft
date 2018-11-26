@@ -1,4 +1,9 @@
 module.exports = {
+    module: {
+        rules: [
+            { test: /\.css$/, loader: "style-loader!css-loader" },
+        ]
+    },
     entry: "./index.js",
     output: {
         filename: "dist.js"
