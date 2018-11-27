@@ -197,7 +197,6 @@ export class RoulettePanel extends Component{
 
     render() {
         let balance = this.state.balance;
-        balance = 1000;
         if (balance < font_pool_entrance_limit) {
             return (
                 <section><h3>Your balance is not enough!</h3></section>
