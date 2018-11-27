@@ -79,7 +79,7 @@ class LoginToggleButton extends Component {
 
 class LogoutButton extends Component {
     render() {
-        return <button onClick={() => {this.props.updating_parent_method('loggedIn', false);}}>Log Out</button>;
+        return <button onClick={() => {this.props.updating_parent_method('loggedIn', false); window.location.reload();}}>Log Out</button>;
     }
 }
 
