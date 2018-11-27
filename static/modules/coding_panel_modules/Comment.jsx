@@ -4,6 +4,7 @@ import {stateToHTML} from 'draft-js-export-html';
 import {Editor as DraftEditor, EditorState as DraftEditorState, RichUtils as DraftRichUtils} from 'draft-js';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowUp, faArrowDown} from '@fortawesome/free-solid-svg-icons';
+import {faArrowRight} from "@fortawesome/free-solid-svg-icons/index";
 
 const post_comments_url = '/post_comments';
 const get_comments_url = '/get_comments';
@@ -112,10 +113,13 @@ class SecondLevelComment extends Component {
         let curr_comment = this.props.comment_ref;
         return (
             <div>
-                <div><h6>{curr_comment.user}</h6></div>
-                <div>
-                    <section>{curr_comment.comment}</section>
+                <div style={{display: 'flex', flexDirection: 'column'}}>
+                    <div style={{order: '1'}}><h6>{curr_comment.user}</h6></div>
+                    <div style={{order: '2'}}>
+                        <section>{curr_comment.comment}</section>
+                    </div>
                 </div>
+
                 <div>
                     <UpvoteDisplay num={curr_comment.upvoteNum}
                                    updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/>
@@ -168,10 +172,13 @@ class CommentEditor extends Component {
     render() {
         return (
             <div>
-                <DraftEditor editorState={this.state.editorState} readOnly={false}
-                             onChange={(editorState) => this.editorOnChangeHandler(editorState)} spellCheck={true}
-                             stripPastedStyles={true}
-                             handleKeyCommand={(command, editorState) => this.handleKeyboardCommand(command, editorState)}/>
+                <div style={{maxHeight: '80%', maxWidth: '100%', overflow: 'auto', border: '0.01em solid grey'}}>
+                    <DraftEditor editorState={this.state.editorState} readOnly={false}
+                                 onChange={(editorState) => this.editorOnChangeHandler(editorState)} spellCheck={true}
+                                 stripPastedStyles={true}
+                                 handleKeyCommand={(command, editorState) => this.handleKeyboardCommand(command, editorState)}/>
+
+                </div>
                 <button onClick={() => this.updateComment()}>Submit</button>
             </div>
         )
@@ -191,13 +198,17 @@ class FirstLevelComment extends Component {
         return (
             <div>
                 <div><UserInfo src={curr_comment.imageSource} user={curr_comment.user}/></div>
-                <div>
-                    <section>{curr_comment.comment}</section>
-                </div>
-                <div><UpvoteDisplay num={curr_comment.upvoteNum}
-                                    updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/></div>
-                <div><DownvoteDisplay num={curr_comment.downvoteNum}
-                                      updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/>
+                <div style={{display: 'flex', flexDirection: 'column'}}>
+                    <div style={{order: '1'}}>
+                        <section>{curr_comment.comment}</section>
+                    </div>
+                    <div style={{order: '2'}}>
+                        <div><UpvoteDisplay num={curr_comment.upvoteNum}
+                                            updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/></div>
+                        <div><DownvoteDisplay num={curr_comment.downvoteNum}
+                                              updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/>
+                        </div>
+                    </div>
                 </div>
                 <div>{secondary_comments}</div>
 
@@ -216,7 +227,8 @@ export class Comment extends Component {
         super(props);
         this.state = {
             comments: [],
-            pageNumber: 0
+            pageNumber: 0,
+            is_fold: true
         };
     }
 
@@ -347,13 +359,18 @@ export class Comment extends Component {
             }
         }
 
-        return (<section>
-            <div><CommentEditor for_road_map={this.props.is_for_road_map}
-                                updating_comment={(id, string) => this.insertComment(id, string, null)}
-                                current_user={this.props.user} current_question_id={this.props.question_id}/></div>
-            <div>{blocks}</div>
-            <button onClick={() => this.navigatePage(true)}>Next Page</button>
-            <button onClick={() => this.navigatePage(false)}>Previous Page</button>
+        return (<section className={'questionComments_content'}>
+            <h3>Show/Leave Comments {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
+            {this.state.is_fold ? (null) : (<div>
+                <div><CommentEditor for_road_map={this.props.is_for_road_map}
+                                    updating_comment={(id, string) => this.insertComment(id, string, null)}
+                                    current_user={this.props.user} current_question_id={this.props.question_id}/></div>
+                <div>{blocks}</div>
+                <div style={{width: '100%', textAlign: 'center'}}>
+                    <div style={{display: 'inline-block', marginRight: '1em'}}><button onClick={() => this.navigatePage(true)}>Next Page</button></div>
+                    <div style={{display: 'inline-block'}}><button onClick={() => this.navigatePage(false)}>Previous Page</button></div>
+                </div>
+            </div>)}
         </section>)
     }
 }

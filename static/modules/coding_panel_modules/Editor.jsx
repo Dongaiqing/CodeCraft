@@ -24,6 +24,9 @@ import 'brace/theme/solarized_light'
 import 'brace/snippets/html';
 import 'brace/ext/language_tools';
 
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
+
 
 export const staticSettings = {
     get all_settings() {
@@ -134,27 +137,26 @@ class EditorConfigItem extends Component {
 
 
 class EditorConfigPanel extends Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_fold: true
+        };
+    }
     render() {
         const settings = this.props.settings;
         const elements = [];
-        elements.push(<h3 key={'EditorConfigPanel_header'} style={{display: 'inline-block', marginBottom: '1em', color: 'white', background: '#D35400'}}>Editor Settings</h3>);
         for (const key in settings) {
             if (settings.hasOwnProperty(key)) {
                 // distinguish different types of keys
                 elements.push(<EditorConfigItem key={'EditorConfigItem'+'_'+key} key_name={key} value={settings[key]} updating_method={(key_name, value) => this.props.updating_method(key_name, value)}/>)
             }
         }
-        return <div
-            style={{
-                order: 2,
-                marginLeft: '1em',
-                paddingLeft: '1em',
-                borderLeft: '0.2em solid #D35400'
-            }}
+        return (<div
             className={'EditorConfigPanel'}>
-            {elements}
-            </div>;
+            <h3 key={'EditorConfigPanel_header'}>Editor Settings {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
+            {this.state.is_fold ? (null) : (<div>{elements}</div>)}
+            </div>);
     }
 }
 
@@ -213,10 +215,6 @@ export class Editor extends Component {
         const items = [
             <EditorConfigPanel key={'EditorConfigPanel'} settings={settings} updating_method={(key_name, value) => this.updateSettings(key_name, value)}/>,
             <AceEditor
-                style={{
-                        order: 1,
-                        width: '100%'
-                }}
                 key={'CoreEditor'}
                 name={'CoreEditor'}
                 mode={settings.language === 'c#' ? 'csharp':settings.language}
@@ -237,12 +235,7 @@ export class Editor extends Component {
             />
         ];
         return <div
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                order: 3,
-                marginLeft: '1em'
-            }}>
+            className={'questionEditor_content'}>
             {items}
             </div>
     }

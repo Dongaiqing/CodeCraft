@@ -57,7 +57,9 @@ export class DisplayAllRoadMaps extends Component {
             arr.push(<div><RoadMapInfoCard add_roadmap={id => this.addRoadMap(id)} profile={item} user={user} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/></div>);
         }
         return (
-            <div>{arr}</div>
+            <div className={'allRoadMaps_content'}>
+                <div className={'allRoadMaps_item'}>{arr}</div>
+            </div>
         );
     }
 }

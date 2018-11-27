@@ -1,0 +1,18 @@
+.roadMapPanel_content {
+  padding-left: 0.5em;
+  h2 {
+    margin-bottom: 1em;
+  }
+}
+
+.savedRoadMap_content, .allRoadMaps_content {
+  display: flex;
+  flex-direction: row;
+  max-width: 80%;
+  overflow-x: auto;
+
+  .savedRoadMap_item, .allRoadMaps_item {
+    width: 10em;
+    height: 10em;
+  }
+}

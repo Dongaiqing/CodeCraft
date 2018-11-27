@@ -125,7 +125,7 @@ class QuestionSubmitButton extends Component {
 class QuestionIDInput extends Component {
     render() {
         const items = [
-            <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'} style={{marginRight: '0.3em'}}>Put your question ID here!</label>,
+            <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'}>Here displays the question ID</label>,
             <input
                 key={'QuestionIDInput_input'}
                 type={'number'}
@@ -135,7 +135,7 @@ class QuestionIDInput extends Component {
                 onChange={(e) => this.props.updating_method('search_question_number', e.target.value)}
             />
         ];
-        return <div>{items}</div>;
+        return <div style={{marginTop: '1em'}}>{items}</div>;
     }
 }
 
@@ -143,7 +143,7 @@ class QuestionNameInput extends Component {
     render() {
         const key = 'QuestionNameInput';
         const items = [
-            <label key={key+'_label'} htmlFor={key} style={{marginRight: '0.3em'}}>Search your question here!</label>,
+            <label key={key+'_label'} htmlFor={key}>Search your question!</label>,
             <input
                 key={key+'_input'}
                 type={'text'}
@@ -249,18 +249,8 @@ export class QuestionDisplayPanel extends Component {
         if (state.current_content !== '' && state.should_send_request === false) {
             arr_elem.push(
                 <section
-                style={{
-                    marginBottom: '1em',
-                    paddingLeft: '0.5em',
-                    borderLeft: '0.3em solid #95A5A6',
-                    display: 'block'
-                }}
                 key={'QuestionDisplayPanel_section'}>
-                    <h2 style={{
-                        color: 'white',
-                        background: '#A6ACAF',
-                        display: 'inline-block'
-                    }}>
+                    <h2>
                         {this.props.current_question_id} - {this.props.current_question_name}
                     </h2>
                     <article style={{display: 'block'}}>
@@ -284,11 +274,8 @@ export class QuestionDisplayPanel extends Component {
         arr_elem.push(<QuestionIDInput key={'QuestionDisplayPanel_QuestionIDInput'} updating_method={(key, val) => this.updateState(key, val)} search_number={state.search_question_number}/>);
         arr_elem.push(<QuestionNameInput key={'QuestionDisplayPanel_QuestionNameInput'} updating_method={(key, val) => this.updateState(key, val)} search_name={state.search_question_name}/>);
         arr_elem.push(<QuestionGenerateButton key={'QuestionDisplayPanel_QuestionGenerateButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
-        return <div
-            style={{
-                margin: '1em',
-                order : 2
-            }}>
+        return <div className={'questionDisplayPanel_content'}>
+            <h3>Explore the questions!</h3>
             {arr_elem}
             </div>;
     }
@@ -313,12 +300,6 @@ export class QuestionFeedbackPanel extends Component {
         if (Object.keys(this.props.current_question_state).length > 0) {
             arr_elem.push(
                 <section
-                    style={{
-                        marginBottom: '1em',
-                        paddingLeft: '0.5em',
-                        borderLeft: '0.3em solid #1F618D',
-                        display: 'block'
-                    }}
                     key={'QuestionFeedbackPanel_section'}>
                         <h2 style={{
                             color: 'white',
@@ -349,10 +330,7 @@ export class QuestionFeedbackPanel extends Component {
         }
         arr_elem.push(<QuestionSubmitButton key={'QuestionFeedbackPanel_QuestionSubmitButton'} updating_method={(key, val) => this.updateState(key, val)}/>);
         return (<div
-            style={{
-                margin: '1em',
-                order: 4
-            }}>
+            className={'questionFeedbackPanel_content'}>
             {arr_elem}
             </div>);
     }

@@ -1,0 +1,38 @@
+
+form {
+  .form-group {
+    padding-bottom: 1em;
+  }
+  h2, h3, h4 {
+    font-weight: 600;
+    font-size: 1.5em;
+  }
+  input {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+  }
+}
+
+button {
+  width: 100%;
+  height: 2em;
+  margin-bottom: 1em;
+  border-radius: 0.3em;
+  background: white;
+  border: 0.2em solid #2E86C1;
+  &:hover {
+    color: white;
+    background: #2E86C1;
+    transition: all 0.1s ease;
+  }
+}
+
+.error_section {
+  padding-top: 0.5em;
+  margin-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  text-align: center;
+  border: 0.02em solid black;
+}

@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 
+import '../styles/LoginPanel.scss'
+
 const login_url = '/login';
 const register_url = '/registration';
 const successful_login_msg = 0;
@@ -36,7 +38,7 @@ class LoginStatus extends Component {
         if (this.state.feedback === '') {
             return (null);
         } else {
-            return <section>{this.state.feedback}</section>;
+            return <section className={'error_section'}>{this.state.feedback}</section>;
         }
     }
 }
@@ -103,17 +105,18 @@ export class LoginPanel extends Component {
     render() {
         if (this.props.loggedIn === false) {
             return (
-                <div>
+                <div className={this.props.className}>
+                    <LoginForm loggedIn={this.props.loggedIn} status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}/>
                     {
                         this.state.shouldSubmit ? (<LoginStatus status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}  updating_parent_method={(key_name, value) => this.props.updating_parent_method(key_name, value)}/>) : (null)
                     }
-                    <LoginForm loggedIn={this.props.loggedIn} status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}/>
                     <LoginToggleButton status={this.state} updating_method={(key_name, value) => this.updateState(key_name, value)}/>
                 </div>
             );
         } else {
             return (
-                <div>
+                <div className={this.props.className}>
+                    <h4>Welcome {this.state.username}</h4>
                     <LogoutButton updating_parent_method={(key_name, value) => this.props.updating_parent_method(key_name, value)}/>
                 </div>
             );

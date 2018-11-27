@@ -8,7 +8,7 @@ const rating_receiving_url = '/get_rating';
 class SubmitRating extends Component {
     render() {
         return (
-            <div>
+            <div className={'submitRating_content'}>
                 <h3>Submit your rating here!</h3>
                 <StarRatingComponent
                     name="Rating"
@@ -41,7 +41,7 @@ class DisplayRating extends Component {
     }
     render() {
         return (
-            <div>
+            <div className={'displayRating_content'}>
                 <StarRatingComponent
                     name="Rating"
                     starCount={5}

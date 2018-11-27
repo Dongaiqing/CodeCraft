@@ -20,6 +20,8 @@ var _RoadMapPanel = require("./modules/RoadMapPanel");
 
 var _Header = require("./modules/Header");
 
+require("./styles/index.scss");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -57,7 +59,8 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Main).call(this, props));
     _this.state = {
       loggedIn: false,
-      user: ''
+      user: '',
+      is_fold: false
     };
     return _this;
   }
@@ -72,22 +75,69 @@ function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      return _react.default.createElement("div", null, _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", null, _react.default.createElement("nav", null, _react.default.createElement(_LoginPanel.LoginPanel, {
+      return _react.default.createElement("div", {
+        style: {
+          height: '100%',
+          width: '100%'
+        }
+      }, _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement("div", {
+        className: 'index_main'
+      }, _react.default.createElement("nav", {
+        className: 'index_nav',
+        style: function () {
+          if (_this2.state.is_fold === true) {
+            return {
+              display: 'none'
+            };
+          } else {
+            return {
+              display: 'block'
+            };
+          }
+        }()
+      }, _react.default.createElement(_LoginPanel.LoginPanel, {
+        className: 'index_nav_login',
         loggedIn: this.state.loggedIn,
         updating_parent_method: function updating_parent_method(key, val) {
           return _this2.updateState(key, val);
         }
-      }), this.state.loggedIn ? _react.default.createElement("ul", null, _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+      }), this.state.loggedIn ? _react.default.createElement("ul", {
+        className: 'index_nav_menu'
+      }, _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/'
       }, "Home")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/coding'
       }, "Coding")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/roulette'
-      }, "Roulette")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
+      }, "Guessing Game")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/roadmap'
       }, "RoadMap")), _react.default.createElement("li", null, _react.default.createElement(_reactRouterDom.Link, {
         to: '/profile'
-      }, "Profile"))) : null), _react.default.createElement("div", null, _react.default.createElement(_Header.Header, null), _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+      }, "Profile"))) : null), _react.default.createElement(_Header.Header, {
+        style: function () {
+          if (_this2.state.is_fold === true) {
+            return {
+              gridColumn: 'span 6'
+            };
+          }
+        }(),
+        className: 'index_header',
+        is_fold: this.state.is_fold,
+        updating_method: function updating_method(val) {
+          return _this2.setState({
+            is_fold: val
+          });
+        }
+      }), _react.default.createElement("div", {
+        style: function () {
+          if (_this2.state.is_fold === true) {
+            return {
+              gridColumn: 'span 6'
+            };
+          }
+        }(),
+        className: 'index_content'
+      }, _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: '/',
         component: _HomePanel.HomePanel

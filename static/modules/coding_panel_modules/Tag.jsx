@@ -12,20 +12,14 @@ const similarity_threshold = 0.5;
 class SubmitTags extends Component {
     constructor(props) {
         super(props);
-        this.state.tagString = '';
+        this.state = {
+            tagString: ''
+        };
     }
 
     handleSubmit() {
-        let current_user = this.props.current_user;
-        let current_question_id = this.props.current_question_id;
-
-        axios.post(tag_submission_url, {
-            question_id: current_question_id,
-            tag: this.state.tagString
-        }).then((response) => {
-            this.props.updating_tags(this.state.tagString.split(','));
-            this.props.updating_display_tags();
-        })
+        this.props.updating_tags(this.state.tagString.split(',').map(item => item.trim()));
+        this.props.updating_display_tags();
     }
 
     render() {
@@ -49,34 +43,45 @@ class TagDataStructure {
 class DisplayTags extends Component {
     constructor(props) {
         super(props);
-        this.state.chartData = {};
+        this.state = {
+            chartData: {}
+        };
     }
 
     generateFrequency(data) {
-        let dict = data.map(item => {return {[item] : 1}});
-        let temp_array = data.splice();
+        let dict = {};
         for (let item of data) {
-            let index_array = [];
-            let index = 0;
-            for (let key of temp_array) {
-                if (stringSimilarity.compareTwoStrings(item, key) > similarity_threshold) {
-                    dict[item] += 1;
-                    index_array.push(index);
+            let find_flag = 0;
+            for (let key in dict) {
+                if (dict.hasOwnProperty(key)) {
+                    console.log(item, key);
+                    if (stringSimilarity.compareTwoStrings(item, key) > similarity_threshold) {
+                        dict[key] += 1;
+                        find_flag = 1;
+                        break;
+                    }
                 }
-                index += 1;
             }
-            for (let i of index_array) {
-                temp_array.splice(i, 1);
+            if (find_flag === 0) {
+                dict[item] = 1
             }
         }
-        return dict;
+        console.log(dict);
+        let arr = [];
+        for (let key in dict) {
+            if (dict.hasOwnProperty(key)) {
+                arr.push({tagName: key, tagFrequency: dict[key]})
+            }
+        }
+        return arr;
     }
     componentDidMount() {
-        let current_question_id = this.props.current_question_id;
+
+        let question_id = this.props.question_id;
 
         axios.get(tag_receiving_url, {
             params: {
-                question_id: current_question_id
+                question_id: question_id
             }
         }).then((response) => {
             console.log('Tag response is ', response.data);
@@ -86,9 +91,9 @@ class DisplayTags extends Component {
             let temp_data = raw_data.filter(item => item.tagFrequency / max_frequency >= frequenct_threshold);
             let random_color = temp_data.map(() => '#'+(Math.random()*0xFFFFFF<<0).toString(16));
             let chart_data = {
-                labels: Object.keys(temp_data),
+                labels: temp_data.map(item => item.tagName),
                 datasets: [{
-                    data: Object.values(temp_data),
+                    data: temp_data.map(item => item.tagFrequency),
                     backgroundColor: random_color,
                     hoverBackgroundColor: random_color
                 }]
@@ -114,13 +119,14 @@ export class Tag extends Component {
         };
     }
     updateTags(tags) {
-        this.setState({tags: tags});
+
         let user = this.props.user;
         let current_question_id = this.props.question_id;
         axios.post(tag_submission_url, {
-            // TODO: params here
+            question_id: current_question_id,
+            tags: tags
         }).then((response) => {
-            this.setState({is_display_tags: true});
+            this.setState({is_display_tags: true, tags: tags});
         })
     }
 

@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faMeteor } from '@fortawesome/free-solid-svg-icons';
 
+
+import "../styles/HomePanel.scss";
 
 class About extends Component {
     constructor(props) {
@@ -12,7 +14,7 @@ class About extends Component {
     }
     render() {
         return <div>
-            <FontAwesomeIcon icon={faHeart} className={'About'} onClick={() => {let prev_toggled = this.state.toggled; this.setState({toggled: !prev_toggled});}}/>
+            <h4><FontAwesomeIcon icon={faMeteor} className={'About'} onClick={() => {let prev_toggled = this.state.toggled; this.setState({toggled: !prev_toggled});}}/></h4>
             {this.state.toggled ? (<section>😋</section>) : (null)}
         </div>
     }

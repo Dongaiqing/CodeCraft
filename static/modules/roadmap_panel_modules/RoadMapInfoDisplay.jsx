@@ -45,18 +45,22 @@ class RoadMapPopup extends Component {
         }
         return (
             <Popup open={this.props.open} closeOnDocumentClick onClose={() => this.props.onClose()}>
-                <div>
+                <div style={{maxHeight: '70%', overflowY:'auto'}}>
                     <div>
                         <RoadMapDraw data={profile.graphData}/>
                     </div>
                     <div><h4>Name: {profile.name}</h4></div>
                     <div><h4>Author: {profile.author}</h4></div>
-                    <div>
-                        <h4>Description</h4>
-                        <section>{profile.description}</section>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        <div style={{order: '1'}}>
+                            <h4>Description</h4>
+                            <section>{profile.description}</section>
+                        </div>
+                        <div style={{order: '2'}}>
+                            <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
+                            <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
+                        </div>
                     </div>
-                    <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
-                    <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
                     <div><Rating user={this.props.user} question_id={profile.id} for_road_map={true}/></div>
                     {delete_button}
                     {like_button}

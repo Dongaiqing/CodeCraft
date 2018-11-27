@@ -74,8 +74,8 @@ export class DisplaySavedRoadMaps extends Component {
             arr.push(<RoadMapInfoCard profile={data} user={user} delete_roadmap={id => this.deleteRoadMap(id)} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/>);
         }
         return (
-            <div>
-                <div>{arr}</div>
+            <div className={'savedRoadMap_content'}>
+                <div className={'savedRoadMap_item'}>{arr}</div>
             </div>
         );
     }

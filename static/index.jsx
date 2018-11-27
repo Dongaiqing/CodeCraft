@@ -9,12 +9,16 @@ import { RoulettePanel } from "./modules/RoulettePanel";
 import { RoadMapPanel } from "./modules/RoadMapPanel";
 import {Header} from "./modules/Header";
 
+import "./styles/index.scss";
+
+
 class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loggedIn: false,
-            user: ''
+            user: '',
+            is_fold: false
         };
     }
 
@@ -25,13 +29,19 @@ class Main extends Component {
     }
     render() {
         return (
-            <div>
+            <div style={{height: '100%', width:'100%'}}>
                 <Router>
-                    <div>
-                        <nav>
-                            <LoginPanel loggedIn={this.state.loggedIn} updating_parent_method={(key, val) => this.updateState(key, val)}/>
+                    <div className={'index_main'}>
+                        <nav className={'index_nav'} style={(() => {
+                            if (this.state.is_fold === true) {
+                                return {display: 'none'}
+                            } else {
+                                return {display: 'block'}
+                            }
+                        })()}>
+                            <LoginPanel className={'index_nav_login'} loggedIn={this.state.loggedIn} updating_parent_method={(key, val) => this.updateState(key, val)}/>
                             {this.state.loggedIn? (
-                            <ul>
+                            <ul className={'index_nav_menu'}>
                                 <li>
                                     <Link to={'/'}>Home</Link>
                                 </li>
@@ -39,7 +49,7 @@ class Main extends Component {
                                     <Link to={'/coding'}>Coding</Link>
                                 </li>
                                 <li>
-                                    <Link to={'/roulette'}>Roulette</Link>
+                                    <Link to={'/roulette'}>Guessing Game</Link>
                                 </li>
                                 <li>
                                     <Link to={'/roadmap'}>RoadMap</Link>
@@ -50,8 +60,16 @@ class Main extends Component {
                             </ul>) : (null)}
                         </nav>
 
-                        <div>
-                            <Header/>
+                        <Header style={(() => {
+                            if (this.state.is_fold === true) {
+                                return {gridColumn: 'span 6'}
+                            }
+                        })()} className={'index_header'} is_fold={this.state.is_fold} updating_method={val => this.setState({is_fold: val})}/>
+                        <div style={(() => {
+                            if (this.state.is_fold === true) {
+                                return {gridColumn: 'span 6'}
+                            }
+                        })()} className={'index_content'}>
                             <Switch>
                                 <Route exact path={'/'} component={HomePanel}/>
                                 <Route path={'/coding'} render={() => <CodingPanel user={this.state.user}/>}/>
