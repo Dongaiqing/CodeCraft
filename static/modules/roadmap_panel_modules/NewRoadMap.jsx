@@ -3,10 +3,8 @@ import axios from 'axios';
 import {RoadMapDraw} from "./RoadMapDraw";
 
 
-const check_id_url = '';
-const save_url = '';
-const check_id_success_msg = '';
-const save_success_msg = '';
+const save_url = '/save_user_roadmap';
+const save_success_msg = 'Success';
 
 export class CreateNewRoadMap extends Component {
     constructor(props) {
@@ -15,7 +13,6 @@ export class CreateNewRoadMap extends Component {
         this.state = {
             title: '',
             description: '',
-            author: this.props.user,
             data: {name: '-1: entry'},
             current_node_id: -1,
             current_parent_id: -1,
@@ -42,6 +39,19 @@ export class CreateNewRoadMap extends Component {
         return 'undone';
     }
 
+    recuriveFindName(curr_obj, node_id) {
+        for(let item of curr_obj) {
+            let id = item.name.replace(/(^\d+)(.+$)/i,'$1');
+            if (id === node_id) {
+                return item.name;
+            }
+            if ('children' in item) {
+                return this.recursiveAdd(item.children, node_id, node_name, parent_id);
+            }
+        }
+        return 'undone';
+    }
+
     addNoteToData() {
         let node_id = this.state.current_node_id;
         let parent_id = this.state.current_parent_id;
@@ -51,18 +61,14 @@ export class CreateNewRoadMap extends Component {
         } else {
             sent_data.push(node_id, parent_id);
         }
-        axios.post(check_id_url, {
-            // TODO: params
-        }).then(response => {
-            if (response.data.msg === check_id_success_msg) {
-                let node_name = response.data[node_id];
-                let prev_data = JSON.parse(JSON.stringify(this.state.data));
-                let result = this.recursiveAdd(prev_data, node_id, node_name, parent_id);
-                this.setState({data: prev_data, is_successfully_added: result === 'done'});
-            } else {
-                this.setState({is_successfully_added: false});
-            }
-        })
+        let node_name = this.recuriveFindName(this.state.data, node_id);
+        if (node_name !== 'undone') {
+            let prev_data = JSON.parse(JSON.stringify(this.state.data));
+            let result = this.recursiveAdd(prev_data, node_id, node_name, parent_id);
+            this.setState({data: prev_data, is_successfully_added: result === 'done'});
+        } else {
+            this.setState({is_successfully_added: false});
+        }
     }
 
     recursiveDelete(curr_obj, node_id) {
@@ -82,23 +88,22 @@ export class CreateNewRoadMap extends Component {
 
     deleteNodeFromData() {
         let node_id = this.state.current_node_id;
-        let sent_data = [node_id];
-        axios.post(check_id_url, {
-            // TODO: params
-        }).then(response => {
-            if (response.data.msg === check_id_success_msg) {
-                let prev_data = JSON.parse(JSON.stringify(this.state.data));
-                let result = this.recursiveDelete(prev_data, node_id);
-                this.setState({data: prev_data, is_successfully_added: result === 'done'});
-            } else {
-                this.setState({is_successfully_added: false});
-            }
-        })
+        let node_name = this.recuriveFindName(this.state.data, node_id);
+        if (node_name !== 'undone') {
+            let prev_data = JSON.parse(JSON.stringify(this.state.data));
+            let result = this.recursiveDelete(prev_data, node_id);
+            this.setState({data: prev_data, is_successfully_added: result === 'done'});
+        } else {
+            this.setState({is_successfully_added: false});
+        }
     }
 
     saveDiagram() {
         axios.post(save_url, {
-            // TODO: params
+            title: this.state.title,
+            description: this.state.description,
+            author: this.props.user,
+            graphData: this.state.data
         }).then(response => {
             this.setState({is_successfully_saved: response.data === save_success_msg});
         })

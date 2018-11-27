@@ -45,24 +45,27 @@ public class UserController {
     @ResponseBody
     public long registration(@RequestBody user user) {
 
+        user usr = userService.findByName(user.getUsername());
+        if (usr == null) {
+            return 0;
+        } else {
+            userService.save(user);
+            return 1;
+        }
 //        if (userService.findQuantity(user.getUsername()) == 0) {
-        userService.save(user);
+//        userService.save(user);
 //        } else {
 //            return 0;
 //        }
-
-        user usr = userService.findByName(user.getUsername());
-
-        return usr == null ? 1 : 0;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public String login(@RequestBody user user) {
+    public int login(@RequestBody user user) {
 
         user temp = userService.findByName(user.getUsername());
 
-        return temp.getUsername();
+        return temp.getUsername() == null ? 1 : 0;
     }
 
     @RequestMapping(value = "/getProfile", method = RequestMethod.POST)

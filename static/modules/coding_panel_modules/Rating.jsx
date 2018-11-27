@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import StarRatingComponent from 'react-star-rating-component';
 
-const rating_submission_url = '';
-const rating_receiving_url = '';
+const rating_submission_url = '/post_rating';
+const rating_receiving_url = '/get_rating';
 
 class SubmitRating extends Component {
     render() {
@@ -24,14 +24,16 @@ class SubmitRating extends Component {
 class DisplayRating extends Component {
     constructor(props) {
         super(props);
-        this.state.ratings = 0;
+        this.state = {
+            ratings: 0
+        };
     }
     componentDidMount() {
-        let is_for_road_map = this.props.for_road_map;
+        let is_for_road_map = this.props.for_road_map === true ? 1 : 0;
         axios.get(rating_receiving_url, {
             params: {
-                // TODO: params
-                id: this.props.question_id
+                question_id: this.props.question_id,
+                is_for_road_map: is_for_road_map
             }
         }).then((response) => {
             this.setState({ratings: response.data});
@@ -63,9 +65,12 @@ export class Rating extends Component {
         this.setState({rating: nextValue});
         let user = this.props.user;
         let current_question_id = this.props.question_id;
-        let is_for_road_map = this.props.for_road_map;
+        let is_for_road_map = this.props.for_road_map === true ? 1: 0;
+        console.log('is_for_road_map', is_for_road_map)
         axios.post(rating_submission_url, {
-            // TODO: params here
+            question_id: current_question_id,
+            is_for_road_map: is_for_road_map,
+            value: nextValue
         }).then((response) => {
             this.setState({is_display_rating: true});
         })
