@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC');
+
+html, body {
+  height: 100vh;
+  width: 100 wh;
+  padding: 0;
+  margin: 0;
+  font-family: 'Noto Sans TC', Helvetica, sans-serif;
+}
+
+#reactdom {
+  width: 100%;
+  height: 100%;
+}
+
+.index_main {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas: "s h h h h h" "s m m m m m" "s m m m m m" "s m m m m m" "s m m m m m" "s m m m m m";
+}
+
+.index_nav {
+  grid-area: s;
+  overflow: auto;
+  transition: all 1s;
+
+  display: flex;
+  flex-direction: column;
+
+  position: sticky;
+  top: 0;
+
+  padding-left: 1em;
+  padding-right: 1em;
+
+  box-shadow: 0.1em 0 0.5em lightslategrey;
+
+  .index_nav_login {
+    padding-bottom: 1em;
+    border-bottom: 0.1em solid #2E86C1;
+  }
+  .index_nav_menu {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+
+    li {
+      padding-bottom: 1em;
+    }
+    a {
+      color: inherit;
+      text-decoration: inherit;
+      &:hover {
+        border-bottom: 0.1em solid #2E86C1;
+        transition: all 0.1s ease;
+      }
+    }
+  }
+}
+
+.index_header {
+  grid-area: h;
+  position: sticky;
+  top: 0;
+  padding-left: 1.5em;
+}
+
+.index_content {
+  grid-area: m;
+  padding-left: 1em;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-right: 1em;
+}

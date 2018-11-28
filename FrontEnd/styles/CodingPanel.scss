@@ -1,0 +1,52 @@
+.codingpanel_content {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-left: 0.5em;
+
+  button {
+    max-width: 80%;
+    margin: 0.5em 0;
+  }
+
+  .questionDisplayPanel_content {
+    order: 1;
+    h2, h3, h4 {
+      padding-bottom: 1em;
+    }
+    label {
+      margin-right: 0.5em;
+    }
+    input {
+      border-top: 0;
+      border-right: 0;
+      border-left: 0;
+    }
+    margin-bottom: 1.5em;
+  }
+  .questionMeta_content {
+    order: 2;
+    margin-bottom: 1.5em;
+  }
+  .questionEditor_content {
+    order: 3;
+    margin-bottom: 1.5em;
+  }
+  .questionFeedbackPanel_content {
+    order: 4;
+    margin-bottom: 1.5em;
+  }
+  .questionComments_content {
+    order: 5;
+    margin-bottom: 1.5em;
+  }
+  .uploadTestcase_content {
+    order: 6;
+    margin-bottom: 1.5em;
+  }
+  .uploadQuestion_content {
+    order: 7;
+    margin-bottom: 1.5em;
+  }
+}
