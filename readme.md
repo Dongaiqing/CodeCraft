@@ -1,2 +1,2 @@
 # Run Project
-run `./manage.sh`
+run `./manage.sh DatabaseUsername DatabasePassword`
