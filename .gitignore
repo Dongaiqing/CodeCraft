@@ -1,0 +1,11 @@
+
+.DS_Store
+target/
+.classpath
+.project
+.settings/
+.vscode/
+java_test/
+.idea/
+bin/
+
