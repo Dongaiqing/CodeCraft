@@ -2,6 +2,7 @@ from flask import Flask, g, request, jsonify, url_for, redirect
 from flaskext.mysql import MySQL
 import os, json, subprocess
 from pyModules.Queries import Queries
+from pyModules.executeCode import exeucteCode
 
 
 app = Flask(__name__)
@@ -89,7 +90,7 @@ def receiveResponse():
         failed['content'] = 'You have input invalid information'
         return jsonify(failed)
     language_pool = {
-        'ruby': 'rb',
+        'ruby': 'ruby',
         'javascript': 'node',
         'python': 'python3',
         'java': 'javac'
@@ -118,25 +119,25 @@ def receiveResponse():
         def execute_code():
             temp_filename = 'temp' + username + str(question_id)
             temp_outputname = 'out' + username + str(question_id)
-            if executable == 'rb':
+            if executable == 'ruby':
                 complete_filename = temp_filename + '.rb'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'python3':
                 complete_filename = temp_filename + '.py'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'node':
                 complete_filename = temp_filename + '.js'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
                 #os.remove(temp_outputname)
                 return result
