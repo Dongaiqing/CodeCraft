@@ -33,6 +33,7 @@
     "draft-js-utils": "^1.2.0",
     "lodash": "^4.17.11",
     "node-sass": "^4.10.0",
+    "node-sass-utils": "^1.1.2",
     "react": "^16.6.3",
     "react-ace": "^6.2.0",
     "react-chartjs-2": "^2.7.4",

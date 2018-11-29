@@ -1,13 +1,8 @@
 import React, {Component, lazy, Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
-// import { CodingPanel } from "./modules/CodingPanel";
 import LoginPanel from "./modules/LoginPanel";
 import Header from "./modules/Header";
-// import { HomePanel } from "./modules/HomePanel";
-// import { ProfilePanel } from "./modules/ProfilePanel";
-// import { RoulettePanel } from "./modules/RoulettePanel";
-// import { RoadMapPanel } from "./modules/RoadMapPanel";
 
 const CodingPanel = lazy(() => import('./modules/CodingPanel'));
 const HomePanel = lazy(() => import('./modules/HomePanel'));

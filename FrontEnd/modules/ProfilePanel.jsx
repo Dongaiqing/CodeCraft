@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 const user_profile_fetching_url = '/get_user_profile';
 const user_profile_updating_url = '/change_user_settings';
@@ -82,14 +84,20 @@ class FriendsInfoItem extends Component {
 }
 
 class FriendsInfo extends Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_fold: true
+        }
+    }
     render() {
         let arr = [];
         for (let friend of this.props.profile.friends) {
             arr.push(<li><FriendsInfoItem username={friend}/></li>);
         }
         return (
-            <div>
+            <div className={'FriendsInfo_content'}>
+                <h3>Friends  {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
                 <ul>{arr}</ul>
             </div>
         );
@@ -97,27 +105,34 @@ class FriendsInfo extends Component {
 }
 
 class ItemsInfo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_fold: true
+        }
+    }
     render() {
         let profile = this.props.profile;
         let arr = [];
         for (let item of profile.items) {
-            arr.push(<p>{item}</p>);
+            arr.push(<li>{item}</li>);
         }
         return (
-            <div>
-                <div>
+            <div className={'ContentsInfo_content'}>
+                <h3>Achievements {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
+                <div className={'ContentsInfo_block'}>
                     <h4>You have eBucks left:</h4>
                     <p>${profile.eBucks}</p>
                 </div>
                 {
                     profile.items.length > 0 ? (
-                        <div>
+                        <div className={'ContentsInfo_block'}>
                             <h4>You have unlocked those items:</h4>
-                            <div>{arr}</div>
+                            <ul>{arr}</ul>
                         </div>
                     ) : (null)
                 }
-                <div>
+                <div className={'ContentsInfo_block'}>
                     <h4>Your are currently at level:</h4>
                     <p>{profile.level}</p>
                 </div>
@@ -127,23 +142,30 @@ class ItemsInfo extends Component {
 }
 
 class CountsInfo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_fold: true
+        }
+    }
     render() {
         let profile = this.props.profile;
         return (
-            <div>
-                <div>
+            <div className={'CountsInfo_content'}>
+                <h3>Statistics {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
+                <div className={'CountsInfo_block'}>
                     <h4>You have correctly answered questions:</h4>
                     <p>{profile.correctQuestionCount}</p>
                 </div>
-                <div>
+                <div className={'CountsInfo_block'}>
                     <h4>You have made comments:</h4>
                     <p>{profile.commentCount}</p>
                 </div>
-                <div>
+                <div className={'CountsInfo_block'}>
                     <h4>You have uploaded questions:</h4>
                     <p>{profile.uploadQuestionCount}</p>
                 </div>
-                <div>
+                <div className={'CountsInfo_block'}>
                     <h4>You have submitted testcases:</h4>
                     <p>{profile.uploadTestCaseCount}</p>
                 </div>
@@ -195,7 +217,10 @@ class UserBasicInfo extends Component {
             arr.push(<button onClick={() => this.handleSettingSubmit()}>Submit</button>);
         }
         return (
-            <div>{arr}</div>
+            <div className={'UserBasicInfo_content'}>
+                <h2>Profile</h2>
+                <div>{arr}</div>
+            </div>
         );
     }
 }
@@ -228,7 +253,7 @@ export default class ProfilePanel extends Component{
     render() {
         let user = this.props.user;
         return (
-            <div>
+            <div className={'ProfilePanel_content'}>
                 <UserBasicInfo profile={this.state.user_profile} updating_email={val => this.updatingEmail(val)}/>
                 <CountsInfo profile={this.state.user_profile}/>
                 <ItemsInfo profile={this.state.user_profile}/>

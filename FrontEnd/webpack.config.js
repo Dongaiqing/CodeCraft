@@ -1,12 +1,15 @@
 const path = require('path');
+const sass = require("node-sass");
+const sassUtils = sassUtils = require("node-sass-utils")(sass);
+const Variables = require(__dirname + "/styles/variables.js");
 module.exports = {
     module: {
         rules: [{
             test: /\.scss$/,
             use: [
-                "style-loader", // creates style nodes from JS strings
-                "css-loader", // translates CSS into CommonJS
-                "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                {loader: "style-loader"},
+                {loader: "css-loader"},
+                {loader: "sass-loader"}
             ]
         }]
     },
