@@ -22,10 +22,8 @@ def index():
 
 @app.route('/js/<filename>')
 def index_js(filename):
-    if 'gzip' in request.headers.get('Accept-Encoding'):
-        return app.send_static_file('js/'+filename+'.js.gz')
-    else:
-        return app.send_static_file('js/'+filename+'.js')
+    return app.send_static_file('js/' + filename + '.js')
+
 
 
 def get_conn():
