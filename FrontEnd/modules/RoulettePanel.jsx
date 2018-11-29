@@ -157,7 +157,7 @@ class EBucksDisplay extends Component {
     }
 }
 
-export class RoulettePanel extends Component{
+export default class RoulettePanel extends Component{
     constructor(props) {
         super(props);
         this.state = {

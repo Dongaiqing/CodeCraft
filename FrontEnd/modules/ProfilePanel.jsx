@@ -200,7 +200,7 @@ class UserBasicInfo extends Component {
     }
 }
 
-export class ProfilePanel extends Component{
+export default class ProfilePanel extends Component{
     constructor(props) {
         super(props);
         this.state = {

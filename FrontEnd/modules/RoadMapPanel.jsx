@@ -10,7 +10,7 @@ import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 const road_map_add_url = '';
 
 
-export class RoadMapPanel extends Component {
+export default class RoadMapPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {

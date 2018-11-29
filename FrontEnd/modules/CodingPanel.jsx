@@ -4,10 +4,9 @@ import {QuestionFeedbackPanel, QuestionDisplayPanel} from './coding_panel_module
 import {Comment} from "./coding_panel_modules/Comment";
 import {Rating} from "./coding_panel_modules/Rating";
 import {UploadQuestion} from "./coding_panel_modules/Upload";
-import {UploadTestcase} from "./coding_panel_modules/Upload";
 import {Tag} from "./coding_panel_modules/Tag";
 
-export class CodingPanel extends Component {
+export default class CodingPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -78,10 +77,6 @@ export class CodingPanel extends Component {
                     />)
                 }
                 <UploadQuestion key={'CodingUploadQuestion'} user={this.props.user}/>
-                <UploadTestcase key={'CodingUploadTestcase'} user={this.props.user}
-                                question_id={this.state.current_question_id}/>
             </div>);
-
-
     }
 }

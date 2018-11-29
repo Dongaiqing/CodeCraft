@@ -12,8 +12,10 @@ module.exports = {
     },
     entry: "./index.js",
     output: {
-        path: path.resolve(__dirname, '../static'),
-        filename: "dist.js"
+        path: path.resolve(__dirname, '../static/js'),
+        publicPath: '/static/js/',
+        filename: "[name].bundle.js",
+        chunkFilename: '[name].bundle.js'
     },
     watch: true,
     mode: 'development',

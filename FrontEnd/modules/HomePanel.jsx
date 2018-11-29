@@ -20,7 +20,7 @@ class About extends Component {
     }
 }
 
-export class HomePanel extends Component{
+export default class HomePanel extends Component{
     render() {
         return (
             <article>

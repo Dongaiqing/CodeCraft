@@ -4,7 +4,7 @@ import {faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 import "../styles/Header.scss"
 
-export class Header extends Component {
+export default class Header extends Component {
     changeFolding() {
         this.props.updating_method(!this.props.is_fold);
     }
