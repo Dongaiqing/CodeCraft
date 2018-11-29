@@ -122,32 +122,31 @@ def receiveResponse():
                 complete_filename = temp_filename + '.rb'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = subprocess.check_output(['rb', complete_filename])
+                result = runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'python3':
                 complete_filename = temp_filename + '.py'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = subprocess.check_output(['python3', complete_filename])
+                result = runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'node':
                 complete_filename = temp_filename + '.js'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = subprocess.check_output(['node ',complete_filename])
+                result = runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
-                os.remove(temp_outputname)
+                #os.remove(temp_outputname)
                 return result
             elif executable == 'javac':
                 complete_filename = temp_filename + '.java'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = subprocess.check_output(['javac', complete_filename])
-                result = subprocess.check_output(['java',temp_filename ])
+                result = runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
-                os.remove(temp_filename + '.class')
+                #os.remove(temp_filename + '.class')
                 return result
 
         result = execute_code()
@@ -159,7 +158,7 @@ def receiveResponse():
         conn.commit()
         saved = {}
         saved['header'] = 'Success'
-        saved['content'] = result.decode('utf-8')
+        saved['content'] = result
 
         return jsonify(saved)
 
