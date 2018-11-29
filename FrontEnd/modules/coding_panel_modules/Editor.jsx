@@ -104,7 +104,7 @@ class EditorConfigItem extends Component {
                         onChange={(e) => {this.update(item_key, e.target.checked)}}
                     />
                 ];
-                return <div style={this.common_item_style}>{items}</div>;
+                return <div className={'EditorConfigPanel_block'}>{items}</div>;
             case 'list':
                 const arr_options = staticSettings.all_settings[item_key].map(x => {
                     return <option key={'EditorConfigItem_option_'+x} value={x}>{x}</option>;
@@ -114,7 +114,7 @@ class EditorConfigItem extends Component {
                     <label key={common_key+'_label'} htmlFor={common_key} style={label_style}>Select {item_key}</label>,
                     <select id={common_key} key={common_key} value={item_value} onChange={(e) => {this.update(item_key, e.target.value)}}>{arr_options}</select>
                 ];
-                return <div style={this.common_item_style}>{items}</div>;
+                return <div className={'EditorConfigPanel_block'}>{items}</div>;
             default:
                 common_key = 'EditorConfigItem_range_'+item_key;
                 items = [
@@ -130,7 +130,7 @@ class EditorConfigItem extends Component {
                         onChange={(e) => {this.update(item_key, e.target.value)}}
                     />
                 ];
-                return <div style={this.common_item_style}>{items}</div>
+                return <div className={'EditorConfigPanel_block'}>{items}</div>
         }
     }
 }
@@ -155,7 +155,7 @@ class EditorConfigPanel extends Component {
         return (<div
             className={'EditorConfigPanel'}>
             <h3 key={'EditorConfigPanel_header'}>Editor Settings {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
-            {this.state.is_fold ? (null) : (<div>{elements}</div>)}
+            {this.state.is_fold ? (null) : (<div className={'EditorConfigPanel_flex'}>{elements}</div>)}
             </div>);
     }
 }
@@ -217,6 +217,7 @@ export class Editor extends Component {
             <AceEditor
                 key={'CoreEditor'}
                 name={'CoreEditor'}
+                style={{width: '100%'}}
                 mode={settings.language === 'c#' ? 'csharp':settings.language}
                 theme={settings.theme}
                 value={this.props.content}

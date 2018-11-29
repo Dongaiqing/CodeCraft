@@ -42,6 +42,7 @@ class DisplayRating extends Component {
     render() {
         return (
             <div className={'displayRating_content'}>
+                <h4>Users' ratings</h4>
                 <StarRatingComponent
                     name="Rating"
                     starCount={5}
@@ -77,10 +78,14 @@ export class Rating extends Component {
     }
 
     render() {
-        if (this.state.is_display_rating === false) {
-            return (<SubmitRating rating={this.state.rating} ratingOnClickHander={(nextValue, prevValue, name) => this.ratingOnClickHander(nextValue, prevValue, name)}/>);
-        } else {
-            return (<DisplayRating for_road_map={this.props.for_road_map} question_id={this.props.question_id}/>);
-        }
+        return (<div className={'rating_content'}>
+            {
+                this.state.is_display_rating ? (
+                    <DisplayRating for_road_map={this.props.for_road_map} question_id={this.props.question_id}/>
+                ) : (
+                    <SubmitRating rating={this.state.rating} ratingOnClickHander={(nextValue, prevValue, name) => this.ratingOnClickHander(nextValue, prevValue, name)}/>
+                )
+            }
+        </div>);
     }
 }

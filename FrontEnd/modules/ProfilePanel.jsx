@@ -7,6 +7,8 @@ const user_profile_fetching_url = '/get_user_profile';
 const user_profile_updating_url = '/change_user_settings';
 // const user_profile_deleting_url = '';
 
+import "../styles/ProfilePanel.scss"
+
 class UserProfile {
     constructor() {
         this.id = 0;
@@ -98,7 +100,11 @@ class FriendsInfo extends Component {
         return (
             <div className={'FriendsInfo_content'}>
                 <h3>Friends  {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
-                <ul>{arr}</ul>
+                {
+                    this.state.is_fold ? (null) : (
+                        <ul>{arr}</ul>
+                    )
+                }
             </div>
         );
     }
@@ -118,24 +124,30 @@ class ItemsInfo extends Component {
             arr.push(<li>{item}</li>);
         }
         return (
-            <div className={'ContentsInfo_content'}>
+            <div className={'ItemsInfo_content'}>
                 <h3>Achievements {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
-                <div className={'ContentsInfo_block'}>
-                    <h4>You have eBucks left:</h4>
-                    <p>${profile.eBucks}</p>
-                </div>
                 {
-                    profile.items.length > 0 ? (
-                        <div className={'ContentsInfo_block'}>
-                            <h4>You have unlocked those items:</h4>
-                            <ul>{arr}</ul>
+                    this.state.is_fold ? (null) : (
+                        <div className={'ItemsInfo_flex'}>
+                        <div className={'ItemsInfo_block'}>
+                            <h4>You have eBucks left:</h4>
+                            <p>${profile.eBucks}</p>
                         </div>
-                    ) : (null)
+                        {
+                            profile.items.length > 0 ? (
+                                <div className={'ItemsInfo_block'}>
+                                    <h4>You have unlocked those items:</h4>
+                                    <ul>{arr}</ul>
+                                </div>
+                            ) : (null)
+                        }
+                        <div className={'ItemsInfo_block'}>
+                            <h4>Your are currently at level:</h4>
+                            <p>{profile.level}</p>
+                        </div>
+                    </div>
+                    )
                 }
-                <div className={'ContentsInfo_block'}>
-                    <h4>Your are currently at level:</h4>
-                    <p>{profile.level}</p>
-                </div>
             </div>
         );
     }
@@ -153,22 +165,28 @@ class CountsInfo extends Component {
         return (
             <div className={'CountsInfo_content'}>
                 <h3>Statistics {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
-                <div className={'CountsInfo_block'}>
-                    <h4>You have correctly answered questions:</h4>
-                    <p>{profile.correctQuestionCount}</p>
-                </div>
-                <div className={'CountsInfo_block'}>
-                    <h4>You have made comments:</h4>
-                    <p>{profile.commentCount}</p>
-                </div>
-                <div className={'CountsInfo_block'}>
-                    <h4>You have uploaded questions:</h4>
-                    <p>{profile.uploadQuestionCount}</p>
-                </div>
-                <div className={'CountsInfo_block'}>
-                    <h4>You have submitted testcases:</h4>
-                    <p>{profile.uploadTestCaseCount}</p>
-                </div>
+                {
+                    this.state.is_fold ? (null) : (
+                        <div className={'CountsInfo_flex'}>
+                        <div className={'CountsInfo_block'}>
+                        <h4>You have correctly answered questions:</h4>
+                        <p>{profile.correctQuestionCount}</p>
+                        </div>
+                        <div className={'CountsInfo_block'}>
+                            <h4>You have made comments:</h4>
+                            <p>{profile.commentCount}</p>
+                        </div>
+                        <div className={'CountsInfo_block'}>
+                            <h4>You have uploaded questions:</h4>
+                            <p>{profile.uploadQuestionCount}</p>
+                        </div>
+                        <div className={'CountsInfo_block'}>
+                            <h4>You have submitted testcases:</h4>
+                            <p>{profile.uploadTestCaseCount}</p>
+                        </div>
+                    </div>
+                    )
+                }
             </div>
         );
     }
@@ -199,22 +217,22 @@ class UserBasicInfo extends Component {
         // TODO: user theme settings
         let arr = [];
         let profile = this.props.profile;
-        arr.push(<img src={profile.userPicSource}/>);
+        arr.push(<img key={'UserBasicInfo_img'} src={profile.userPicSource}/>);
         if (this.state.displaySettings === false) {
-            arr.push(<h3>{profile.username}</h3>);
-            arr.push(<h4>{profile.userEmail}</h4>);
-            arr.push(<button onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>);
+            arr.push(<h3 key={'UserBasicInfo_username'}>{profile.username}</h3>);
+            arr.push(<h4 key={'UserBasicInfo_useremail'}>{profile.userEmail}</h4>);
+            arr.push(<button key={'UserBasicInfo_changeBTN'} onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>);
         } else {
-            arr.push(<div>Leave blank any input you don't want to change</div>);
-            arr.push(<div>
+            arr.push(<div key={'UserBasicInfo_changeMSG'}>Leave blank any input you don't want to change</div>);
+            arr.push(<div key={'UserBasicInfo_changePASSWORD'}>
                 <label htmlFor={'settings_password'}>Change Password</label>
                 <input id={'settings_password'} key={'settings_password'} type={'password'} value={this.state.newPassword} onChange={(e) => this.setState({newPassword: e.target.value})}/>
             </div>);
-            arr.push(<div>
-                <label htmlFor={'settings_email'}>Change Password</label>
+            arr.push(<div key={'UserBasicInfo_changeEMAIL'}>
+                <label htmlFor={'settings_email'}>Change Email</label>
                 <input id={'settings_email'} key={'settings_email'} type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>
             </div>);
-            arr.push(<button onClick={() => this.handleSettingSubmit()}>Submit</button>);
+            arr.push(<button key={'UserBasicInfo_changeSUBMIT'} onClick={() => this.handleSettingSubmit()}>Submit</button>);
         }
         return (
             <div className={'UserBasicInfo_content'}>

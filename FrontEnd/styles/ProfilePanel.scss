@@ -6,32 +6,56 @@
   .UserBasicInfo_content {
     order: 1;
     margin: 1.5em;
-    box-shadow: 0 0 0.1em lightgray;
+    padding: 1em;
+    box-shadow: 0 0 0.2em lightgray;
     border-radius: 0.1em;
   }
   .CountsInfo_content {
     margin: 1.5em;
     order: 2;
-    .CountsInfo_block {
-      box-shadow: 0 0 0.1em lightgray;
-      border-radius: 0.1em;
-      width: 10em;
-      height: 10em;
+    .CountsInfo_flex {
+      display: flex;
+      flex-direction: row;
+      flex-flow: wrap;
+      justify-content: flex-start;
+      align-content: space-around;
+      //min-height: 25em;
+
+      .CountsInfo_block {
+        box-shadow: 0 0 0.2em lightgray;
+        border-radius: 0.1em;
+        width: 10em;
+        height: 10em;
+        padding: 0.5em;
+        margin: 1em;
+      }
     }
   }
-  .ContentsInfo_content {
+  .ItemsInfo_content {
     order: 3;
     margin: 1.5em;
-    .ContentsInfo_block {
-      box-shadow: 0 0 0.1em lightgray;
-      border-radius: 0.1em;
-      width: 10em;
-      height: 10em;
 
-      ul {
-        list-style: none;
-        overflow-y: auto;
-        padding: 0;
+    .ItemsInfo_flex {
+      display: flex;
+      flex-direction: row;
+      flex-flow: wrap;
+      justify-content: flex-start;
+      align-content: space-around;
+      //min-height: 25em;
+
+      .ItemsInfo_block {
+        box-shadow: 0 0 0.2em lightgray;
+        border-radius: 0.1em;
+        width: 10em;
+        height: 10em;
+        padding: 0.5em;
+        margin: 1em;
+
+        ul {
+          list-style: none;
+          overflow-y: auto;
+          padding: 0;
+        }
       }
     }
   }

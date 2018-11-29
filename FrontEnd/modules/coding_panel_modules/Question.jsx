@@ -190,23 +190,23 @@ class QuestionSelectPanel extends Component {
         const arr_elems = [];
         if (item_arr.length === 1 && item_arr[0].hasOwnProperty('error')) {
             arr_elems.push(
-                <h3>{item_arr[0].error}</h3>
+                <h4 style={{order: 1}}>{item_arr[0].error}</h4>
             );
             arr_elems.push(
-                <p>Click on the text below to dismiss the box</p>
+                <p style={{order: 2}}>Click on the text below to dismiss the box</p>
             );
             arr_elems.push(
-                <p style={{cursor: 'pointer', fontWeight: 'bold', margin: '0 auto'}} onClick={() => this.updateSearchQuery(0, 'Count Of Smaller Numbers After Self')}>return 'This is the best website EVER!';</p>
+                <p style={{order: 3, cursor: 'pointer', fontWeight: 'bold', margin: '0 auto'}} onClick={() => this.updateSearchQuery(0, 'Count Of Smaller Numbers After Self')}>return 'This is the best website EVER!';</p>
             );
         } else {
             arr_elems.push(
-                <h3>We have found multiple entries that satisfy the requirement!</h3>
+                <h4 style={{order: 1}}>We have found multiple entries that satisfy the requirement!</h4>
             );
             arr_elems.push(
-                <p>Please select one of the question below!</p>
+                <p style={{order: 2}}>Please select one of the question below!</p>
             );
             arr_elems.push(
-                <dl style={{width: '100%', borderBottom: '0.05em solid grey', marginBottom: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
+                <dl style={{order: 3, width: '100%', borderBottom: '0.05em solid grey', marginBottom: '0.5em', display: 'flex', flexWrap: 'wrap'}}>
                     <dt style={{width: '50%', fontWeight: 'bold'}}>Question ID</dt>
                     <dd style={{width: '50%', marginLeft: 'auto', fontWeight: 'bold', textAlign: 'right'}}>Question Name</dd>
                 </dl>
@@ -216,7 +216,7 @@ class QuestionSelectPanel extends Component {
                 arr_elems.push(<QuestionSelectItem id={item.id} title={item.title} updating_methods={(id, title) => this.updateSearchQuery(id, title)}/>);
             }
         }
-        return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
+        return <section style={{border: '0.2em solid #EC7063', margin: '1em', padding: '1em', display: 'flex', flexDirection: 'column'}}><article style={{width: '50%', margin: '0 auto'}}>{arr_elems}</article></section>;
     }
 }
 
@@ -249,10 +249,10 @@ export class QuestionDisplayPanel extends Component {
         if (state.current_content !== '' && state.should_send_request === false) {
             arr_elem.push(
                 <section
-                key={'QuestionDisplayPanel_section'}>
-                    <h2>
+                key={'QuestionDisplayPanel_section'} style={{borderRadius: '0.2em', boxShadow: '0 0 0.5em lightgrey', padding: '1em'}}>
+                    <h3>
                         {this.props.current_question_id} - {this.props.current_question_name}
-                    </h2>
+                    </h3>
                     <article style={{display: 'block'}}>
                         {state.current_content.split('\n').map(item => <div>{item}</div>)}
                     </article>

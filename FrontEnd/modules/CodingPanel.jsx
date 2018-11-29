@@ -6,6 +6,8 @@ import {Rating} from "./coding_panel_modules/Rating";
 import {UploadQuestion} from "./coding_panel_modules/Upload";
 import {Tag} from "./coding_panel_modules/Tag";
 
+import "../styles/CodingPanel.scss";
+
 export default class CodingPanel extends Component {
     constructor(props) {
         super(props);
@@ -37,18 +39,18 @@ export default class CodingPanel extends Component {
                 />
                 <div className={'questionMeta_content'}>
                     {
-                        this.state.current_question_id === 0 ? (null) : (<Rating
-                            key={'CodingRating'}
-                            user={this.props.user}
-                            question_id={this.state.current_question_id}
-                        />)
-                    }
-                    {
-                        this.state.current_question_id === 0 ? (null) : (<Tag
-                            key={'CodingTags'}
-                            user={this.props.user}
-                            question_id={this.state.current_question_id}
-                        />)
+                        this.state.current_question_id === 0 ? (null) : (<div className={'questionMeta_flex'}>
+                            <Rating
+                                key={'CodingRating'}
+                                user={this.props.user}
+                                question_id={this.state.current_question_id}
+                            />
+                            <Tag
+                                key={'CodingTags'}
+                                user={this.props.user}
+                                question_id={this.state.current_question_id}
+                            />
+                        </div>)
                     }
                 </div>
 

@@ -1,6 +1,7 @@
 from flask import Flask, g, request, jsonify, url_for, redirect
 from flaskext.mysql import MySQL
-import os, json, subprocess
+import os
+import json
 from pyModules.Queries import Queries
 from pyModules.executeCode import exeucteCode
 
@@ -21,7 +22,10 @@ def index():
 
 @app.route('/js/<filename>')
 def index_js(filename):
-    return app.send_static_file('js/'+filename+'.js')
+    if 'gzip' in request.headers.get('Accept-Encoding'):
+        return app.send_static_file('js/'+filename+'.js.gz')
+    else:
+        return app.send_static_file('js/'+filename+'.js')
 
 
 def get_conn():
@@ -228,7 +232,7 @@ def upvoteComment():
         #upvoting
         cursor.execute('UPDATE Comments SET upvoteNum=%s WHERE id=%s', (value, comment_id))
     else:
-        cursor.execute('UPDATE Comments SET downvote=%s WHERE id=%s', (value, comment_id))
+        cursor.execute('UPDATE Comments SET downvoteNum=%s WHERE id=%s', (value, comment_id))
     conn.commit()
     cursor.close()
     return jsonify(0)

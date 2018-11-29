@@ -1,18 +1,30 @@
 const path = require('path');
-const sass = require("node-sass");
-const sassUtils = sassUtils = require("node-sass-utils")(sass);
-const Variables = require(__dirname + "/styles/variables.js");
+const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
     module: {
-        rules: [{
-            test: /\.scss$/,
-            use: [
-                {loader: "style-loader"},
-                {loader: "css-loader"},
-                {loader: "sass-loader"}
-            ]
-        }]
+        rules: [
+            {
+                test: /\.scss$/,
+                use: [
+                    {loader: "style-loader"},
+                    {loader: "css-loader"},
+                    {loader: "sass-loader"}
+                ]
+            }, {
+                test: /\.css$/,
+                use: [
+                    {loader: "style-loader"},
+                    {loader: "css-loader"}
+                ]
+            }
+        ]
     },
+    // plugins: [
+    //     new CompressionPlugin({
+    //         test: /\.js(\?.*)?$/i,
+    //         algorithm: 'gzip'
+    //     })
+    // ],
     entry: "./index.js",
     output: {
         path: path.resolve(__dirname, '../static/js'),

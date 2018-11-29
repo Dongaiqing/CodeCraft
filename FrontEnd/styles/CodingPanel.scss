@@ -12,6 +12,7 @@
 
   .questionDisplayPanel_content {
     order: 1;
+    padding-right: 0.5em;
     h2, h3, h4 {
       padding-bottom: 1em;
     }
@@ -28,10 +29,47 @@
   .questionMeta_content {
     order: 2;
     margin-bottom: 1.5em;
+    .questionMeta_flex {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+
+      .rating_content {
+        order: 1;
+      }
+      .tags_content {
+        order: 2;
+      }
+    }
   }
   .questionEditor_content {
     order: 3;
     margin-bottom: 1.5em;
+    .EditorConfigPanel {
+      margin-bottom: 1em;
+      .EditorConfigPanel_flex {
+        display: flex;
+        flex-direction: row;
+        flex-flow: wrap;
+        justify-content: flex-start;
+        align-content: space-around;
+
+        .EditorConfigPanel_block {
+          border-radius: 0.2em;
+          box-shadow: 0 0 0.3em lightgray;
+          width: 7em;
+          height: 7em;
+          padding: 0.5em;
+          margin: 0.5em;
+
+          label {
+            display: block;
+            word-break: break-all;
+          }
+        }
+      }
+    }
+
   }
   .questionFeedbackPanel_content {
     order: 4;
@@ -40,10 +78,33 @@
   .questionComments_content {
     order: 5;
     margin-bottom: 1.5em;
-  }
-  .uploadTestcase_content {
-    order: 6;
-    margin-bottom: 1.5em;
+    padding-right: 0.5em;
+    .firstLevelComments_content {
+      border-radius: 0.5em;
+      box-shadow: 0 0 0.5em lightgray;
+      padding: 1em;
+      margin: 1em;
+    }
+    .SecondLevelComment_content {
+      padding-left: 1em;
+      margin: 0.5em;
+    }
+    .comment_flex {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      .comment_blockleft {
+        order: 1;
+        vertical-align: center;
+        flex-shrink: 0;
+      }
+      .comment_blockright {
+        order: 2;
+        vertical-align: center;
+        margin-left: 1em;
+      }
+    }
   }
   .uploadQuestion_content {
     order: 7;

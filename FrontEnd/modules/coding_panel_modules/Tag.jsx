@@ -104,6 +104,8 @@ class DisplayTags extends Component {
     render() {
         return (
             <div>
+                <h4>Users' tags</h4>
+                <p>only frequent ones are shown</p>
                 <Doughnut data={this.state.chartData} />
             </div>
         );
@@ -136,10 +138,14 @@ export class Tag extends Component {
     }
 
     render() {
-        if (this.state.is_display_tags === false) {
-            return (<SubmitTags updating_tags={(tags) => this.updateTags(tags)} updating_display_tags={() => this.updatingDisplayTags()} current_user={this.props.user} current_question_id={this.props.current_question_id}/>);
-        } else {
-            return (<DisplayTags question_id={this.props.question_id}  current_question_id={this.props.current_question_id}/>);
-        }
+        return (<div className={'tags_content'}>
+            {
+                this.state.is_display_tags ? (
+                    <DisplayTags question_id={this.props.question_id}  current_question_id={this.props.current_question_id}/>
+                ) : (
+                    <SubmitTags updating_tags={(tags) => this.updateTags(tags)} updating_display_tags={() => this.updatingDisplayTags()} current_user={this.props.user} current_question_id={this.props.current_question_id}/>
+                )
+            }
+        </div>);
     }
 }

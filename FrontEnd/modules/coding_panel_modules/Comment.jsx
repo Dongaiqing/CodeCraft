@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {stateToHTML} from 'draft-js-export-html';
-import {Editor as DraftEditor, EditorState as DraftEditorState, RichUtils as DraftRichUtils} from 'draft-js';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowUp, faArrowDown} from '@fortawesome/free-solid-svg-icons';
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons/index";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const post_comments_url = '/post_comments';
 const get_comments_url = '/get_comments';
@@ -55,6 +55,7 @@ export class UpvoteDisplay extends Component {
 
     regulateNum() {
         let prev_value = this.props.num;
+        console.log(prev_value);
         if (this.state.clicked === false) {
             this.setState({clicked: true});
             this.props.updating_upvote(prev_value + 1);
@@ -65,10 +66,12 @@ export class UpvoteDisplay extends Component {
     }
 
     render() {
-        return <div>
-            <FontAwesomeIcon icon={faArrowUp} className={'UpvoteIcon'} onClick={() => this.regulateNum()}/>
-            <p>{this.props.num}</p>
-        </div>
+        return (
+            <div>
+                <FontAwesomeIcon icon={faArrowUp} className={'UpvoteIcon'} onClick={() => this.regulateNum()}/>
+                <span style={{marginLeft: '0.5em'}}>{this.props.num}</span>
+            </div>
+        );
     }
 }
 
@@ -92,19 +95,23 @@ export class DownvoteDisplay extends Component {
     }
 
     render() {
-        return <div>
-            <FontAwesomeIcon icon={faArrowDown} onClick={() => this.regulateNum()}/>
-            <p>{this.props.num}</p>
-        </div>
+        return (
+            <div>
+                <FontAwesomeIcon icon={faArrowDown} onClick={() => this.regulateNum()}/>
+                <span style={{marginLeft: '0.5em'}}>{this.props.num}</span>
+            </div>
+        );
     }
 }
 
 class UserInfo extends Component {
     render() {
-        return <figure className={'userInfo'}>
-            <img src={this.props.src} alt={this.props.user}/>
-            <figcaption>{this.props.user}</figcaption>
-        </figure>;
+        return (
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <img style={{order: 1, marginRight: '1em'}} src={this.props.src} alt={this.props.user}/>
+                <h4 style={{order: 2, verticalAlign: 'center'}}>{this.props.user}</h4>
+            </div>
+        );
     }
 }
 
@@ -112,19 +119,18 @@ class SecondLevelComment extends Component {
     render() {
         let curr_comment = this.props.comment_ref;
         return (
-            <div>
-                <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <div style={{order: '1'}}><h6>{curr_comment.user}</h6></div>
-                    <div style={{order: '2'}}>
-                        <section>{curr_comment.comment}</section>
-                    </div>
-                </div>
-
-                <div>
-                    <UpvoteDisplay num={curr_comment.upvoteNum}
+            <div className={'SecondLevelComment_content'}>
+                <h4><span>{curr_comment.user}</span></h4>
+                <div className={'comment_flex'}>
+                    <div className={'comment_blockleft'}>
+                        <UpvoteDisplay num={curr_comment.upvoteNum}
                                    updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/>
-                    <DownvoteDisplay num={curr_comment.downvoteNum}
+                        <DownvoteDisplay num={curr_comment.downvoteNum}
                                      updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/>
+                    </div>
+                    <div className={'comment_blockright'}>
+                        <section dangerouslySetInnerHTML={{__html: curr_comment.comment}}/>
+                    </div>
                 </div>
             </div>
         );
@@ -135,22 +141,11 @@ class CommentEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            editorState: DraftEditorState.createEmpty()
+            text: ''
         }
     }
 
-    editorOnChangeHandler(editorState) {
-        this.setState({editorState: editorState});
-    }
-
-    handleKeyboardCommand(command, editorState) {
-        const newState = DraftRichUtils.handleKeyCommand(editorState, command);
-        if (newState) {
-            this.editorOnChangeHandler(newState);
-        }
-    }
-
-    updateComment(string) {
+    updateComment() {
         let current_user = this.props.current_user;
         let current_question_id = this.props.current_question_id;
         // this variable can be null/undefined!
@@ -161,23 +156,19 @@ class CommentEditor extends Component {
             question_id: current_question_id,
             parent_comment_id: current_parent_id,
             is_for_road_map: is_for_road_map,
-            content: stateToHTML(this.state.editorState.getCurrentContent())
+            content: this.state.text
         }).then((response) => {
             console.log('Send comment to backend', response.data);
             let id = response.data;
-            this.props.updating_comment(id, stateToHTML(this.state.editorState.getCurrentContent()));
+            this.props.updating_comment(id, this.state.text);
         })
     }
 
     render() {
         return (
             <div>
-                <div style={{maxHeight: '80%', maxWidth: '100%', overflow: 'auto', border: '0.01em solid grey'}}>
-                    <DraftEditor editorState={this.state.editorState} readOnly={false}
-                                 onChange={(editorState) => this.editorOnChangeHandler(editorState)} spellCheck={true}
-                                 stripPastedStyles={true}
-                                 handleKeyCommand={(command, editorState) => this.handleKeyboardCommand(command, editorState)}/>
-
+                <div>
+                    <ReactQuill theme="snow" value={this.state.text} onChange={(value) => this.setState({text: value})} />
                 </div>
                 <button onClick={() => this.updateComment()}>Submit</button>
             </div>
@@ -186,6 +177,12 @@ class CommentEditor extends Component {
 }
 
 class FirstLevelComment extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_fold: true
+        };
+    }
     render() {
         let curr_comment = this.props.comment_ref;
         const secondary_comments = [];
@@ -196,26 +193,36 @@ class FirstLevelComment extends Component {
                                                         updating_downvote={(id, val) => this.props.updating_downvote(id, val)}/>);
         }
         return (
-            <div>
-                <div><UserInfo src={curr_comment.imageSource} user={curr_comment.user}/></div>
-                <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <div style={{order: '1'}}>
-                        <section>{curr_comment.comment}</section>
-                    </div>
-                    <div style={{order: '2'}}>
-                        <div><UpvoteDisplay num={curr_comment.upvoteNum}
-                                            updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/></div>
-                        <div><DownvoteDisplay num={curr_comment.downvoteNum}
-                                              updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/>
+            <div className={'firstLevelComments_content'}>
+                <div>
+                    <div><UserInfo src={curr_comment.imageSource} user={curr_comment.user}/></div>
+                    <div className={'comment_flex'}>
+                        <div className={'comment_blockleft'}>
+                            <div><UpvoteDisplay num={curr_comment.upvoteNum}
+                                                updating_upvote={val => this.props.updating_upvote(curr_comment.id, val)}/></div>
+                            <div><DownvoteDisplay num={curr_comment.downvoteNum}
+                                                  updating_downvote={val => this.props.updating_downvote(curr_comment.id, val)}/>
+                            </div>
+                        </div>
+                        <div className={'comment_blockright'}>
+                            <section dangerouslySetInnerHTML={{__html: curr_comment.comment}}/>
                         </div>
                     </div>
                 </div>
+
                 <div>{secondary_comments}</div>
 
-                <div><CommentEditor
-                    updating_comment={(id, string) => this.props.updating_comment(id, string, curr_comment.id)}
-                    current_user={this.props.current_user} current_question_id={this.props.current_question_id}
-                    current_parent_comment_id={curr_comment.id}/></div>
+                <div>
+                    <h5>Write followups {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h5>
+                    {
+                        this.state.is_fold ? (null) : (<div>
+                            <CommentEditor
+                            updating_comment={(id, string) => this.props.updating_comment(id, string, curr_comment.id)}
+                            current_user={this.props.current_user} current_question_id={this.props.current_question_id}
+                            current_parent_comment_id={curr_comment.id}/>
+                        </div>)
+                    }
+                </div>
             </div>
         );
     }
@@ -263,6 +270,9 @@ export class Comment extends Component {
                         first_lev_question.downvoteNum = val;
                     }
                     found = 1;
+                    break;
+                }
+                if (found === 1) {
                     break;
                 }
 

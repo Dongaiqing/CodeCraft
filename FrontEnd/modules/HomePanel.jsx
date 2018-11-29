@@ -23,7 +23,7 @@ class About extends Component {
 export default class HomePanel extends Component{
     render() {
         return (
-            <article>
+            <article className={'HomePanel_content'}>
                 <h1>Welcome to CodeCraft!</h1>
                 <About/>
             </article>
