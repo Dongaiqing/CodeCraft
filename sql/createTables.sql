@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS QuestionSubmission (
   sourceLanguage VARCHAR(255),
   userID INT,
   questionID INT,
-  result VARCHAR(255),
+  result TEXT,
   FOREIGN KEY (userID) REFERENCES UserProfile(id),
   FOREIGN KEY (questionID) REFERENCES QuestionCode(id)
 );

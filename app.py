@@ -10,7 +10,7 @@ from pyModules.generatePics import generatePics
 app = Flask(__name__)
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '123456'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'Aa123123123!'
 app.config['MYSQL_DATABASE_DB'] = 'CodeCraft'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
