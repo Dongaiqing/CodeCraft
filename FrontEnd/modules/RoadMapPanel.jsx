@@ -7,6 +7,8 @@ import {CreateNewRoadMap} from "./roadmap_panel_modules/NewRoadMap";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
+import "../styles/RoadMapPanel.scss";
+
 const road_map_add_url = '';
 
 

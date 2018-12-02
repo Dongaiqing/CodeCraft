@@ -54,11 +54,11 @@ export class DisplayAllRoadMaps extends Component {
         let arr = [];
         let user = this.props.user;
         for (let item of this.state.all_roadmaps) {
-            arr.push(<div style={{marginRight: '1em'}}><RoadMapInfoCard add_roadmap={id => this.addRoadMap(id)} profile={item} user={user} updating_upvote={(val) => this.updateVotes(item.id, val, true)} updating_downvote={(val) => this.updateVotes(item.id, val, false)}/></div>);
+            arr.push(<div className={'allRoadMaps_item'}><RoadMapInfoCard add_roadmap={id => this.addRoadMap(id)} profile={item} user={user} updating_upvote={(val) => this.updateVotes(item.id, val, true)} updating_downvote={(val) => this.updateVotes(item.id, val, false)}/></div>);
         }
         return (
-            <div className={'allRoadMaps_content'}>
-                <div className={'allRoadMaps_item'} style={{display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto'}}>{arr}</div>
+            <div>
+                <div className={'allRoadMaps_content'}>{arr}</div>
             </div>
         );
     }

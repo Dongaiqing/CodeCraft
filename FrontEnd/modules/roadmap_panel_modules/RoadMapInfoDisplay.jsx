@@ -44,19 +44,21 @@ class RoadMapPopup extends Component {
             like_button = <div><span onClick={() => {this.props.add_roadmap(profile.id); this.setState({delete_clicked: !this.state.like_clicked})}}><FontAwesomeIcon icon={this.state.like_clicked ? faTimes : faHeart}/></span></div>;
         }
         return (
-            <Popup open={this.props.open} closeOnDocumentClick onClose={() => this.props.onClose()}>
-                <div style={{maxHeight: '70%', overflowY:'auto'}}>
+            <Popup open={this.props.open} closeOnDocumentClick onClose={() => this.props.onClose()} contentStyle={{height: '40em', width: '40em', overflowY:'auto'}}>
+                <div style={{maxHeight: '100%'}}>
                     <div>
                         <RoadMapDraw data={profile.graphData}/>
                     </div>
                     <div><h4>Name: {profile.name}</h4></div>
                     <div><h4>Author: {profile.author}</h4></div>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <div style={{order: '1'}}>
-                            <h4>Description</h4>
-                            <section>{profile.description}</section>
-                        </div>
                         <div style={{order: '2'}}>
+                            <div style={{verticalAlign: 'middle'}}>
+                                <h4>Description</h4>
+                                <section>{profile.description}</section>
+                            </div>
+                        </div>
+                        <div style={{order: '1'}}>
                             <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
                             <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
                         </div>
@@ -94,7 +96,7 @@ export class RoadMapInfoCard extends Component {
         let profile = this.props.profile;
         let user = this.props.user;
         return (
-            <div>
+            <div style={{boxShadow: '0 0 0.5em grey', marginRight: '1em', padding: '1em'}}>
                 <div style={{display: 'flex', flexDirection: 'row'}}>
                     <div style={{order: '1', marginRight: '1em'}}>
                         <div><h4>Name: {profile.name}</h4></div>

@@ -10,9 +10,12 @@
   flex-direction: row;
   max-width: 80%;
   overflow-x: auto;
+}
 
-  .savedRoadMap_item, .allRoadMaps_item {
-    width: 10em;
-    height: 10em;
-  }
+.savedRoadMap_item, .allRoadMaps_item {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 1em;
+  max-width: 15em;
+  max-height: 15em;
 }

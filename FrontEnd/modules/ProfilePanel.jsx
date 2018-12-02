@@ -3,12 +3,16 @@ import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
+import {Fonts, Themes} from "./fontsAndThemes";
+
+import "../styles/ProfilePanel.scss";
+
 const user_profile_fetching_url = '/get_user_profile';
 const user_profile_updating_url = '/change_user_settings';
 const add_friend_url = '/add_friend_by_search';
-// const user_profile_deleting_url = '';
 
-import "../styles/ProfilePanel.scss"
+const change_font_url = '/change_font';
+const change_theme_url = '/change_theme';
 
 class UserProfile {
     constructor() {
@@ -268,6 +272,59 @@ class UserBasicInfo extends Component {
                 </div>
             </div>
         );
+    }
+}
+
+class PreferenceInfo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            current_font: 'default',
+            current_theme: 'default',
+            is_fold: true
+        }
+    }
+
+    changeFont() {
+        axios.post(change_font_url,  {
+            username: this.props.profile.username,
+            new_font: this.state.current_font
+        }).then(response => {
+            window.location.reload();
+        })
+    }
+    
+    changeTheme() {
+        axios.post(change_theme_url, {
+            username: this.props.profile.username,
+            new_theme: this.state.current_theme
+        }).then(response => {
+            window.location.reload();
+        })
+    }
+
+    render() {
+        let profile = this.props.profile;
+        const all_themes = profile.items.filter(item => Themes.includes(item));
+        const all_fonts = profile.items.filter(item => Fonts.includes(item));
+        return (
+            <div>
+                <h3>Preferences {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
+                <p>After choosing new fonts/themes, please refresh your page!</p>
+                <div>
+                    <div>
+                        <label htmlFor={'ProfilePanel_select_fonts'}>Change fonts here!</label>
+                        <select onChange={e => this.setState({current_font: e.target.value})} id={'ProfilePanel_select_fonts'}>{all_fonts.map(item => <option value={item}>{item}</option>)}</select>
+                        <button onClick={() => this.changeFont()}>Submit</button>
+                    </div>
+                    <div>
+                        <label htmlFor={'ProfilePanel_select_themes'}>Change themes here!</label>
+                        <select onChange={e => this.setState({current_theme: e.target.value})} id={'ProfilePanel_select_themes'}>{all_themes.map(item => <option value={item}>{item}</option>)}</select>
+                        <button onClick={() => this.changeTheme()}>Submit</button>
+                    </div>
+                </div>
+            </div>
+        )
     }
 }
 
