@@ -33,6 +33,6 @@ module.exports = {
         chunkFilename: '[name].bundle.js'
     },
     watch: true,
-    mode: 'development',
+    mode: 'production',
     devtool: "#eval-source-map"
 };
