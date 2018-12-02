@@ -4,6 +4,7 @@ import os
 import json
 from pyModules.Queries import Queries
 from pyModules.executeCode import exeucteCode
+from pyModules.generatePics import generatePics
 
 
 app = Flask(__name__)
@@ -23,6 +24,10 @@ def index():
 @app.route('/js/<filename>')
 def index_js(filename):
     return app.send_static_file('js/' + filename + '.js')
+
+@app.route('/img/<filename>')
+def get_img(filename):
+    return app.send_static_file('img/' + filename + 'png')
 
 
 
@@ -74,8 +79,9 @@ def registration():
     cursor = conn.cursor()
     cursor.execute(Queries.lookupLoginExists(), (data['username']))
     result = cursor.fetchone()
+    path = generatePics.randomPic(data['username'])
     if result is None:
-        cursor.execute(Queries.insertIntoRegister(), (data['username'], data['email'], data['password'], 'default', 0, 0, 0, 0, 0, 0))
+        cursor.execute(Queries.insertIntoRegister(), (data['username'], data['email'], data['password'], path, 0, 0, 0, 0, 0, 0))
         conn.commit()
         cursor.close()
         return jsonify(0)
@@ -120,7 +126,6 @@ def receiveResponse():
     else:
         def execute_code():
             temp_filename = 'temp' + username + str(question_id)
-            temp_outputname = 'out' + username + str(question_id)
             if executable == 'ruby':
                 complete_filename = temp_filename + '.rb'
                 with open(complete_filename, 'w') as file:
@@ -141,15 +146,13 @@ def receiveResponse():
                     file.write(source_code)
                 result = exeucteCode.runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
-                #os.remove(temp_outputname)
                 return result
             elif executable == 'javac':
                 complete_filename = temp_filename + '.java'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
                 os.remove(complete_filename)
-                #os.remove(temp_filename + '.class')
                 return result
 
         result = execute_code()
@@ -158,11 +161,19 @@ def receiveResponse():
                            (source_code, language, username, question_id, result))
         except Exception:
             cursor.execute((Queries.updateQuestionAnswer(), (source_code, result, language, username, question_id)))
-        conn.commit()
+
         saved = {}
         saved['header'] = 'Success'
         saved['content'] = result
 
+        # update submission count
+        cursor.execute('SELECT correctQuestionCount FROM UserProfile WHERE username=%s', (username))
+        current_count = cursor.fetchone()[0]
+        cursor.execute('UPDATE UserProfile SET correctQuestionCount=%s WHERE username=%s', (current_count+1, username))
+        cursor.execute('SELECT eBucks FROM UserProfile WHERE username=%s', (username))
+        curr_bucks = cursor.fetchone()[0]
+        cursor.execute('UPDATE UserProfile SET eBucks=%s WHERE username=%s', (curr_bucks + 1, username))
+        conn.commit()
         return jsonify(saved)
 
 @app.route('/get_code_test', methods=['GET'])
@@ -223,6 +234,7 @@ def upvoteComment():
     value = data['value']
     is_upvote = data['is_upvote']
 
+
     conn = get_conn()
     cursor = conn.cursor()
 
@@ -231,6 +243,7 @@ def upvoteComment():
         cursor.execute('UPDATE Comments SET upvoteNum=%s WHERE id=%s', (value, comment_id))
     else:
         cursor.execute('UPDATE Comments SET downvoteNum=%s WHERE id=%s', (value, comment_id))
+
     conn.commit()
     cursor.close()
     return jsonify(0)
@@ -262,6 +275,12 @@ def postComments():
         cursor.execute(Queries.insertIntoQuestionCode_Comments(), (question_id, comment_id))
         if parent_comment_id != -1:
             cursor.execute(Queries.insertIntoSubComments(), (parent_comment_id, comment_id))
+    cursor.execute('SELECT commentCount FROM UserProfile WHERE username=%s', (username))
+    curr_count = cursor.fetchone()[0]
+    cursor.execute('UPDATE UserProfile SET commentCount=%s WHERE username=%s', (curr_count + 1, username))
+    cursor.execute('SELECT eBucks FROM UserProfile WHERE username=%s', (username))
+    curr_bucks = cursor.fetchone()[0]
+    cursor.execute('UPDATE UserProfile SET eBucks=%s WHERE username=%s', (curr_bucks + 5, username))
     conn.commit()
     cursor.close()
     return jsonify(comment_id)
@@ -344,6 +363,13 @@ def postQuestion():
     result = cursor.fetchone()
     cursor.execute(Queries.updateUserProfileuploadQuestionCount(), (result[7]+1, result[0]))
     cursor.execute(Queries.insertIntoQuestionCode(), (title, content, 'default', 0, 0, username))
+
+    cursor.execute('SELECT uploadQuestionCount FROM UserProfile WHERE username=%s', (username))
+    curr_count = cursor.fetchone()[0]
+    cursor.execute('UPDATE UserProfile SET uploadQuestionCount=%s WHERE username=%s', (curr_count+1, username))
+    cursor.execute('SELECT eBucks FROM UserProfile WHERE username=%s', (username))
+    curr_bucks = cursor.fetchone()[0]
+    cursor.execute('UPDATE UserProfile SET eBucks=%s WHERE username=%s', (curr_bucks + 10, username))
     conn.commit()
     cursor.close()
     return jsonify('Success')
@@ -490,12 +516,14 @@ def getUserprofile():
     username = request.args.get('username')
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(Queries.getUserProfile(), username)
+    cursor.execute(Queries.getUserProfile(), (username))
     temp = cursor.fetchone()
     cursor.execute('SELECT friendName FROM UserProfile_Friends WHERE userID=%s', (temp[0]))
     friends = [x[0] for x in cursor.fetchall()]
-    cursor.execute('SELECT itemStr FROM UserProfile_Items WHERE userID=%s', (temp[0]))
+    cursor.execute('SELECT itemStr FROM UserProfile_Items WHERE userID=(SELECT userID FROM UserProfile WHERE username=%s)', (username))
     items = [x[0] for x in cursor.fetchall()]
+    new_level = (temp[5] * 1 + temp[6] * 5 + temp[7] * 10 + len(friends) * 5) // 100
+    cursor.execute('UPDATE UserProfile SET userLevel=%s WHERE username=%s', (new_level, username))
     result = {
         'id': temp[0],
         'username': temp[1],
@@ -506,7 +534,7 @@ def getUserprofile():
         'uploadQuestionCount': temp[7],
         'uploadTestCaseCount': temp[8],
         'eBucks': temp[9],
-        'level': temp[10],
+        'level': new_level,
         'friends': friends,
         'items': items
     }
@@ -559,6 +587,45 @@ def checkValidQuestionID():
     if result is None:
         return jsonify({'msg': 'Failed'})
     return jsonify({'msg': 'Success', 'name': result})
+
+@app.route('/add_friend_by_search', methods=['POST'])
+def addFriendBySearch():
+    data = request.get_json()
+    search_string = data['search_string']
+    current_user = data['username']
+    conn = get_conn()
+    cursor = conn.cursor()
+    obj = {}
+    cursor.execute('SELECT * FROM UserProfile WHERE id=%s OR username=%s', (search_string, search_string))
+    result = cursor.fetchone()
+    if result is None:
+        obj['msg'] = 'Failed'
+        return jsonify(obj)
+    else:
+        obj['msg'] = 'Success'
+        obj['userProfile'] = {
+            'id': result[0],
+            'username': result[1],
+            'userEmail': result[2],
+            'userPicSource': result[4],
+            'correctQuestionCount': result[5],
+            'commentCount': result[6],
+            'uploadQuestionCount': result[7],
+            'uploadTestCaseCount': result[8],
+            'eBucks': result[9],
+            'level': result[10],
+            'items': result
+        }
+    # check if friends is here, if not then insert
+    cursor.execute('SELECT * FROM UserProfile_Friends WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND friendName=%s', (current_user, result[1]))
+    result = cursor.fetchall()
+    if result is None:
+        cursor.execute('INSERT INTO UserProfile_Friends(userID, friendName) VALUES((SELECT id FROM UserProfile WHERE username=%s), (SELECT username FROM UserProfile WHERE id=%s))', (current_user, result[0]))
+    else:
+        obj['msg'] = 'Duplicate'
+    conn.commit()
+    cursor.close()
+    return jsonify(obj)
 
 
 if __name__ == '__main__':

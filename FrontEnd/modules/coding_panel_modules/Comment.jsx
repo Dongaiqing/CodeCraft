@@ -256,6 +256,7 @@ export class Comment extends Component {
 
     updatingVote(id, val, is_upvote) {
         axios.post(update_comments_url, {
+            username: this.props.user,
             comment_id: id,
             value: val,
             is_upvote: is_upvote === true ? 1 : 0
@@ -349,7 +350,6 @@ export class Comment extends Component {
     render() {
         let blocks = null;
         if (this.state.comments.length > 0) {
-            console.log(this.state.comments)
             let user = this.props.user;
             let current_question_id = this.props.question_id;
             let is_for_road_map = this.props.is_for_road_map;

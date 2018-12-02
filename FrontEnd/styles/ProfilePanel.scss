@@ -72,3 +72,37 @@
     }
   }
 }
+
+.friendsInfoItem_flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-content: space-between;
+  .friendsInfoItem_card {
+    border-radius: 0.2em;
+    box-shadow: 0 0 0.2em lightgray;
+    padding: 0.5em;
+    margin: 0.5em;
+  }
+
+  .friendsInfoItem_list_flex {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+    overflow: visible;
+    width: 6.5em;
+
+    dt {
+      flex: 0 0 50%;
+      width: 33%;
+    }
+
+    dd {
+      flex:0 0 50%;
+      margin-left: auto;
+      text-align: right;
+      width: 66%;
+      margin-bottom: 0.5em;
+    }
+  }
+}

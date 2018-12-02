@@ -5,6 +5,7 @@ import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 const user_profile_fetching_url = '/get_user_profile';
 const user_profile_updating_url = '/change_user_settings';
+const add_friend_url = '/add_friend_by_search';
 // const user_profile_deleting_url = '';
 
 import "../styles/ProfilePanel.scss"
@@ -37,10 +38,9 @@ class FriendsInfoItem extends Component {
         };
     }
     componentDidMount() {
-        let username = this.props.username;
         axios.get(user_profile_fetching_url, {
             params: {
-                username: username
+                username: this.props.friend_username
             }
         }).then(response => {
             this.setState({profile: response.data})
@@ -48,40 +48,34 @@ class FriendsInfoItem extends Component {
     }
     render() {
         let profile = this.state.profile;
-        if (this.state.clicked) {
-            return (
-                <div>
-                    <div onClick={() => this.setState({clicked: false})}>
-                        <span>{profile.username}</span>
-                        <span>{profile.level}</span>
-                    </div>
-                    <div>
-                        <dl>
-                            <dt>Correct Questions</dt>
-                            <dd>{profile.correctQuestionCount}</dd>
-
-                            <dt>Uploaded Questions</dt>
-                            <dd>{profile.uploadQuestionCount}</dd>
-
-                            <dt>Uploaded Testcases</dt>
-                            <dd>{profile.uploadTestCaseCount}</dd>
-
-                            <dt>Unlocked Items</dt>
-                            <dd>{profile.items.length}</dd>
-                        </dl>
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <div onClick={() => this.setState({clicked: true})}>
-                        <span>{profile.username}</span>
-                        <span>{profile.level}</span>
-                    </div>
-                </div>
-            );
+        if (profile === null) {
+            return (null);
         }
+        return (
+            <div key={'friendsInfoItem_'+profile.username} className={'friendsInfoItem_card'}>
+                <div>
+                    <div onClick={() => this.setState({clicked: !this.state.clicked})}>
+                        <h4>{profile.username}</h4>
+                    </div>
+                    {
+                        this.state.clicked ? (
+                            <div className={'friendsInfoItem_list'}>
+                                <dl className={'friendsInfoItem_list_flex'}>
+                                    <dt>Submitted Solutions</dt>
+                                    <dd>{profile.correctQuestionCount}</dd>
+
+                                    <dt>Uploaded Questions</dt>
+                                    <dd>{profile.uploadQuestionCount}</dd>
+
+                                    <dt>Unlocked Items</dt>
+                                    <dd>{profile.items.length}</dd>
+                                </dl>
+                            </div>
+                        ) : (null)
+                    }
+                </div>
+            </div>
+        );
     }
 }
 
@@ -89,20 +83,46 @@ class FriendsInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            is_fold: true
+            is_fold: true,
+            search_string: '',
+            show_error: false
         }
     }
+
+    addFriends() {
+        axios.post(add_friend_url, {
+            username: this.props.current_user,
+            search_string: this.state.search_string
+        }).then(response => {
+            if (response.data.msg !== 'Success') {
+                this.setState({show_error: true})
+            } else {
+                this.props.updating_profile()
+            }
+        })
+    }
+
     render() {
         let arr = [];
         for (let friend of this.props.profile.friends) {
-            arr.push(<li><FriendsInfoItem username={friend}/></li>);
+            arr.push(<div><FriendsInfoItem friend_username={friend}/></div>);
         }
+        const friends_arr = <div className={'friendsInfoItem_flex'}>{arr}</div>;
+        const add_friends = (<div>
+            <label>Add friends by ID/Username</label>
+            <input type={'text'} value={this.state.search_string} onChange={e => this.setState({search_string: e.target.value})}/>
+            <button onClick={() => this.addFriends()}>Submit</button>
+            {this.state.show_error ? (<article>Failed to add friends!</article>) : (null)}
+        </div>);
         return (
             <div className={'FriendsInfo_content'}>
                 <h3>Friends  {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
                 {
                     this.state.is_fold ? (null) : (
-                        <ul>{arr}</ul>
+                        <div>
+                            {add_friends}
+                            {friends_arr}
+                        </div>
                     )
                 }
             </div>
@@ -169,7 +189,7 @@ class CountsInfo extends Component {
                     this.state.is_fold ? (null) : (
                         <div className={'CountsInfo_flex'}>
                         <div className={'CountsInfo_block'}>
-                        <h4>You have correctly answered questions:</h4>
+                        <h4>You have submitted answers:</h4>
                         <p>{profile.correctQuestionCount}</p>
                         </div>
                         <div className={'CountsInfo_block'}>
@@ -179,10 +199,6 @@ class CountsInfo extends Component {
                         <div className={'CountsInfo_block'}>
                             <h4>You have uploaded questions:</h4>
                             <p>{profile.uploadQuestionCount}</p>
-                        </div>
-                        <div className={'CountsInfo_block'}>
-                            <h4>You have submitted testcases:</h4>
-                            <p>{profile.uploadTestCaseCount}</p>
                         </div>
                     </div>
                     )
@@ -214,30 +230,42 @@ class UserBasicInfo extends Component {
         })
     }
     render() {
-        // TODO: user theme settings
-        let arr = [];
         let profile = this.props.profile;
-        arr.push(<img key={'UserBasicInfo_img'} src={profile.userPicSource}/>);
-        if (this.state.displaySettings === false) {
-            arr.push(<h3 key={'UserBasicInfo_username'}>{profile.username}</h3>);
-            arr.push(<h4 key={'UserBasicInfo_useremail'}>{profile.userEmail}</h4>);
-            arr.push(<button key={'UserBasicInfo_changeBTN'} onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>);
-        } else {
-            arr.push(<div key={'UserBasicInfo_changeMSG'}>Leave blank any input you don't want to change</div>);
-            arr.push(<div key={'UserBasicInfo_changePASSWORD'}>
-                <label htmlFor={'settings_password'}>Change Password</label>
-                <input id={'settings_password'} key={'settings_password'} type={'password'} value={this.state.newPassword} onChange={(e) => this.setState({newPassword: e.target.value})}/>
-            </div>);
-            arr.push(<div key={'UserBasicInfo_changeEMAIL'}>
-                <label htmlFor={'settings_email'}>Change Email</label>
-                <input id={'settings_email'} key={'settings_email'} type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>
-            </div>);
-            arr.push(<button key={'UserBasicInfo_changeSUBMIT'} onClick={() => this.handleSettingSubmit()}>Submit</button>);
-        }
+        console.log(profile.userPicSource)
         return (
             <div className={'UserBasicInfo_content'}>
                 <h2>Profile</h2>
-                <div>{arr}</div>
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <div style={{order: '1', marginRight: '1em', whiteSpace: 'nowrap'}}>
+                        <span style={{display: 'inline-block', height: '100%', verticalAlign: 'middle'}}/>
+                        <img style={{maxWidth: '5em', maxHeight: '5em', verticalAlign: 'middle', boxShadow: '0 0 0.2em grey'}} key={'UserBasicInfo_img'} src={profile.userPicSource} alt={profile.username}/>
+                    </div>
+                    <div style={{order: '2'}}>
+                        {
+                            this.state.displaySettings ? (
+                                <div>
+                                    <div key={'UserBasicInfo_changeMSG'}>Leave blank any input you don't want to change</div>
+                                    <div key={'UserBasicInfo_changePASSWORD'}>
+                                        <label htmlFor={'settings_password'}>Change Password</label>
+                                        <input id={'settings_password'} key={'settings_password'} type={'password'} value={this.state.newPassword} onChange={(e) => this.setState({newPassword: e.target.value})}/>
+                                    </div>
+                                    <div key={'UserBasicInfo_changeEMAIL'}>
+                                        <label htmlFor={'settings_email'}>Change Email</label>
+                                        <input id={'settings_email'} key={'settings_email'} type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>
+                                    </div>
+                                    <button key={'UserBasicInfo_changeSUBMIT'} onClick={() => this.handleSettingSubmit()}>Submit</button>
+                                </div>
+                            ) : (
+                                <div>
+                                    <h3 key={'UserBasicInfo_username'}>{profile.username}</h3>
+                                    <h4 key={'UserBasicInfo_useremail'}>{profile.userEmail}</h4>
+                                    <button key={'UserBasicInfo_changeBTN'} onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>
+                                    <button onClick={() => this.setState({displaySettings: false})}>Back</button>
+                                </div>
+                            )
+                        }
+                    </div>
+                </div>
             </div>
         );
     }
@@ -268,6 +296,18 @@ export default class ProfilePanel extends Component{
         })
     }
 
+    updateProfile() {
+        let user = this.props.user;
+        axios.get(user_profile_fetching_url, {
+            params: {
+                username: user
+            }
+        }).then((response) => {
+            console.log('user profile is ', response.data, );
+            this.setState({user_profile: response.data});
+        })
+    }
+
     render() {
         let user = this.props.user;
         return (
@@ -275,7 +315,7 @@ export default class ProfilePanel extends Component{
                 <UserBasicInfo profile={this.state.user_profile} updating_email={val => this.updatingEmail(val)}/>
                 <CountsInfo profile={this.state.user_profile}/>
                 <ItemsInfo profile={this.state.user_profile}/>
-                <FriendsInfo profile={this.state.user_profile}/>
+                <FriendsInfo updating_profile={() => this.updateProfile()} current_user={user} profile={this.state.user_profile}/>
             </div>
         );
     }
