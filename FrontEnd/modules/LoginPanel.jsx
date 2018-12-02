@@ -77,6 +77,9 @@ const change_styles = (name) => {
             let y = Math.floor(Math.random()*view_height) + 1;
             let radius = Math.floor(Math.random()*20) + 5;
             ctx.arc(x, y, radius, 0, Math.PI*2, true);
+            if (Math.round(Math.random()) === 1) {
+                ctx.filter('blur(10px)');
+            }
             if (i % 2 === 1) {
               ctx.fill();
             } else {
