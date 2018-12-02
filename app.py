@@ -2,6 +2,7 @@ from flask import Flask, g, request, jsonify, url_for, redirect
 from flaskext.mysql import MySQL
 import os
 import json
+import re
 from pyModules.Queries import Queries
 from pyModules.recommendation import Recommendation
 from pyModules.executeCode import exeucteCode
@@ -154,6 +155,8 @@ def receiveResponse():
                 os.remove(complete_filename)
                 return result
             elif executable == 'javac':
+                temp_filename = re.search("(?:(?<=\n)|(?<=\A))(?:public\s)?(class|interface|enum)\s([^\n\s]*)",
+                                          source_code).group(2)
                 complete_filename = temp_filename + '.java'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
