@@ -1,5 +1,9 @@
 .index_nav_login {
+  color: black;
+
   form {
+    color: inherit;
+    background: inherit;
     .form-group {
       padding-bottom: 1em;
     }
@@ -20,6 +24,7 @@
     margin-bottom: 1em;
     border-radius: 0.3em;
     background: white;
+    color: inherit;
     border: 0.2em solid #2E86C1;
     &:hover {
       color: white;
@@ -29,6 +34,8 @@
   }
 
   .error_section {
+    color: inherit;
+    background: inherit;
     padding-top: 0.5em;
     margin-top: 0.5em;
     padding-bottom: 0.5em;

@@ -39,7 +39,6 @@ class Main extends Component {
             const formatted = font_name.indexOf(' ') === -1 ? font_name : font_name.split(' ').join('+');
             const url = 'https://fonts.googleapis.com/css?family='+formatted;
             axios.get(url).then(response => {
-                console.log(response.data);
                 let node = document.createElement('style');
                 node.innerHTML = response.data;
                 document.getElementsByTagName("head")[0].appendChild(node);

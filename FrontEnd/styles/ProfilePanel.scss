@@ -10,9 +10,13 @@
     box-shadow: 0 0 0.2em lightgray;
     border-radius: 0.1em;
   }
-  .CountsInfo_content {
+  .PreferencesPanel_content {
     margin: 1.5em;
     order: 2;
+  }
+  .CountsInfo_content {
+    margin: 1.5em;
+    order: 3;
     .CountsInfo_flex {
       display: flex;
       flex-direction: row;
@@ -32,7 +36,7 @@
     }
   }
   .ItemsInfo_content {
-    order: 3;
+    order: 4;
     margin: 1.5em;
 
     .ItemsInfo_flex {
@@ -60,7 +64,7 @@
     }
   }
   .FriendsInfo_content {
-    order: 4;
+    order: 5;
     margin: 1.5em;
     width: 10em;
     height: 10em;
@@ -105,7 +109,4 @@
       margin-bottom: 0.5em;
     }
   }
-}
-.PreferencesPanel_content {
-  order: 5;
 }

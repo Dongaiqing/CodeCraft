@@ -258,13 +258,13 @@ class UserBasicInfo extends Component {
                                         <input id={'settings_email'} key={'settings_email'} type={'text'} value={this.state.newEmail} onChange={(e) => this.setState({newEmail: e.target.value})}/>
                                     </div>
                                     <button key={'UserBasicInfo_changeSUBMIT'} onClick={() => this.handleSettingSubmit()}>Submit</button>
+                                    <button onClick={() => this.setState({displaySettings: false})}>Back</button>
                                 </div>
                             ) : (
                                 <div>
                                     <h3 key={'UserBasicInfo_username'}>{profile.username}</h3>
                                     <h4 key={'UserBasicInfo_useremail'}>{profile.userEmail}</h4>
                                     <button key={'UserBasicInfo_changeBTN'} onClick={() => this.setState({displaySettings: true})}>Change Email or Password</button>
-                                    <button onClick={() => this.setState({displaySettings: false})}>Back</button>
                                 </div>
                             )
                         }
