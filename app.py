@@ -3,14 +3,14 @@ from flaskext.mysql import MySQL
 import os
 import json
 from pyModules.Queries import Queries
+from pyModules.recommendation import Recommendation
 from pyModules.executeCode import exeucteCode
 from pyModules.generatePics import generatePics
-
 
 app = Flask(__name__)
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '123456'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'CodeCraft'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -21,6 +21,7 @@ def index():
     get_conn()
     return app.send_static_file('index.html')
 
+
 @app.route('/js/<filename>')
 def index_js(filename):
     return app.send_static_file('js/' + filename + '.js')
@@ -30,7 +31,6 @@ def get_img(filename):
     return app.send_static_file('img/' + filename + 'png')
 
 
-
 def get_conn():
     conn = getattr(g, '_database', None)
     if conn is None:
@@ -38,15 +38,18 @@ def get_conn():
         cursor = conn.cursor()
     return conn
 
+
 @app.teardown_appcontext
 def close_connection(exception):
     conn = getattr(g, '_database', None)
     if conn is not None:
         conn.close()
 
+
 def init_conn():
     with app.app_context():
         conn = get_conn()
+
 
 # force redirecting to home
 @app.route('/coding')
@@ -55,6 +58,7 @@ def init_conn():
 @app.route('/profile')
 def redirectToHome():
     return redirect(url_for('index'))
+
 
 # starting to capture urls
 @app.route('/login', methods=['POST'])
@@ -69,6 +73,7 @@ def login():
     if result is not None:
         return jsonify(0)
     return jsonify(1)
+
 
 @app.route('/registration', methods=['POST'])
 def registration():
@@ -87,6 +92,7 @@ def registration():
         return jsonify(0)
     cursor.close()
     return jsonify(1)
+
 
 @app.route('/post_code_test', methods=['POST'])
 def receiveResponse():
@@ -130,21 +136,21 @@ def receiveResponse():
                 complete_filename = temp_filename + '.rb'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename, temp_filename, executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'python3':
                 complete_filename = temp_filename + '.py'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename, temp_filename, executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'node':
                 complete_filename = temp_filename + '.js'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
-                result = exeucteCode.runcode(complete_filename,temp_filename,executable)
+                result = exeucteCode.runcode(complete_filename, temp_filename, executable)
                 os.remove(complete_filename)
                 return result
             elif executable == 'javac':
@@ -176,6 +182,7 @@ def receiveResponse():
         conn.commit()
         return jsonify(saved)
 
+
 @app.route('/get_code_test', methods=['GET'])
 def sendCode():
     id = request.args.get('id')
@@ -192,6 +199,7 @@ def sendCode():
     temp = [{'title': x[1], 'id': x[0], 'article': x[2]} for x in cursor.fetchall()]
     return jsonify(temp)
 
+
 @app.route('/get_comments', methods=['GET'])
 def getComments():
     is_for_road_map = request.args.get('is_for_road_map')
@@ -203,11 +211,15 @@ def getComments():
     if is_for_road_map == '1':
         # meaning for roadmap
         cursor.execute(Queries.getAllRoadmapTopLevelComments(), (question_id))
-        first_level = [{'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]} for x in cursor.fetchall()]
+        first_level = [
+            {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]} for
+            x in cursor.fetchall()]
         for item in first_level:
             first_id = item['id']
             cursor.execute(Queries.getAllRoadmapSecondLevelComments(), (question_id, first_id))
-            second_level = [{'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]} for x in cursor.fetchall()]
+            second_level = [
+                {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]}
+                for x in cursor.fetchall()]
             item['secondaryComments'] = second_level
         cursor.close()
         return jsonify(first_level)
@@ -227,6 +239,7 @@ def getComments():
         print(first_level)
         return jsonify(first_level)
 
+
 @app.route('/update_comments', methods=['POST'])
 def upvoteComment():
     data = request.get_json()
@@ -239,7 +252,7 @@ def upvoteComment():
     cursor = conn.cursor()
 
     if is_upvote == 1:
-        #upvoting
+        # upvoting
         cursor.execute('UPDATE Comments SET upvoteNum=%s WHERE id=%s', (value, comment_id))
     else:
         cursor.execute('UPDATE Comments SET downvoteNum=%s WHERE id=%s', (value, comment_id))
@@ -247,6 +260,7 @@ def upvoteComment():
     conn.commit()
     cursor.close()
     return jsonify(0)
+
 
 @app.route('/post_comments', methods=['POST'])
 def postComments():
@@ -285,6 +299,7 @@ def postComments():
     cursor.close()
     return jsonify(comment_id)
 
+
 @app.route('/get_rating', methods=['GET'])
 def getRating():
     question_id = request.args.get('question_id')
@@ -297,10 +312,11 @@ def getRating():
         cursor.execute(Queries.getQuestionRating(), (question_id))
     result = cursor.fetchone()
     cursor.close()
-    if (result[0] == 0) :
+    if (result[0] == 0):
         return jsonify(0)
     print(result[0], result[1])
-    return jsonify(result[0]/result[1])
+    return jsonify(result[0] / result[1])
+
 
 @app.route('/post_rating', methods=['POST'])
 def postRating():
@@ -314,13 +330,14 @@ def postRating():
         cursor.execute(Queries.getQuestionRating(), (question_id))
         result = cursor.fetchone()
         print(question_id)
-        cursor.execute(Queries.updateQuestionRating(), (result[0]+value, result[1]+1, question_id))
+        cursor.execute(Queries.updateQuestionRating(), (result[0] + value, result[1] + 1, question_id))
     else:
         cursor.execute(Queries.getRoadmapRating(), (question_id))
         result = cursor.fetchone()
-        cursor.execute(Queries.updateRoadmapRating(), (result[0]+value, result[1]+1, question_id))
+        cursor.execute(Queries.updateRoadmapRating(), (result[0] + value, result[1] + 1, question_id))
     cursor.close()
     return jsonify(0)
+
 
 @app.route('/post_tag', methods=['POST'])
 def postTag():
@@ -337,6 +354,7 @@ def postTag():
     cursor.close()
     return jsonify(0)
 
+
 @app.route('/get_tag', methods=['GET'])
 def getTag():
     question_id = request.args.get('question_id')
@@ -348,6 +366,7 @@ def getTag():
     conn.commit()
     cursor.close()
     return jsonify(result)
+
 
 @app.route('/post_question', methods=['POST'])
 def postQuestion():
@@ -361,7 +380,7 @@ def postQuestion():
 
     cursor.execute(Queries.getUserProfile(), (username))
     result = cursor.fetchone()
-    cursor.execute(Queries.updateUserProfileuploadQuestionCount(), (result[7]+1, result[0]))
+    cursor.execute(Queries.updateUserProfileuploadQuestionCount(), (result[7] + 1, result[0]))
     cursor.execute(Queries.insertIntoQuestionCode(), (title, content, 'default', 0, 0, username))
 
     cursor.execute('SELECT uploadQuestionCount FROM UserProfile WHERE username=%s', (username))
@@ -373,6 +392,7 @@ def postQuestion():
     conn.commit()
     cursor.close()
     return jsonify('Success')
+
 
 @app.route('/post_testcase', methods=['POST'])
 def postTestcase():
@@ -391,6 +411,7 @@ def postTestcase():
     conn.commit()
     cursor.close()
     return jsonify('Success')
+
 
 @app.route('/all_roadmap', methods=['GET'])
 def getAllRoadmaps():
@@ -413,10 +434,12 @@ def getAllRoadmaps():
                 for y in cursor.fetchall()]
             item['secondaryComments'] = second_level
 
-        result.append({'id': x[0], 'description': x[1], 'graphData': json.loads(x[2]), 'name': x[3], 'author': username, 'upvoteNum': x[5], 'downvoteNum': x[6], 'comments': first_level})
+        result.append({'id': x[0], 'description': x[1], 'graphData': json.loads(x[2]), 'name': x[3], 'author': username,
+                       'upvoteNum': x[5], 'downvoteNum': x[6], 'comments': first_level})
 
     cursor.close()
     return jsonify(result)
+
 
 @app.route('/upvote_roadmap', methods=['POST'])
 def upvoteRoadmap():
@@ -430,6 +453,7 @@ def upvoteRoadmap():
     cursor.close()
     return jsonify(0)
 
+
 @app.route('/downvote_roadmap', methods=['POST'])
 def downvoteRoadmap():
     data = request.get_json()
@@ -442,6 +466,7 @@ def downvoteRoadmap():
     cursor.close()
     return jsonify(0)
 
+
 @app.route('/add_to_fav_roadmap', methods=['POST'])
 def addFavRoadmap():
     data = request.get_json()
@@ -453,6 +478,7 @@ def addFavRoadmap():
     conn.commit()
     cursor.close()
     return jsonify(0)
+
 
 @app.route('/save_user_roadmap', methods=['POST'])
 def saveRoadMap():
@@ -473,6 +499,7 @@ def saveRoadMap():
     cursor.close()
     return jsonify('Success')
 
+
 @app.route('/get_user_roadmap', methods=['GET'])
 def getAllUserFavs():
     username = request.args.get('username')
@@ -486,18 +513,24 @@ def getAllUserFavs():
         cursor.execute('SELECT username FROM UserProfile WHERE id=%s', (x[4]))
         username = cursor.fetchone()
         cursor.execute(Queries.getAllRoadmapTopLevelComments(), (x[0]))
-        first_level = [{'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]} for y in cursor.fetchall()]
+        first_level = [
+            {'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]} for
+            y in cursor.fetchall()]
         for item in first_level:
             first_id = item['id']
             cursor.execute(Queries.getAllRoadmapSecondLevelComments(), (x[0], first_id))
-            second_level = [{'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]} for y in cursor.fetchall()]
+            second_level = [
+                {'id': y[0], 'imageSource': y[1], 'user': y[2], 'comment': y[3], 'upvoteNum': y[4], 'downvoteNum': y[5]}
+                for y in cursor.fetchall()]
             item['secondaryComments'] = second_level
 
-        result.append({'id': x[0], 'description': x[1], 'graphData': json.loads(x[2]), 'name': x[3], 'author': username,'upvoteNum': x[5], 'downvoteNum': x[6], 'comments': first_level})
+        result.append({'id': x[0], 'description': x[1], 'graphData': json.loads(x[2]), 'name': x[3], 'author': username,
+                       'upvoteNum': x[5], 'downvoteNum': x[6], 'comments': first_level})
 
     conn.commit()
     cursor.close()
     return jsonify(result)
+
 
 @app.route('/delete_user_roadmap', methods=['POST'])
 def deleteUserFav():
@@ -510,6 +543,7 @@ def deleteUserFav():
     conn.commit()
     cursor.close()
     return jsonify(0)
+
 
 @app.route('/get_user_profile', methods=['GET'])
 def getUserprofile():
@@ -542,6 +576,7 @@ def getUserprofile():
     print(result)
     return jsonify(result)
 
+
 @app.route('/change_user_settings', methods=['POST'])
 def changeUserSetting():
     data = request.get_json()
@@ -556,6 +591,7 @@ def changeUserSetting():
     cursor.close()
     return jsonify(0)
 
+
 @app.route('/update_balance_and_items', methods=['POST'])
 def updateBalanceAndItems():
     data = request.get_json()
@@ -566,11 +602,14 @@ def updateBalanceAndItems():
     cursor = conn.cursor()
 
     for new_item in new_items:
-        cursor.execute('INSERT INTO UserProfile_Items(userID, itemStr) VALUES((SELECT id FROM UserProfile WHERE username=%s), %s)', (username, new_item))
+        cursor.execute(
+            'INSERT INTO UserProfile_Items(userID, itemStr) VALUES((SELECT id FROM UserProfile WHERE username=%s), %s)',
+            (username, new_item))
     cursor.execute('UPDATE UserProfile SET eBucks=%s WHERE username=%s', (new_balance, username))
     conn.commit()
     cursor.close()
     return jsonify('Success')
+
 
 @app.route('/check_valid_question_id', methods=['POST'])
 def checkValidQuestionID():
