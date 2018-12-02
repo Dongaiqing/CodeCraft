@@ -107,7 +107,7 @@ class LoginStatus extends Component {
             password: this.props.status.password,
             email: this.props.status.email
         }).then((response) => {
-            console.log('Post in LoginStatus', response.data);
+            console.log('Post in LoginStatus', response.data, successful_login_msg);
             // if login succeeded
             if (response.data.msg === successful_login_msg) {
                 this.setState({feedback: 'Successfully ' + (this.props.status.isLogin ? 'Logged in!' : 'Registered!')});

@@ -96,9 +96,9 @@ def registration():
         cursor.execute(Queries.insertIntoRegister(), (data['username'], data['email'], data['password'], path, 0, 0, 0, 0, 0, 0))
         conn.commit()
         cursor.close()
-        return jsonify(0)
+        return jsonify({'msg': 0, 'preference': {'font_name': 'default', 'theme_name': 'default'}})
     cursor.close()
-    return jsonify(1)
+    return jsonify({'msg': 1})
 
 
 @app.route('/post_code_test', methods=['POST'])
