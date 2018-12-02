@@ -69,10 +69,16 @@ def login():
     cursor = get_conn().cursor()
     cursor.execute(Queries.tryLogin(), (data['username'], data['password']))
     result = cursor.fetchone()
-    cursor.close()
+
     if result is not None:
-        return jsonify(0)
-    return jsonify(1)
+        cursor.execute('SELECT * FROM UserProfile_Preferences WHERE userID=(SELECT id FROM UserProfile WHERE username=%s)', (data['username']))
+        result = cursor.fetchone()
+        cursor.close()
+        if result is None:
+            return jsonify({'msg': 0, 'preference': {'font_name': 'default', 'theme_name': 'default'}})
+        return jsonify({'msg': 0, 'preference': {'font_name': result[2], 'theme_name': result[3]}})
+    cursor.close()
+    return jsonify({'msg': 1})
 
 
 @app.route('/registration', methods=['POST'])
@@ -666,7 +672,36 @@ def addFriendBySearch():
     cursor.close()
     return jsonify(obj)
 
+@app.route('/change_font', methods=['POST'])
+def change_font():
+    data = request.get_json()
+    username = data['username']
+    new_font = data['new_font']
 
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT INTO UserProfile_Preferences(userID, fontName) VALUES((SELECT id FROM UserProfile WHERE username=%s), %s) ON DUPLICATE KEY UPDATE fontName=%s', (username, new_font, new_font))
+    conn.commit()
+    return jsonify(0)
+
+
+@app.route('/change_theme', methods=['POST'])
+def change_theme():
+    data = request.get_json()
+    username = data['username']
+    new_theme = data['new_theme']
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        'INSERT INTO UserProfile_Preferences(userID, themeName) VALUES((SELECT id FROM UserProfile WHERE username=%s), %s) ON DUPLICATE KEY UPDATE themeName=%s',
+        (username, new_theme, new_theme))
+    conn.commit()
+    return jsonify(0)
 
 
 if __name__ == '__main__':

@@ -286,6 +286,7 @@ class PreferenceInfo extends Component {
     }
 
     changeFont() {
+        console.log(this.state.current_font)
         axios.post(change_font_url,  {
             username: this.props.profile.username,
             new_font: this.state.current_font
@@ -307,22 +308,32 @@ class PreferenceInfo extends Component {
         let profile = this.props.profile;
         const all_themes = profile.items.filter(item => Themes.includes(item));
         const all_fonts = profile.items.filter(item => Fonts.includes(item));
+        const fonts_arr = all_fonts.map(item => <option value={item}>{item}</option>);
+        fonts_arr.unshift(<option value={'default'}>{'default'}</option>);
+        const themes_arr = all_themes.map(item => <option value={item}>{item}</option>);
+        themes_arr.unshift(<option value={'default'}>{'default'}</option>);
         return (
-            <div>
+            <div className={'PreferencesPanel_content'}>
                 <h3>Preferences {this.state.is_fold ? (<FontAwesomeIcon icon={faArrowRight} onClick={() => this.setState({is_fold: false})}/>) : (<FontAwesomeIcon icon={faArrowDown} onClick={() => this.setState({is_fold: true})}/>)}</h3>
-                <p>After choosing new fonts/themes, please refresh your page!</p>
-                <div>
-                    <div>
-                        <label htmlFor={'ProfilePanel_select_fonts'}>Change fonts here!</label>
-                        <select onChange={e => this.setState({current_font: e.target.value})} id={'ProfilePanel_select_fonts'}>{all_fonts.map(item => <option value={item}>{item}</option>)}</select>
-                        <button onClick={() => this.changeFont()}>Submit</button>
-                    </div>
-                    <div>
-                        <label htmlFor={'ProfilePanel_select_themes'}>Change themes here!</label>
-                        <select onChange={e => this.setState({current_theme: e.target.value})} id={'ProfilePanel_select_themes'}>{all_themes.map(item => <option value={item}>{item}</option>)}</select>
-                        <button onClick={() => this.changeTheme()}>Submit</button>
-                    </div>
-                </div>
+                {
+                    this.state.is_fold ? (null) : (
+                        <div>
+                            <p>After choosing new fonts/themes, please refresh your page!</p>
+                            <div>
+                                <div>
+                                    <label htmlFor={'ProfilePanel_select_fonts'}>Change fonts here!</label>
+                                    <select onChange={e => this.setState({current_font: e.target.value})} id={'ProfilePanel_select_fonts'}>{fonts_arr}</select>
+                                    <button onClick={() => this.changeFont()}>Submit</button>
+                                </div>
+                                <div>
+                                    <label htmlFor={'ProfilePanel_select_themes'}>Change themes here!</label>
+                                    <select onChange={e => this.setState({current_theme: e.target.value})} id={'ProfilePanel_select_themes'}>{themes_arr}</select>
+                                    <button onClick={() => this.changeTheme()}>Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         )
     }
@@ -373,6 +384,7 @@ export default class ProfilePanel extends Component{
                 <CountsInfo profile={this.state.user_profile}/>
                 <ItemsInfo profile={this.state.user_profile}/>
                 <FriendsInfo updating_profile={() => this.updateProfile()} current_user={user} profile={this.state.user_profile}/>
+                <PreferenceInfo profile={this.state.user_profile}/>
             </div>
         );
     }

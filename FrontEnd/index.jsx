@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import LoginPanel from "./modules/LoginPanel";
 import Header from "./modules/Header";
+import axios from "axios";
 
 const CodingPanel = lazy(() => import('./modules/CodingPanel'));
 const HomePanel = lazy(() => import('./modules/HomePanel'));
@@ -12,14 +13,17 @@ const RoadMapPanel = lazy(() => import('./modules/RoadMapPanel'));
 
 import "./styles/index.scss";
 
-
 class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loggedIn: false,
             user: '',
-            is_fold: false
+            is_fold: false,
+            preference: {
+                font_name: 'default',
+                theme_name: 'default'
+            }
         };
     }
 
@@ -30,6 +34,18 @@ class Main extends Component {
     }
 
     render() {
+        if (this.state.preference.font_name !== 'default') {
+            let font_name = this.state.preference.font_name;
+            const formatted = font_name.indexOf(' ') === -1 ? font_name : font_name.split(' ').join('+');
+            const url = 'https://fonts.googleapis.com/css?family='+formatted;
+            axios.get(url).then(response => {
+                console.log(response.data);
+                let node = document.createElement('style');
+                node.innerHTML = response.data;
+                document.getElementsByTagName("head")[0].appendChild(node);
+                document.getElementById('reactdom').style['font-family'] = font_name+', sans-serif';
+            });
+        }
         return (
             <div style={{height: '100%', width: '100%'}}>
                 <Router>

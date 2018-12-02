@@ -115,3 +115,11 @@ CREATE TABLE IF NOT EXISTS UserProfile_RoadMap(
   FOREIGN KEY (userID) REFERENCES UserProfile(id),
   FOREIGN KEY (roadmapID) REFERENCES RoadMap(id)
 );
+
+CREATE TABLE IF NOT EXISTS UserProfile_Preferences(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  userID INT UNIQUE,
+  fontName VARCHAR(1000) DEFAULT 'default',
+  themeName VARCHAR(1000) DEFAULT 'default',
+  FOREIGN KEY (userID) REFERENCES UserProfile(id)
+);

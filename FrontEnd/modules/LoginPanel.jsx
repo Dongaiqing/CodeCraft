@@ -22,11 +22,13 @@ class LoginStatus extends Component {
         }).then((response) => {
             console.log('Post in LoginStatus', response.data);
             // if login succeeded
-            if (response.data === successful_login_msg) {
+            if (response.data.msg === successful_login_msg) {
                 this.setState({feedback: 'Successfully ' + (this.props.status.isLogin ? 'Logged in!' : 'Registered!')});
                 this.props.updating_parent_method('loggedIn', true);
                 this.props.updating_method('shouldSubmit', false);
                 this.props.updating_parent_method('user', this.props.status.username);
+                console.log(response.data.preference)
+                this.props.updating_parent_method('preference', response.data.preference);
             } else {
                 this.setState({feedback: 'Failed to ' + (this.props.status.isLogin ? 'log in!' : 'register!')});
             }
