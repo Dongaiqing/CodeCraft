@@ -2,6 +2,7 @@ from flask import Flask, g, request, jsonify, url_for, redirect
 from flaskext.mysql import MySQL
 import os
 import json
+import re
 from pyModules.Queries import Queries
 from pyModules.recommendation import Recommendation
 from pyModules.executeCode import exeucteCode
@@ -10,7 +11,7 @@ from pyModules.generatePics import generatePics
 app = Flask(__name__)
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '123456'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'Aa123123123!'
 app.config['MYSQL_DATABASE_DB'] = 'CodeCraft'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -160,6 +161,8 @@ def receiveResponse():
                 os.remove(complete_filename)
                 return result
             elif executable == 'javac':
+                temp_filename = re.search("(?:(?<=\n)|(?<=\A))(?:public\s)?(class|interface|enum)\s([^\n\s]*)",
+                                          source_code).group(2)
                 complete_filename = temp_filename + '.java'
                 with open(complete_filename, 'w') as file:
                     file.write(source_code)
@@ -705,4 +708,4 @@ def change_theme():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run('0.0.0.0', port=80)

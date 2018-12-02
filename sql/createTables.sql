@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS UserProfile(
   id INT PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(1000) UNIQUE,
-  useremail VARCHAR(1000),
-  password VARCHAR(1000),
-  userPicSource VARCHAR(2000),
+  username VARCHAR(255) UNIQUE,
+  useremail VARCHAR(255),
+  password VARCHAR(255),
+  userPicSource TEXT,
   correctQuestionCount INT,
   commentCount INT,
   uploadQuestionCount INT,
@@ -15,51 +15,51 @@ CREATE TABLE IF NOT EXISTS UserProfile(
 CREATE TABLE IF NOT EXISTS UserProfile_Items (
   id INT PRIMARY KEY AUTO_INCREMENT,
   userID INT,
-  itemStr VARCHAR(1000),
+  itemStr VARCHAR(255),
   FOREIGN KEY (userID) REFERENCES UserProfile(id)
 );
 
 CREATE TABLE IF NOT EXISTS UserProfile_Friends (
   id INT PRIMARY KEY AUTO_INCREMENT,
   userID INT,
-  friendName VARCHAR(1000),
+  friendName VARCHAR(255),
   FOREIGN KEY (userID) REFERENCES UserProfile(id),
   FOREIGN KEY (friendName) REFERENCES UserProfile(username)
 );
 
 CREATE TABLE IF NOT EXISTS QuestionCode (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  title VARCHAR(1000),
-  article VARCHAR(2000),
-  answer VARCHAR(2000),
+  title VARCHAR(255),
+  article TEXT,
+  answer TEXT,
   totalRating INT,
   numRating INT,
-  author VARCHAR(1000)
+  author VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS QuestionCode_Tag (
   id INT PRIMARY KEY AUTO_INCREMENT,
   questionID INT,
-  tag VARCHAR(1000),
+  tag VARCHAR(255),
   FOREIGN KEY (questionID) REFERENCES QuestionCode(id)
 );
 
 CREATE TABLE IF NOT EXISTS QuestionSubmission (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  sourceCode VARCHAR(2000),
-  sourceLanguage VARCHAR(1000),
+  sourceCode TEXT,
+  sourceLanguage VARCHAR(255),
   userID INT,
   questionID INT,
-  result VARCHAR(2000),
+  result TEXT,
   FOREIGN KEY (userID) REFERENCES UserProfile(id),
   FOREIGN KEY (questionID) REFERENCES QuestionCode(id)
 );
 
 CREATE TABLE IF NOT EXISTS RoadMap (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  description VARCHAR(2000),
-  graphData VARCHAR(2000),
-  title VARCHAR(1000),
+  description TEXT,
+  graphData VARCHAR(255),
+  title VARCHAR(255),
   userID INT,
   upvoteNum INT,
   downvoteNum INT,
@@ -70,9 +70,9 @@ CREATE TABLE IF NOT EXISTS RoadMap (
 
 CREATE TABLE IF NOT EXISTS Comments (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  imageSource VARCHAR(2000),
-  username VARCHAR(1000),
-  comment VARCHAR(2000),
+  imageSource TEXT,
+  username VARCHAR(255),
+  comment TEXT,
   upvoteNum INT,
   downvoteNum INT
 );
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS RoadMap_Comments(
 CREATE TABLE IF NOT EXISTS QuestionCode_Testcases(
   id INT PRIMARY KEY AUTO_INCREMENT,
   questionID INT,
-  testcase VARCHAR(2000),
+  testcase TEXT,
   FOREIGN KEY (questionID) REFERENCES QuestionCode(id)
 );
 
