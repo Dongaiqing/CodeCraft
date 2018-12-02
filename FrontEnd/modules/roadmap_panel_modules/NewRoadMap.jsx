@@ -19,7 +19,8 @@ export class CreateNewRoadMap extends Component {
             current_parent_id: -1,
             is_successfully_added: true,
             is_successfully_deleted: true,
-            is_successfully_saved: false
+            is_successfully_saved: false,
+            is_click_submitted: false
         };
     }
 
@@ -43,8 +44,7 @@ export class CreateNewRoadMap extends Component {
 
     recursiveFind(curr_obj, node_id) {
         let id = curr_obj.name.split(':')[0];
-        if (id === curr_obj.toString()) {
-
+        if (id === node_id.toString()) {
             return 'done';
         }
         for(let item of curr_obj['children']) {
@@ -58,7 +58,7 @@ export class CreateNewRoadMap extends Component {
     addNoteToData() {
         let node_id = this.state.current_node_id;
         let parent_id = this.state.current_parent_id;
-        if (this.recursiveFind(parent_id) !== 'done') {
+        if (this.recursiveFind(this.state.data, parent_id) !== 'done') {
             return;
         }
         axios.post(check_id_url, {
@@ -116,7 +116,7 @@ export class CreateNewRoadMap extends Component {
             author: this.props.user,
             graphData: this.state.data
         }).then(response => {
-            this.setState({is_successfully_saved: response.data === save_success_msg});
+            this.setState({is_successfully_saved: response.data === save_success_msg, is_click_submitted: true});
         })
     }
 
@@ -124,7 +124,7 @@ export class CreateNewRoadMap extends Component {
         let failed_to_submit_display = null;
         let failed_to_add_node = null;
         let failed_to_delete_node = null;
-        if (this.state.title !== '') {
+        if (this.state.is_click_submitted !== false) {
             if (this.state.is_successfully_added) {
                 failed_to_submit_display = <section>Failed to Submit</section>;
             } else {

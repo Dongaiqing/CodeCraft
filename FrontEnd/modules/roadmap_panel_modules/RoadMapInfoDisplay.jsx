@@ -95,11 +95,15 @@ export class RoadMapInfoCard extends Component {
         let user = this.props.user;
         return (
             <div>
-                <div onClick={() => this.setState({clicked: true})}>
-                    <div><h4>Name: {profile.name}</h4></div>
-                    <div><h4>Author: {profile.author}</h4></div>
-                    <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
-                    <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <div style={{order: '1', marginRight: '1em'}}>
+                        <div><h4>Name: {profile.name}</h4></div>
+                        <div><h4>Author: {profile.author}</h4></div>
+                    </div>
+                    <div style={{order: '2'}}>
+                        <div><UpvoteDisplay num={profile.upvoteNum} updating_upvote={val => this.props.updating_upvote(val)}/></div>
+                        <div><DownvoteDisplay num={profile.downvoteNum} updating_downvote={val => this.props.updating_downvote(val)}/></div>
+                    </div>
                 </div>
                 {
                     this.props.delete_roadmap ? (<div><span onClick={() => this.props.delete_roadmap(profile.id)}><FontAwesomeIcon icon={faTimes}/></span></div>) : (null)
@@ -108,6 +112,7 @@ export class RoadMapInfoCard extends Component {
                     this.props.add_roadmap ? (<div><span onClick={() => this.props.add_roadmap(profile.id)}><FontAwesomeIcon icon={faHeart}/></span></div>) : (null)
                 }
                 <div>
+                    <div onClick={() => this.setState({clicked: true})}><span>Click here to see more</span></div>
                     <RoadMapPopup
                         user={user}
                         profile={profile}

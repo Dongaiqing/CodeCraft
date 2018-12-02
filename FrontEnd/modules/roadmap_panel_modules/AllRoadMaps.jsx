@@ -27,7 +27,7 @@ export class DisplayAllRoadMaps extends Component {
             roadmap_id: id,
             value: val
         }).then(response => {
-            let prev_roadMaps = JSON.parse(JSON.stringify(this.state.roadMaps));
+            let prev_roadMaps = JSON.parse(JSON.stringify(this.state.all_roadmaps));
             for (let item of prev_roadMaps) {
                 if (item.id === id) {
                     if (is_update) {
@@ -37,7 +37,7 @@ export class DisplayAllRoadMaps extends Component {
                     }
                 }
             }
-            this.setState({roadMaps: prev_roadMaps});
+            this.setState({all_roadmaps: prev_roadMaps});
         })
     }
 
@@ -54,11 +54,11 @@ export class DisplayAllRoadMaps extends Component {
         let arr = [];
         let user = this.props.user;
         for (let item of this.state.all_roadmaps) {
-            arr.push(<div><RoadMapInfoCard add_roadmap={id => this.addRoadMap(id)} profile={item} user={user} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/></div>);
+            arr.push(<div style={{marginRight: '1em'}}><RoadMapInfoCard add_roadmap={id => this.addRoadMap(id)} profile={item} user={user} updating_upvote={(val) => this.updateVotes(item.id, val, true)} updating_downvote={(val) => this.updateVotes(item.id, val, false)}/></div>);
         }
         return (
             <div className={'allRoadMaps_content'}>
-                <div className={'allRoadMaps_item'}>{arr}</div>
+                <div className={'allRoadMaps_item'} style={{display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', overflowX: 'auto'}}>{arr}</div>
             </div>
         );
     }

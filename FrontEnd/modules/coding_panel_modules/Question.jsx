@@ -127,6 +127,7 @@ class QuestionIDInput extends Component {
         const items = [
             <label key={'QuestionIDInput_label'} htmlFor={'QuestionIDInput'}>Here displays the question ID</label>,
             <input
+                readOnly={'readonly'}
                 key={'QuestionIDInput_input'}
                 type={'number'}
                 name={'question_number'}
