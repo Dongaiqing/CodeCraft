@@ -352,12 +352,12 @@ def postRating():
     if is_for_road_map == 0:
         cursor.execute(Queries.getQuestionRating(), (question_id))
         result = cursor.fetchone()
-        print(question_id)
         cursor.execute(Queries.updateQuestionRating(), (result[0] + value, result[1] + 1, question_id))
     else:
         cursor.execute(Queries.getRoadmapRating(), (question_id))
         result = cursor.fetchone()
         cursor.execute(Queries.updateRoadmapRating(), (result[0] + value, result[1] + 1, question_id))
+    conn.commit()
     cursor.close()
     return jsonify(0)
 
