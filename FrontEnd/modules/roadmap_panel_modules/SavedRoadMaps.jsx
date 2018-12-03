@@ -71,11 +71,11 @@ export class DisplaySavedRoadMaps extends Component {
         let arr = [];
         let user = this.props.user;
         for (let data of this.state.roadMaps) {
-            arr.push(<RoadMapInfoCard profile={data} user={user} delete_roadmap={id => this.deleteRoadMap(id)} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/>);
+            arr.push(<div className={'savedRoadMap_item'}><RoadMapInfoCard profile={data} user={user} delete_roadmap={id => this.deleteRoadMap(id)} updating_upvote={(id, val) => this.updateVotes(id, val, true)} updating_downvote={(id, val) => this.updateVotes(id, val, false)}/></div>);
         }
         return (
             <div className={'savedRoadMap_content'}>
-                <div className={'savedRoadMap_item'}>{arr}</div>
+                {arr}
             </div>
         );
     }

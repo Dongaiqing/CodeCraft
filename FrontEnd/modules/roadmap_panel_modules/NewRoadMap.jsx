@@ -116,7 +116,9 @@ export class CreateNewRoadMap extends Component {
             author: this.props.user,
             graphData: this.state.data
         }).then(response => {
-            this.setState({is_successfully_saved: response.data === save_success_msg, is_click_submitted: true});
+            console.log('a', response.data);
+            this.setState({is_click_submitted: true});
+            this.setState({is_successfully_saved: response.data === save_success_msg});
         })
     }
 

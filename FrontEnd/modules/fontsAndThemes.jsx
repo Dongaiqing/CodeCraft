@@ -22,6 +22,20 @@ export const ThemesObj = [
             emphasis: '#071b3d',
             font: '#ffffff'
         }
+    }, {
+        name: 'autumn',
+        styles: {
+            background: '#F4D03F',
+            emphasis: '#E67E22',
+            font: '#ffffff'
+        }
+    }, {
+        name: 'freeze',
+        styles: {
+            background: '#99A3A4',
+            emphasis: '#839192',
+            font: '#ffffff'
+        }
     }
 ];
 
