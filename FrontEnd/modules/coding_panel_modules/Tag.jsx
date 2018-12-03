@@ -75,31 +75,23 @@ class DisplayTags extends Component {
         }
         return arr;
     }
-    componentDidMount() {
 
-        let question_id = this.props.question_id;
+    componentWillReceiveProps(nextprops) {
+        console.log(nextprops.data);
+        let raw_data = this.generateFrequency(nextprops.data);
+        let max_frequency = Math.max.apply(Math, raw_data.map(item => item.tagFrequency));
 
-        axios.get(tag_receiving_url, {
-            params: {
-                question_id: question_id
-            }
-        }).then((response) => {
-            console.log('Tag response is ', response.data);
-            let raw_data = this.generateFrequency(response.data);
-            let max_frequency = Math.max.apply(Math, raw_data.map(item => item.tagFrequency));
-
-            let temp_data = raw_data.filter(item => item.tagFrequency / max_frequency >= frequenct_threshold);
-            let random_color = temp_data.map(() => '#'+(Math.random()*0xFFFFFF<<0).toString(16));
-            let chart_data = {
-                labels: temp_data.map(item => item.tagName),
-                datasets: [{
-                    data: temp_data.map(item => item.tagFrequency),
-                    backgroundColor: random_color,
-                    hoverBackgroundColor: random_color
-                }]
-            };
-            this.setState({chartData: chart_data});
-        })
+        let temp_data = raw_data.filter(item => item.tagFrequency / max_frequency >= frequenct_threshold);
+        let random_color = temp_data.map(() => '#'+(Math.random()*0xFFFFFF<<0).toString(16));
+        let chart_data = {
+            labels: temp_data.map(item => item.tagName),
+            datasets: [{
+                data: temp_data.map(item => item.tagFrequency),
+                backgroundColor: random_color,
+                hoverBackgroundColor: random_color
+            }]
+        };
+        this.setState({chartData: chart_data});
     }
     render() {
         return (
@@ -128,7 +120,8 @@ export class Tag extends Component {
             question_id: current_question_id,
             tags: tags
         }).then((response) => {
-            this.setState({is_display_tags: true, tags: tags});
+            console.log('response', response.data);
+            this.setState({is_display_tags: true, tags: response.data.tags});
         })
     }
 
@@ -141,7 +134,7 @@ export class Tag extends Component {
         return (<div className={'tags_content'}>
             {
                 this.state.is_display_tags ? (
-                    <DisplayTags question_id={this.props.question_id}  current_question_id={this.props.current_question_id}/>
+                    <DisplayTags question_id={this.props.question_id}  current_question_id={this.props.current_question_id} data={this.state.tags}/>
                 ) : (
                     <SubmitTags updating_tags={(tags) => this.updateTags(tags)} updating_display_tags={() => this.updatingDisplayTags()} current_user={this.props.user} current_question_id={this.props.current_question_id}/>
                 )

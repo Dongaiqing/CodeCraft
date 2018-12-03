@@ -11,7 +11,7 @@ from pyModules.generatePics import generatePics
 app = Flask(__name__)
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Aa123123123!'
+app.config['MYSQL_DATABASE_PASSWORD'] = '123456'
 app.config['MYSQL_DATABASE_DB'] = 'CodeCraft'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -335,7 +335,7 @@ def getRating():
         cursor.execute(Queries.getQuestionRating(), (question_id))
     result = cursor.fetchone()
     cursor.close()
-    if (result[0] == 0):
+    if result[0] == 0:
         return jsonify(0)
     print(result[0], result[1])
     return jsonify(result[0] / result[1])
@@ -371,11 +371,14 @@ def postTag():
 
     conn = get_conn()
     cursor = conn.cursor()
+    cursor.execute('SELECT tag FROM QuestionCode_Tag WHERE questionID=%s', (question_id))
+    result = [x[0] for x in cursor.fetchall()]
     for tag in tags:
         cursor.execute(Queries.insertQuestionTag(), (question_id, tag))
     conn.commit()
     cursor.close()
-    return jsonify(0)
+    result.extend(tags)
+    return jsonify({'tags': result})
 
 
 @app.route('/get_tag', methods=['GET'])
