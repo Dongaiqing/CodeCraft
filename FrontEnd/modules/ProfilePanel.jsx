@@ -73,6 +73,9 @@ class FriendsInfoItem extends Component {
 
                                     <dt>Unlocked Items</dt>
                                     <dd>{profile.items.length}</dd>
+
+                                    <dt>Level</dt>
+                                    <dd>{profile.level}</dd>
                                 </dl>
                             </div>
                         ) : (null)
