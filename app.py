@@ -96,9 +96,9 @@ def registration():
         cursor.execute(Queries.insertIntoRegister(), (data['username'], data['email'], data['password'], path, 0, 0, 0, 0, 0, 0))
         conn.commit()
         cursor.close()
-        return jsonify(0)
+        return jsonify({'msg': 0, 'preference': {'font_name': 'default', 'theme_name': 'default'}})
     cursor.close()
-    return jsonify(1)
+    return jsonify({'msg': 1})
 
 
 @app.route('/post_code_test', methods=['POST'])
@@ -224,11 +224,18 @@ def getComments():
             {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]} for
             x in cursor.fetchall()]
         for item in first_level:
+            if item['imageSource'] == 'default':
+                cursor.execute('SELECT userPicSource FROM UserProfile WHERE username=%s', (item['user']))
+                item['imageSource'] = cursor.fetchone()[0]
             first_id = item['id']
             cursor.execute(Queries.getAllRoadmapSecondLevelComments(), (question_id, first_id))
             second_level = [
                 {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]}
                 for x in cursor.fetchall()]
+            for temp_item in second_level:
+                if temp_item['imageSource'] == 'default':
+                    cursor.execute('SELECT userPicSource FROM UserProfile WHERE username=%s', (temp_item['user']))
+                    temp_item['imageSource'] = cursor.fetchone()[0]
             item['secondaryComments'] = second_level
         cursor.close()
         return jsonify(first_level)
@@ -238,12 +245,19 @@ def getComments():
             {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]} for
             x in cursor.fetchall()]
         for item in first_level:
+            if item['imageSource'] == 'default':
+                cursor.execute('SELECT userPicSource FROM UserProfile WHERE username=%s', (item['user']))
+                item['imageSource'] = cursor.fetchone()[0]
             first_id = item['id']
             cursor.execute(Queries.getAllQuestionSecondLevelComments(), (question_id, first_id))
             second_level = [
                 {'id': x[0], 'imageSource': x[1], 'user': x[2], 'comment': x[3], 'upvoteNum': x[4], 'downvoteNum': x[5]}
                 for x in cursor.fetchall()]
             item['secondaryComments'] = second_level
+            for temp_item in second_level:
+                if temp_item['imageSource'] == 'default':
+                    cursor.execute('SELECT userPicSource FROM UserProfile WHERE username=%s', (temp_item['user']))
+                    temp_item['imageSource'] = cursor.fetchone()[0]
         cursor.close()
         print(first_level)
         return jsonify(first_level)

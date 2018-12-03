@@ -31,7 +31,7 @@ import {faArrowDown, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 export const staticSettings = {
     get all_settings() {
         return {
-            language: ['javascript', 'java', 'python', 'ruby', 'markdown', 'html', 'c#'],
+            language: ['javascript', 'java', 'python', 'ruby', 'markdown', 'html'],
             theme: ['github', 'monokai', 'tomorrow', 'kuroir', 'twilight', 'xcode', 'textmate', 'solarized_dark', 'solarized_light', 'terminal'],
             fontSize: {
                 min: 1,

@@ -108,7 +108,7 @@ class UserInfo extends Component {
     render() {
         return (
             <div style={{display: 'flex', flexDirection: 'row'}}>
-                <img style={{order: 1, marginRight: '1em'}} src={this.props.src} alt={this.props.user}/>
+                <img style={{order: 1, marginRight: '1em', maxWidth: '5em', maxHeight: '5em', verticalAlign: 'middle', boxShadow: '0 0 0.2em grey'}} src={this.props.src} alt={this.props.user}/>
                 <h4 style={{order: 2, verticalAlign: 'center'}}>{this.props.user}</h4>
             </div>
         );
