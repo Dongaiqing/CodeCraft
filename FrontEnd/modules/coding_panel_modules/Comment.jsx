@@ -159,7 +159,7 @@ class CommentEditor extends Component {
             content: this.state.text
         }).then((response) => {
             console.log('Send comment to backend', response.data);
-            let id = response.data;
+            let id = response.data[0];
             this.props.updating_comment(id, this.state.text);
         })
     }
@@ -185,6 +185,11 @@ class FirstLevelComment extends Component {
     }
     render() {
         let curr_comment = this.props.comment_ref;
+        let img_source = curr_comment.imageSource;
+        if (img_source === '' || img_source === undefined || img_source === null) {
+            img_source = this.props.user_profile.userPicSource;
+        }
+
         const secondary_comments = [];
         for (let second_level_comment of curr_comment.secondaryComments) {
             secondary_comments.push(<SecondLevelComment key={'SecondLevelComment' + second_level_comment.id}
@@ -195,7 +200,7 @@ class FirstLevelComment extends Component {
         return (
             <div className={'firstLevelComments_content'}>
                 <div>
-                    <div><UserInfo src={curr_comment.imageSource} user={curr_comment.user}/></div>
+                    <div><UserInfo src={img_source} user={curr_comment.user}/></div>
                     <div className={'comment_flex'}>
                         <div className={'comment_blockleft'}>
                             <div><UpvoteDisplay num={curr_comment.upvoteNum}
@@ -249,9 +254,28 @@ export class Comment extends Component {
         }).then((response) => {
             console.log('Get all comments:', response.data, Object.keys(response.data).length);
             if (Object.keys(response.data).length > 0) {
-                this.setState({comments: response.data});
+                this.setState({comments: response.data, prev_question_id: this.props.question_id});
             }
         })
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.question_id !== prevProps.question_id) {
+            let is_for_road_map = this.props.for_road_map === true ? 1 : 0;
+            axios.get(get_comments_url, {
+                params: {
+                    is_for_road_map: is_for_road_map,
+                    question_id: this.props.question_id
+                }
+            }).then((response) => {
+                this.setState({
+                    comments: response.data,
+                    pageNumber: 0,
+                    is_fold: true
+                });
+            });
+        }
+        return null;
     }
 
     updatingVote(id, val, is_upvote) {
@@ -266,6 +290,7 @@ export class Comment extends Component {
             for (let first_lev_question of prev_comments) {
                 if (first_lev_question.id === id) {
                     if (is_upvote) {
+                        console.log('first_lev_question', first_lev_question, val);
                         first_lev_question.upvoteNum = val;
                     } else {
                         first_lev_question.downvoteNum = val;
@@ -292,6 +317,7 @@ export class Comment extends Component {
                     break;
                 }
             }
+            console.log(prev_comments);
             this.setState({
                 comments: prev_comments
             });
@@ -301,11 +327,12 @@ export class Comment extends Component {
     navigatePage(is_nextpage) {
         let prev_pageNumber = this.state.pageNumber;
         if (is_nextpage) {
-            if ((prev_pageNumber + 1) * num_comments - this.state.comments.length < num_comments) {
+            if (Math.abs((prev_pageNumber + 1) * num_comments - this.state.comments.length) > 0) {
                 this.setState({pageNumber: prev_pageNumber + 1});
             }
         } else {
-            if ((prev_pageNumber - 1) > 0) {
+            console.log(prev_pageNumber);
+            if ((prev_pageNumber - 1) >= 0) {
                 this.setState({pageNumber: prev_pageNumber - 1});
             }
         }
@@ -314,7 +341,9 @@ export class Comment extends Component {
     insertComment(id, string, parent_id) {
 
         if (parent_id !== null && parent_id !== undefined) {
-            let data = new SecondLevelCommentDataStructure();
+            let data = {};
+            data.imageSource = '';
+            data.secondaryComments = [];
             data.user = this.props.user;
             data.comment = string;
             data.downvoteNum = 0;
@@ -330,13 +359,14 @@ export class Comment extends Component {
             }
             this.setState({comments: prev_comments});
         } else {
-            let data = new FirstLevelCommentDataStructure();
+            let data = {};
             data.user = this.props.user;
             data.comment = string;
             data.id = id;
             data.downvoteNum = 0;
             data.upvoteNum = 0;
             data.secondaryComments = [];
+            data.imageSource = '';
 
             let prev_comments = JSON.parse(JSON.stringify(this.state.comments));
             prev_comments.unshift(data);
@@ -354,7 +384,7 @@ export class Comment extends Component {
             let current_question_id = this.props.question_id;
             let is_for_road_map = this.props.is_for_road_map;
             blocks = [];
-            for (let i = this.state.pageNumber * num_comments; i < num_comments; i += 1) {
+            for (let i = this.state.pageNumber * num_comments; i < (this.state.pageNumber+1) * num_comments; i += 1) {
                 if (i >= this.state.comments.length) {
                     continue;
                 }
@@ -364,7 +394,7 @@ export class Comment extends Component {
                                        updating_upvote={(id, val) => this.updatingVote(id, val, true)}
                                        updating_downvote={(id, val) => this.updatingVote(id, val, false)}
                                        updating_comment={(id, string, parent_id) => this.insertComment(id, string, parent_id)}
-                                       current_user={user} current_question_id={current_question_id}/>
+                                       current_user={user} current_question_id={current_question_id} user_profile={this.props.user_profile}/>
                 )
             }
         }
@@ -377,8 +407,9 @@ export class Comment extends Component {
                                     current_user={this.props.user} current_question_id={this.props.question_id}/></div>
                 <div>{blocks}</div>
                 <div style={{width: '100%', textAlign: 'center'}}>
-                    <div style={{display: 'inline-block', marginRight: '1em'}}><button onClick={() => this.navigatePage(true)}>Next Page</button></div>
-                    <div style={{display: 'inline-block'}}><button onClick={() => this.navigatePage(false)}>Previous Page</button></div>
+                    <button style={{display: 'inline-block', marginRight: '1em'}} onClick={() => this.navigatePage(false)}>Previous Page</button>
+                    <button style={{display: 'inline-block'}} onClick={() => this.navigatePage(true)}>Next Page</button>
+
                 </div>
             </div>)}
         </section>)

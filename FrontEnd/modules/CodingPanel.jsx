@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import {Editor, staticSettings} from './coding_panel_modules/Editor';
 import {QuestionFeedbackPanel, QuestionDisplayPanel} from './coding_panel_modules/Question';
 import {Comment} from "./coding_panel_modules/Comment";
@@ -8,10 +9,13 @@ import {Tag} from "./coding_panel_modules/Tag";
 
 import "../styles/CodingPanel.scss";
 
+const user_profile_fetching_url = '/get_user_profile';
+
 export default class CodingPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user_profile: {},
             editor_content: '',
             editor_language: '',
             editor_theme: '',
@@ -26,6 +30,17 @@ export default class CodingPanel extends Component {
         this.setState({
             [key_name]: value
         });
+    }
+
+    componentDidMount() {
+        let user = this.props.user;
+        axios.get(user_profile_fetching_url, {
+            params: {
+                username: user
+            }
+        }).then((response) => {
+            this.setState({user_profile: response.data});
+        })
     }
 
     render() {
@@ -77,6 +92,7 @@ export default class CodingPanel extends Component {
                         key={'CodingCommentSection'}
                         user={this.props.user}
                         question_id={this.state.current_question_id}
+                        user_profile={this.state.user_profile}
                     />)
                 }
                 <UploadQuestion key={'CodingUploadQuestion'} user={this.props.user}/>
