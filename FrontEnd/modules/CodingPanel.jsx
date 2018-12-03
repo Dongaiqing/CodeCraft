@@ -29,6 +29,7 @@ export default class CodingPanel extends Component {
     }
 
     render() {
+        console.log('this.state.current_question_id', this.state.current_question_id);
         return (
             <div className={'codingpanel_content'}>
                 <QuestionDisplayPanel

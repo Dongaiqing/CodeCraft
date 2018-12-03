@@ -62,6 +62,10 @@ export class Rating extends Component {
         };
     }
 
+    componentWillReceiveProps(newprops) {
+        this.setState({rating: 0, is_display_rating: false});
+    }
+
     ratingOnClickHander(nextValue, prevValue, name) {
         this.setState({rating: nextValue});
         let user = this.props.user;
@@ -78,6 +82,7 @@ export class Rating extends Component {
     }
 
     render() {
+        console.log('change question id,', this.props.question_id, this.state);
         return (<div className={'rating_content'}>
             {
                 this.state.is_display_rating ? (

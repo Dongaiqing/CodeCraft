@@ -112,6 +112,9 @@ export class Tag extends Component {
             is_display_tags: false
         };
     }
+    componentWillReceiveProps(newprops) {
+        this.setState({tags: [], is_display_tags: false});
+    }
     updateTags(tags) {
 
         let user = this.props.user;
