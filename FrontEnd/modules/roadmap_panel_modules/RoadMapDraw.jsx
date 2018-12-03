@@ -71,8 +71,8 @@ export class RoadMapDraw extends Component {
         // expected data structure: a json object with {name: 'id: Name', children: []}
         const data = hierarchy(raw_data);
         const config = {
-            width: document.getElementsByClassName('index_content')[0].offsetWidth - 50,
-            height: document.getElementsByClassName('index_content')[0].offsetHeight - 50,
+            width: 500,
+            height: 500,
             margin: {
                 top: 50,
                 left: 50,
