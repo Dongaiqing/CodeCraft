@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {RoadMapDraw} from "./RoadMapDraw";
+import _ from 'lodash';
 
 const check_id_url = '/check_valid_question_id';
 const check_id_success_msg = 'Success';
@@ -26,7 +27,8 @@ export class CreateNewRoadMap extends Component {
 
     recursiveAdd(curr_obj, node_id, node_name, parent_id) {
         let id = curr_obj.name.split(':')[0];
-        if (id === parent_id.toString()) {
+        // console.log(id, parent_id, typeof id, typeof parent_id);
+        if (id === parent_id) {
             if (!('children' in curr_obj)) {
                 item.children = [];
             }
@@ -44,11 +46,12 @@ export class CreateNewRoadMap extends Component {
 
     recursiveFind(curr_obj, node_id) {
         let id = curr_obj.name.split(':')[0];
-        if (id === node_id.toString()) {
+        // console.log(id, node_id, typeof id, typeof node_id);
+        if (id === node_id) {
             return 'done';
         }
         for(let item of curr_obj['children']) {
-            if (this.recursiveAdd(item, node_id) === 'done') {
+            if (this.recursiveFind(item, node_id) === 'done') {
                 return 'done';
             }
         }
@@ -58,7 +61,8 @@ export class CreateNewRoadMap extends Component {
     addNoteToData() {
         let node_id = this.state.current_node_id;
         let parent_id = this.state.current_parent_id;
-        if (this.recursiveFind(this.state.data, parent_id) !== 'done') {
+        console.log(parent_id, typeof parent_id);
+        if (this.recursiveFind(this.state.data,  _.isString(parent_id) ? parent_id : parent_id.toString()) !== 'done') {
             return;
         }
         axios.post(check_id_url, {
@@ -67,7 +71,8 @@ export class CreateNewRoadMap extends Component {
             if (response.data['msg'] === check_id_success_msg) {
                 let node_name = response.data['name'];
                 let prev_data = JSON.parse(JSON.stringify(this.state.data));
-                let result = this.recursiveAdd(prev_data, node_id, node_name, parent_id);
+                console.log(parent_id, typeof parent_id);
+                let result = this.recursiveAdd(prev_data, node_id, node_name, _.isString(parent_id) ? parent_id : parent_id.toString());
                 console.log(prev_data, node_id, node_name, parent_id);
                 this.setState({data: prev_data, is_successfully_added: result === 'done'});
             } else {
@@ -149,7 +154,7 @@ export class CreateNewRoadMap extends Component {
                 <textarea value={this.state.description} onChange={e => this.setState({description: e.target.value})}/>
                 <h4>Add Node</h4>
                 <div>
-                    <input type={'number'} value={this.state.current_node_id} onChange={e => this.setState({current_node_id: e.target.value})}/> from parent <input  type={'number'} value={this.state.current_parent_id} onChange={e => this.setState({current_parent_id: e.target.value})}/>
+                    Add node with ID <input type={'number'} value={this.state.current_node_id} onChange={e => this.setState({current_node_id: e.target.value})}/> to parent node with ID <input type={'number'} value={this.state.current_parent_id} onChange={e => this.setState({current_parent_id: e.target.value})}/>
                     <button onClick={() => this.addNoteToData()}>Add!</button>
                     {failed_to_add_node}
                 </div>

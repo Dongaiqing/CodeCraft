@@ -25,16 +25,30 @@ export const ThemesObj = [
     }, {
         name: 'autumn',
         styles: {
-            background: '#F4D03F',
-            emphasis: '#E67E22',
-            font: '#ffffff'
+            background: '#DC7633',
+            emphasis: '#873600',
+            font: '#000000'
         }
     }, {
-        name: 'freeze',
+        name: 'diamond',
         styles: {
             background: '#99A3A4',
             emphasis: '#839192',
             font: '#ffffff'
+        }
+    }, {
+        name: 'ruby',
+        styles: {
+            background: '#CB4335',
+            emphasis: '#7B241C',
+            font: '#ffffff'
+        }
+    }, {
+        name: 'midday',
+        styles: {
+            background: '#AED6F1',
+            emphasis: '#5499C7',
+            font: '#000000'
         }
     }
 ];

@@ -30,7 +30,7 @@ function Node({ node, events }) {
                 x={-width / 2}
                 fill={"#ffffff"}
                 stroke={node.children ? "#6FB5E3" : "#4CDACB"}
-                strokeWidth={1}
+                strokeWidth={2}
                 strokeDasharray={!node.children ? "2,2" : "0"}
                 strokeOpacity={!node.children ? .6 : 1}
                 rx={!node.children ? 10 : 0}
@@ -45,7 +45,7 @@ function Node({ node, events }) {
                 fontFamily="Arial"
                 textAnchor={"middle"}
                 style={{ pointerEvents: "none" }}
-                fill={node.depth === 0 ? "#71248e" : node.children ? "white" : "#26deb0"}
+                fill={node.depth === 0 ? "#d4d7d8" : node.children ? "white" : "#20acdb"}
             >
                 {node.data.name}
             </text>
@@ -58,7 +58,7 @@ function Link({ link }) {
         <LinkHorizontal
             data={link}
             stroke="#374469"
-            strokeWidth="1"
+            strokeWidth="2"
             fill="none"
             distance={30}
         />
@@ -71,8 +71,8 @@ export class RoadMapDraw extends Component {
         // expected data structure: a json object with {name: 'id: Name', children: []}
         const data = hierarchy(raw_data);
         const config = {
-            width: 400,
-            height: 400,
+            width: document.getElementsByClassName('index_content')[0].offsetWidth - 50,
+            height: document.getElementsByClassName('index_content')[0].offsetHeight - 50,
             margin: {
                 top: 50,
                 left: 50,
@@ -84,12 +84,12 @@ export class RoadMapDraw extends Component {
         return (
             <div>
                 <svg width={config.width} height={config.width}>
-                    <LinearGradient id="lg" from="#fd9b93" to="#fe6e9e" />
+                    <LinearGradient id="lg" from="#45B1D9" to="#1B93C1" />
                     <rect
                         width={config.width}
                         height={config.height}
                         rx={25}
-                        fill="#272b4d"
+                        fill="#DAE3E6"
                     />
                     <Tree
                         top={config.margin.top}
