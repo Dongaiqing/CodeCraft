@@ -578,8 +578,9 @@ def getUserprofile():
     cursor = conn.cursor()
     cursor.execute(Queries.getUserProfile(), (username))
     temp = cursor.fetchone()
-    cursor.execute('SELECT friendName FROM UserProfile_Friends WHERE userID=%s', (temp[0]))
+    cursor.execute('SELECT friendName FROM UserProfile_Friends WHERE userID=(SELECT userID FROM UserProfile WHERE username=%s)', (temp[1]))
     friends = [x[0] for x in cursor.fetchall()]
+    print(friends)
     cursor.execute('SELECT itemStr FROM UserProfile_Items WHERE userID=(SELECT userID FROM UserProfile WHERE username=%s)', (username))
     items = [x[0] for x in cursor.fetchall()]
     new_level = (temp[5] * 1 + temp[6] * 5 + temp[7] * 10 + len(friends) * 5) // 100
@@ -661,7 +662,10 @@ def addFriendBySearch():
     conn = get_conn()
     cursor = conn.cursor()
     obj = {}
-    cursor.execute('SELECT * FROM UserProfile WHERE id=%s OR username=%s', (search_string, search_string))
+    if search_string.isdigit():
+        cursor.execute('SELECT * FROM UserProfile WHERE id=%s', (search_string))
+    else:
+        cursor.execute('SELECT * FROM UserProfile WHERE username=%s', (search_string))
     result = cursor.fetchone()
     if result is None:
         obj['msg'] = 'Failed'
@@ -683,8 +687,8 @@ def addFriendBySearch():
         }
     # check if friends is here, if not then insert
     cursor.execute('SELECT * FROM UserProfile_Friends WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND friendName=%s', (current_user, result[1]))
-    result = cursor.fetchall()
-    if result is None:
+    temp_result = cursor.fetchall()
+    if not temp_result:
         cursor.execute('INSERT INTO UserProfile_Friends(userID, friendName) VALUES((SELECT id FROM UserProfile WHERE username=%s), (SELECT username FROM UserProfile WHERE id=%s))', (current_user, result[0]))
     else:
         obj['msg'] = 'Duplicate'

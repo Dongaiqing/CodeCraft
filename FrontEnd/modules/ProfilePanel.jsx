@@ -101,7 +101,8 @@ class FriendsInfo extends Component {
             if (response.data.msg !== 'Success') {
                 this.setState({show_error: true})
             } else {
-                this.props.updating_profile()
+                this.setState({show_error: false});
+                this.props.updating_profile(response.data.userProfile)
             }
         })
     }
@@ -160,8 +161,8 @@ class ItemsInfo extends Component {
                         {
                             profile.items.length > 0 ? (
                                 <div className={'ItemsInfo_block'}>
-                                    <h4>You have unlocked those items:</h4>
-                                    <ul>{arr}</ul>
+                                    <h4 style={{marginBottom: '0.5em'}}>You have unlocked those items:</h4>
+                                    <div style={{height: '5em', overflowY: 'auto'}}><ul>{arr}</ul></div>
                                 </div>
                             ) : (null)
                         }
@@ -364,16 +365,10 @@ export default class ProfilePanel extends Component{
         })
     }
 
-    updateProfile() {
-        let user = this.props.user;
-        axios.get(user_profile_fetching_url, {
-            params: {
-                username: user
-            }
-        }).then((response) => {
-            console.log('user profile is ', response.data, );
-            this.setState({user_profile: response.data});
-        })
+    updateProfile(friends_profile) {
+        let prev_user_profile = JSON.parse(JSON.stringify(this.state.user_profile));
+        prev_user_profile.friends.push(friends_profile.username);
+        this.setState({user_profile: prev_user_profile});
     }
 
     render() {
@@ -383,7 +378,7 @@ export default class ProfilePanel extends Component{
                 <UserBasicInfo profile={this.state.user_profile} updating_email={val => this.updatingEmail(val)}/>
                 <CountsInfo profile={this.state.user_profile}/>
                 <ItemsInfo profile={this.state.user_profile}/>
-                <FriendsInfo updating_profile={() => this.updateProfile()} current_user={user} profile={this.state.user_profile}/>
+                <FriendsInfo updating_profile={(friend_profile) => this.updateProfile(friend_profile)} current_user={user} profile={this.state.user_profile}/>
                 <PreferenceInfo profile={this.state.user_profile}/>
             </div>
         );
