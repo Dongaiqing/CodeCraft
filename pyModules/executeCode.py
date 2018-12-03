@@ -8,7 +8,7 @@ class exeucteCode:
 
         PATH_JAVAC = "/usr/bin/javac "
         PATH_JAVA = "/usr/bin/java "
-        PATH_RUBY = "/usr/bin/ruby"
+        PATH_RUBY = "/usr/bin/ruby "
         PATH_PYTHON = "/usr/local/bin/python3 "
         PATH_NODE = "/home/ec2-user/.nvm/versions/node/v11.2.0/bin/node "
         print(filename, tempfilename, language)
