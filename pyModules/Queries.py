@@ -145,7 +145,7 @@ class Queries():
 
     @staticmethod
     def deleteUserProfile_RoadMap():
-        return 'DELETE FROM UserProfile_RoadMap WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND roadmapsID=%s'
+        return 'DELETE FROM UserProfile_RoadMap WHERE userID=(SELECT id FROM UserProfile WHERE username=%s) AND roadmapID=%s'
 
     @staticmethod
     def getAllUserProfile_RoadMap():
