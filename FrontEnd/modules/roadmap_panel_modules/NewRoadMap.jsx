@@ -133,9 +133,9 @@ export class CreateNewRoadMap extends Component {
         let failed_to_delete_node = null;
         if (this.state.is_click_submitted !== false) {
             if (this.state.is_successfully_added) {
-                failed_to_submit_display = <section>Failed to Submit</section>;
-            } else {
                 failed_to_submit_display = <section>Successfully Submitted</section>;
+            } else {
+                failed_to_submit_display = <section>Failed to Submit</section>;
             }
 
             if (!this.state.is_successfully_added) {
